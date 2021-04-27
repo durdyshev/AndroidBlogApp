@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "627576588678",
+    "firebase_url": "https://gurles.firebaseio.com",
+    "project_id": "gurles",
+    "storage_bucket": "gurles.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:627576588678:android:8e4b3440f4be800b",
+        "android_client_info": {
+          "package_name": "com.example.komp.gurles"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "627576588678-4aeuf31vj0svmrkntgvvurvfiaf6t66h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.komp.gurles",
+            "certificate_hash": "2565558a7c73bef0a353dda56341b7ae1fc4ebd3"
+          }
+        },
+        {
+          "client_id": "627576588678-k74kctcs4tm0cp4gf1ckn0t700tg9vgs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.komp.gurles",
+            "certificate_hash": "827caf130efd6236c197a8f247ea4f027f6b8c85"
+          }
+        },
+        {
+          "client_id": "627576588678-c1rov9c1tgfbbhojbopbqqq8cnsdq1pd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdpBI6YSuYkjxtD9yOBAJBaaZb4dh-3Ao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "627576588678-c1rov9c1tgfbbhojbopbqqq8cnsdq1pd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

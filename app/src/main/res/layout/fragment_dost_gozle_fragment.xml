@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Dost_gozle_fragment">
+
+       <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+           <Button
+               android:id="@+id/dost_gos_dostknopka"
+               android:layout_width="151dp"
+               android:layout_height="41dp"
+               android:layout_marginStart="116dp"
+               android:layout_marginTop="18dp"
+               android:layout_marginEnd="117dp"
+               android:background="@color/renk"
+               android:text="Button"
+               android:textAppearance="@android:style/TextAppearance.Holo.Medium.Inverse"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toBottomOf="@+id/dost_gos_id" />
+
+           <EditText
+               android:id="@+id/dost_gos_tekst_id"
+               android:layout_width="297dp"
+               android:layout_height="49dp"
+               android:layout_marginStart="16dp"
+               android:layout_marginTop="76dp"
+               android:background="@drawable/search"
+               android:ems="10"
+               android:hint="Ady ya-da Idi"
+               android:inputType="textPersonName"
+               app:layout_constraintEnd_toStartOf="@+id/dost_gos_gozle_surat_knopka"
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toTopOf="parent" />
+
+           <ImageButton
+               android:id="@+id/dost_gos_gozle_surat_knopka"
+               android:layout_width="70dp"
+               android:layout_height="49dp"
+               android:layout_marginStart="12dp"
+               android:layout_marginTop="76dp"
+               android:layout_marginEnd="16dp"
+               android:background="@color/cardview_light_background"
+               android:backgroundTint="@android:color/transparent"
+               android:scaleType="fitCenter"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintStart_toEndOf="@+id/dost_gos_tekst_id"
+               app:layout_constraintTop_toTopOf="parent"
+               app:srcCompat="@drawable/search_button" />
+
+           <de.hdodenhof.circleimageview.CircleImageView
+
+               android:id="@+id/dost_gos_profil"
+               android:layout_width="97dp"
+               android:layout_height="93dp"
+
+               android:layout_marginStart="142dp"
+               android:layout_marginTop="16dp"
+               android:layout_marginEnd="145dp"
+               android:src="@mipmap/profil"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintHorizontal_bias="1.0"
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toBottomOf="@+id/dost_gos_tekst_id" />
+
+           <TextView
+               android:id="@+id/dost_gos_ady"
+               android:layout_width="144dp"
+               android:layout_height="wrap_content"
+               android:layout_marginStart="8dp"
+               android:layout_marginTop="8dp"
+               android:layout_marginEnd="8dp"
+               android:text="Ulanyjy"
+               android:textAlignment="center"
+               android:textSize="18sp"
+               android:textStyle="bold"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toBottomOf="@+id/dost_gos_profil" />
+
+           <TextView
+               android:id="@+id/dost_gos_id"
+               android:layout_width="152dp"
+               android:layout_height="25dp"
+               android:layout_marginStart="116dp"
+               android:layout_marginTop="12dp"
+               android:layout_marginEnd="8dp"
+               android:text="id"
+               android:textAlignment="center"
+               android:textSize="18sp"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintHorizontal_bias="0.0"
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toBottomOf="@+id/dost_gos_ady" />
+
+           <RadioGroup
+               android:id="@+id/radioGroup"
+               android:layout_width="358dp"
+               android:layout_height="48dp"
+               android:layout_marginStart="8dp"
+               android:layout_marginTop="8dp"
+               android:layout_marginEnd="8dp"
+               android:layout_marginBottom="8dp"
+               android:orientation="vertical"
+               android:scrollbarAlwaysDrawVerticalTrack="false"
+               app:layout_constraintBottom_toTopOf="@+id/dost_gos_tekst_id"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toTopOf="parent">
+
+               <android.support.constraint.ConstraintLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_weight="1">
+
+                   <RadioButton
+                       android:id="@+id/radio_ady"
+                       android:layout_width="67dp"
+                       android:layout_height="33dp"
+                       android:layout_marginStart="31dp"
+                       android:layout_marginTop="8dp"
+                       android:layout_marginBottom="7dp"
+                       android:layout_weight="1"
+                       android:checked="false"
+                       android:text="Ady"
+                       app:layout_constraintBottom_toBottomOf="parent"
+                       app:layout_constraintStart_toStartOf="parent"
+                       app:layout_constraintTop_toTopOf="parent" />
+
+                   <RadioButton
+                       android:id="@+id/radio_id"
+                       android:layout_width="60dp"
+                       android:layout_height="32dp"
+                       android:layout_marginTop="8dp"
+                       android:layout_marginEnd="64dp"
+                       android:layout_marginBottom="8dp"
+                       android:checked="true"
+                       android:text="@string/id"
+                       app:layout_constraintBottom_toBottomOf="parent"
+                       app:layout_constraintEnd_toEndOf="parent"
+                       app:layout_constraintTop_toTopOf="parent"
+                       app:layout_constraintVertical_bias="0.0"
+                       tools:text="@string/id" />
+
+               </android.support.constraint.ConstraintLayout>
+
+           </RadioGroup>
+
+       </android.support.constraint.ConstraintLayout>
+
+
+</FrameLayout>

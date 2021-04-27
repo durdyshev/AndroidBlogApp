@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/sms_menu_edit_kopyala"
+        android:title="Kopyala" />
+    <item
+        android:id="@+id/sms_menu_edit_poz"
+        android:title="Poz" />
+</menu>

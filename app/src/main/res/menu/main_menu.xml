@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+
+
+    <item
+        android:id="@+id/menu_agza_gos"
+        android:icon="@drawable/outline_person_add_white_18dp"
+        android:title="@string/dost_gozle"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_sazla_knopka"
+        android:icon="@drawable/outline_settings_white_18dp"
+        android:title="@string/sazlamalar"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_cyk_knopka"
+        android:title="@string/cyk" />
+</menu>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+   >
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/obshy_dostlar_yeke_haly_card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/cardview_shadow_end_color"
+        app:cardBackgroundColor="@color/cardview_shadow_end_color"
+        app:cardElevation="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/obshy_dostlar_yeke_haly_profil"
+                android:layout_width="71dp"
+                android:layout_height="49dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/profile_placeholder"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/obshy_dostlar_yeke_haly_ady"
+                android:layout_width="210dp"
+                android:layout_height="23dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp"
+
+                android:text="@string/ulanyjy"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/obshy_dostlar_yeke_haly_profil"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.142" />
+
+            <TextView
+                android:id="@+id/obshy_dostlar_yeke_haly_id"
+                android:layout_width="236dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp"
+                android:maxLength="20"
+                android:text="TextView"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/obshy_dostlar_yeke_haly_profil"
+                app:layout_constraintTop_toBottomOf="@+id/obshy_dostlar_yeke_haly_ady"
+                app:layout_constraintVertical_bias="1.0" />
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
+</android.support.constraint.ConstraintLayout>
+

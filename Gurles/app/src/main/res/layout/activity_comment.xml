@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true"
+    tools:context=".Comment">
+
+
+    <LinearLayout
+        android:id="@+id/comment_edit_linear"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <EditText
+            android:id="@+id/comment_sms"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/cardview_light_background"
+            android:ems="10"
+            android:hint="@string/yaz_bir_zatlar_mat_tvoyu"
+            android:inputType="textMultiLine"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageButton
+            android:id="@+id/comment_ugrat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/ak"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintVertical_bias="1.0"
+            app:srcCompat="@mipmap/send" />
+
+    </LinearLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/comment_edit_linear"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="fill"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:fillViewport="true"
+        android:fitsSystemWindows="false"
+        android:foregroundGravity="fill"
+        app:layout_anchorGravity="fill"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/comment_popup"
+                android:layout_width="63dp"
+                android:layout_height="51dp"
+
+                android:layout_above="@+id/comment_viewpager"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="46dp"
+                android:background="@color/cardview_shadow_end_color"
+                android:src="@mipmap/menu" />
+
+            <LinearLayout
+                android:id="@+id/comment_dots_linear"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_alignStart="@+id/viewpager"
+                android:layout_alignEnd="@+id/viewpager"
+                android:layout_alignBottom="@+id/viewpager"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="-1dp"
+                android:layout_marginBottom="13dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="horizontal">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/comments_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/viewpager"
+                android:layout_marginTop="0dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:textAlignment="center">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/comment_like"
+                        android:layout_width="50dp"
+                        android:layout_height="35dp"
+
+
+                        android:layout_marginTop="8dp"
+                        android:scaleType="centerCrop"
+                        android:src="@mipmap/heart" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/comment_comment"
+                        android:layout_width="50dp"
+                        android:layout_height="35dp"
+
+
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="10dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/comment" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/comment_paylas"
+                        android:layout_width="40dp"
+                        android:layout_height="35dp"
+
+
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="10dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/share" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/comment_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="9dp"
+                        android:layout_marginEnd="0dp"
+                        android:layout_marginBottom="5dp"
+                        android:text="Ata Watanym Turkmenistan" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_profil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="0dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/comment_profil"
+                        android:layout_width="70dp"
+                        android:layout_height="54dp"
+
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="8dp"
+                        android:src="@drawable/profile_placeholder" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/comment_ulanyjy"
+                        android:layout_width="match_parent"
+                        android:layout_height="22dp"
+
+
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="71dp"
+                        android:text="@string/ulanyjy"
+                        android:textAlignment="textStart"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        tools:ignore="MissingConstraints" />
+
+                    <TextView
+                        android:id="@+id/comment_tarih"
+                        android:layout_width="261dp"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="64dp"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="@string/tarih"
+                        android:textAlignment="viewStart" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/comments_details"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/comment_like_san"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+
+
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="0 like"
+                    android:textAlignment="center"
+                    android:textColor="@color/face"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/komment_like_recycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_weight="1" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="50dp"
+                        android:layout_height="30dp"
+                        android:layout_weight="1"
+                        android:src="@drawable/next" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/comment_komment_san"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="0 komment"
+                    android:textColor="@color/face"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/komment_recycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="fill_vertical"
+
+                        android:layout_marginBottom="0dp"
+                        android:fitsSystemWindows="true"
+                        android:scrollbarSize="5dp"
+                        android:scrollbarThumbVertical="@android:color/darker_gray"
+                        android:scrollbars="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent">
+
+
+                    </android.support.v7.widget.RecyclerView>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/comment_dots_sanaw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/viewpager"
+                android:layout_alignEnd="@+id/viewpager"
+                android:layout_marginTop="21dp"
+                android:layout_marginEnd="12dp"
+                android:text="TextView" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="350dp"
+                android:layout_below="@+id/linear_profil"
+                android:layout_marginTop="5dp" />
+
+        </RelativeLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+
+</RelativeLayout>

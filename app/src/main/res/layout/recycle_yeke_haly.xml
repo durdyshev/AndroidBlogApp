@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/main_blog_post"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/cardview_light_background"
+        android:padding="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.048">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/recycle_yeke_haly_profil"
+                android:layout_width="70dp"
+                android:layout_height="54dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="9dp"
+                android:src="@drawable/profile_placeholder"
+                app:layout_constraintBottom_toTopOf="@+id/recycle_yeke_haly_surat"
+                app:layout_constraintEnd_toStartOf="@+id/recycle_yeke_haly_ulanyjy"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/recycle_yeke_haly_ulanyjy"
+                android:layout_width="53dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="250dp"
+                android:text="@string/ulanyjy"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.225"
+                app:layout_constraintStart_toEndOf="@+id/recycle_yeke_haly_profil"
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteY="7dp" />
+
+            <TextView
+                android:id="@+id/recycle_yeke_haly_tarih"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="255dp"
+                android:text="@string/tarih"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.42"
+                app:layout_constraintStart_toEndOf="@+id/recycle_yeke_haly_profil"
+                app:layout_constraintTop_toBottomOf="@+id/recycle_yeke_haly_ulanyjy" />
+
+            <ImageView
+                android:id="@+id/recycle_yeke_haly_surat"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="164dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recycle_yeke_haly_profil"
+                app:srcCompat="@drawable/image_placeholder" />
+
+            <TextView
+                android:id="@+id/recycle_yeke_haly_info"
+                android:layout_width="0dp"
+                android:layout_height="22dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="180dp"
+                android:layout_marginBottom="2dp"
+                android:text="Ata Watanym Turkmenistan"
+                app:layout_constraintBottom_toTopOf="@+id/recycle_yeke_haly_komment_san"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/recycle_yeke_haly_like"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="272dp"
+                android:src="@mipmap/heart"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/recycle_yeke_haly_comment"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/comment"
+                app:layout_constraintBottom_toTopOf="@+id/recycle_yeke_haly_info"
+                app:layout_constraintStart_toEndOf="@+id/recycle_yeke_haly_like"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.932" />
+
+            <TextView
+                android:id="@+id/recycle_yeke_haly_like_san"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="328dp"
+                android:layout_marginBottom="2dp"
+                android:text="0 like"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/recycle_yeke_haly_info"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recycle_yeke_haly_like"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/recycle_yeke_haly_komment_san"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="2dp"
+                android:text="0 komment"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/recycle_yeke_haly_komment_edit"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageButton
+                android:id="@+id/popup"
+                android:layout_width="63dp"
+                android:layout_height="51dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="7dp"
+                android:layout_marginBottom="30dp"
+                android:background="@color/cardview_shadow_end_color"
+                android:src="@mipmap/menu"
+                app:layout_constraintBottom_toTopOf="@+id/recycle_yeke_haly_surat"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/recycle_yeke_haly_komment_edit"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="9dp"
+                android:layout_marginEnd="11dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/search"
+                android:ems="10"
+                android:hint="Teswir yaz..."
+                android:inputType="text"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageButton
+                android:id="@+id/recycle_yeke_haly_komment_ugrat"
+                android:layout_width="41dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@color/cardview_shadow_end_color"
+                app:layout_constraintBottom_toBottomOf="@+id/recycle_yeke_haly_komment_edit"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.974"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/recycle_yeke_haly_komment_edit"
+                app:layout_constraintVertical_bias="0.0"
+                app:srcCompat="@mipmap/post_send" />
+
+            <ImageButton
+                android:id="@+id/recycle_yeke_haly_paylas"
+                android:layout_width="41dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="272dp"
+                android:layout_marginEnd="212dp"
+                android:background="@color/cardview_shadow_end_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/recycle_yeke_haly_comment"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/share" />
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
+
+</android.support.constraint.ConstraintLayout>

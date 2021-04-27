@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ProgressBar
+        android:id="@+id/progressBar4"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="167dp"
+        android:layout_height="196dp"
+        android:layout_alignStart="@+id/viewpager_surat"
+        android:layout_alignTop="@+id/viewpager_surat"
+        android:layout_alignEnd="@+id/viewpager_surat"
+        android:layout_alignBottom="@+id/viewpager_surat"
+        android:layout_marginStart="119dp"
+        android:layout_marginTop="230dp"
+        android:layout_marginEnd="125dp"
+        android:layout_marginBottom="305dp" />
+
+    <ImageView
+        android:id="@+id/viewpager_surat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:paddingStart="4dp"
+        android:paddingLeft="4dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="4dp"
+        android:paddingRight="0dp"
+        android:paddingBottom="0dp" />
+
+</RelativeLayout>

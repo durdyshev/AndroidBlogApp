@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/sms_menu_telefon"
+        android:icon="@mipmap/telefon"
+        android:title="Jan et"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/sms_menu_video"
+        android:icon="@mipmap/video_call"
+        android:title="Video jan et"
+        app:showAsAction="always" />
+</menu>

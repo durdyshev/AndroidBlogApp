@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="400dp"
+    android:background="@color/colorPrimary">
+
+    <ImageView
+        android:id="@+id/dost_onizleme_arkafon"
+        android:layout_width="0dp"
+        android:layout_height="178dp"
+        android:layout_marginBottom="10dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toTopOf="@+id/dost_onizleme_ady"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/background" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+
+        android:id="@+id/dost_onizleme_profil"
+        android:layout_width="0dp"
+        android:layout_height="73dp"
+
+        android:layout_marginTop="48dp"
+
+        android:layout_marginBottom="8dp"
+
+        android:src="@mipmap/profil"
+        app:layout_constraintBottom_toTopOf="@+id/dost_onizleme_ady"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/dost_onizleme_ady"
+        android:layout_width="0dp"
+        android:layout_height="38dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/ulanyjy"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/dost_onizleme_id"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.438"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/dost_onizleme_id"
+        android:layout_width="0dp"
+        android:layout_height="38dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/id"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/dost_onizleme_dostlar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.414"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/dost_onizleme_dostlar"
+        android:layout_width="0dp"
+        android:layout_height="36dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/dostlar"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/dost_onizleme_esasy_knopka"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.457"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/dost_onizleme_yaz"
+        android:layout_width="111dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="32dp"
+        android:background="@color/colorAccent"
+        android:text="@string/yaz"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/dost_onizleme_esasy_knopka"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/dost_onizleme_esasy_knopka"
+        android:layout_width="111dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="32dp"
+        android:background="@color/colorAccent"
+        android:text="@string/esasy"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/dost_onizleme_blok"
+        app:layout_constraintStart_toEndOf="@+id/dost_onizleme_yaz" />
+
+    <Button
+        android:id="@+id/dost_onizleme_blok"
+        android:layout_width="111dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="32dp"
+        android:background="@color/colorAccent"
+        android:text="@string/blokla"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/dost_onizleme_esasy_knopka" />
+</android.support.constraint.ConstraintLayout>

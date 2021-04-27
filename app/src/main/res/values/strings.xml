@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">Gurles</string>
+    <string name="email">email</string>
+    <string name="parol">parol</string>
+    <string name="gir">Gir</string>
+    <string name="registrasiya">Registrasiya</string>
+
+    <string name="sazlamalar">Sazlamalar</string>
+
+    <string name="akkaunt_d_ret">Akkaunt döret</string>
+    <string name="sakla">Sakla</string>
+    <string name="paylas">Paylas</string>
+    <string name="informasiyalar">Informasiyalar</string>
+    <string name="profil">Profil</string>
+    <string name="bildirisler">Bildirisler</string>
+    <string name="esasy">Esasy</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="bildiris_fragmenti">Bildiris Fragmenti</string>
+    <string name="profil_fragmenti">Profil Fragmenti</string>
+    <string name="fragment_esasy">Fragment Esasy</string>
+    <string name="ulanyjy">Ulanyjy</string>
+    <string name="tarih">Tarih</string>
+    <string name="dost_gozle">Dost Gozle</string>
+    <string name="id">id</string>
+
+    <string name="user_id">user_id</string>
+    <string name="dostlar">Dostlar</string>
+    <string name="lenta">Lenta</string>
+    <string name="hatlar">Hatlar</string>
+    <string name="cyk">Cyk</string>
+    <string name="gozle">Gozle</string>
+    <string name="kabul">Kabul</string>
+    <string name="yaz">Yaz</string>
+
+    <string name="blokla">Blokla</string>
+    <string name="yaz_bir_zatlar_mat_tvoyu">Yaz bir zatlar mat tvoyu. . .</string>
+    <string name="title_activity_sms_obshy">Sms_obshy</string>
+    <string name="title_activity_kotlin">kotlin</string>
+    <string name="h_zirki_pikir">Häzirki Pikir</string>
+    <string name="default_notification_channel_id">notification_id</string>
+
+</resources>

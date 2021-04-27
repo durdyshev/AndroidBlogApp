@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".surat">
+
+    <TextView
+        android:id="@+id/surat_ac_sanaw"
+        android:layout_width="77dp"
+        android:layout_height="27dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/surat_ac_viewpager" />
+
+    <LinearLayout
+
+        android:id="@+id/surat_ac_linear_dots"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_alignStart="@+id/surat_ac_viewpager"
+        android:layout_alignEnd="@+id/surat_ac_viewpager"
+        android:layout_alignBottom="@+id/surat_ac_viewpager"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="65dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/surat_ac_viewpager"
+        app:layout_constraintEnd_toEndOf="@+id/surat_ac_viewpager"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/surat_ac_viewpager">
+
+    </LinearLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/surat_ac_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="420dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="115dp"
+        android:layout_marginBottom="195dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </android.support.v4.view.ViewPager>
+
+</RelativeLayout>

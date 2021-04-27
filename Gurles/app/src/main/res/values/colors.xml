@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3B5998</color>
+    <color name="colorPrimaryDark">#2f333f</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="renk">#008744</color>
+    <color name="face">#4A6AAF</color>
+    <color name="ak">#FFFFFF</color>
+    <color name="gara">#212225</color>
+</resources>
