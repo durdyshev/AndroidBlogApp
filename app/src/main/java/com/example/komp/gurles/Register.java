@@ -71,7 +71,7 @@ public class Register extends AppCompatActivity {
                                             userMap.put("typing","hickim");
                                             userMap.put("kontakt","");
                                             userMap.put("arkafon","");
-                                            userMap.put("pikir","");
+                                            userMap.put("pikir","Hey there I am using Gurlesh");
                                             userMap.put("number","");
 
                                             firebaseFirestore.collection("ulanyjylar").document(currenuserid).set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {

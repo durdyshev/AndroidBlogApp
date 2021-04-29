@@ -20,6 +20,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="5dp"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="5dp">
 
@@ -53,8 +55,8 @@
 
             <TextView
                 android:id="@+id/sms_ugrat_last_seen"
-                android:layout_width="129dp"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="TextView"
                 android:textColor="@color/cardview_light_background" />
         </LinearLayout>
