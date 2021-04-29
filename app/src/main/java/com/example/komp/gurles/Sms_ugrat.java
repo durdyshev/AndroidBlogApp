@@ -241,13 +241,14 @@ public class Sms_ugrat extends AppCompatActivity {
                 .build();
         sinchClient.setSupportCalling(true);
         sinchClient.startListeningOnActiveConnection();
-        sinchClient.setSupportManagedPush(true);
 
+       // sinchClient.setSupportManagedPush(true);
+        sinchClient.start();
         sinchClient.getCallClient().addCallClientListener(new CallClientListener() {
             @Override
             public void onIncomingCall(CallClient callClient, final Call incomingcall) {
                 final AlertDialog alertDialog=new AlertDialog.Builder(Sms_ugrat.this).create();
-                alertDialog.setTitle("Jan gelyar");
+              //  alertDialog.setTitle("Jan gelyar");
                 alertDialog.setButton(android.app.AlertDialog.BUTTON_NEUTRAL, "Ocur", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -265,10 +266,27 @@ public class Sms_ugrat extends AppCompatActivity {
                     }
                 });
 
-//                alertDialog.show();
+              alertDialog.show();
             }
         });
-        sinchClient.start();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         audio.setOnTouchListener(new View.OnTouchListener() {
@@ -579,7 +597,7 @@ public class Sms_ugrat extends AppCompatActivity {
 
     private void opencallerdialog(final Call call) {
         final AlertDialog alertDialog1=new AlertDialog.Builder(Sms_ugrat.this).create();
-        alertDialog1.setMessage("Jan edilyar");
+       // alertDialog1.setMessage("Jan edilyar");
         alertDialog1.setButton(android.app.AlertDialog.BUTTON_NEUTRAL, "Ocur", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {

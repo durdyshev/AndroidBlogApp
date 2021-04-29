@@ -24,13 +24,16 @@
             android:id="@+id/sms_item_audio_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
             app:srcCompat="@mipmap/play" />
 
         <ImageView
             android:id="@+id/sms_item_audio_pause"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
             android:layout_weight="1"
             android:visibility="gone"
             app:srcCompat="@mipmap/pause" />
@@ -53,7 +56,7 @@
         android:layout_alignTop="@+id/sms_item_tekst"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="0dp"
+        android:layout_marginEnd="5dp"
         android:background="@drawable/background_left"
         app:cardBackgroundColor="@android:color/holo_purple">
 
@@ -65,7 +68,7 @@
 
             <ImageView
                 android:id="@+id/sms_item_paylas_surat"
-                android:layout_width="150dp"
+                android:layout_width="0dp"
                 android:layout_height="150dp"
 
                 android:layout_marginStart="8dp"
@@ -79,14 +82,16 @@
 
             <TextView
                 android:id="@+id/sms_item_paylas_tekst"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="137dp"
+                android:fontFamily="sans-serif-medium"
                 android:inputType="textAutoCorrect"
                 android:maxLength="20"
                 android:text="TextView"
                 android:textColor="@color/ak"
-                app:layout_constraintTop_toBottomOf="@+id/sms_item_paylas_surat"
-                tools:layout_editor_absoluteX="137dp" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sms_item_paylas_surat" />
         </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.CardView>
@@ -132,7 +137,7 @@
 
     <ImageView
         android:id="@+id/sms_item_surat"
-        android:layout_width="288dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
@@ -162,9 +167,9 @@
         android:id="@+id/sms_item_gorulme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/sms_item_tekst"
+        android:layout_below="@+id/sms_item_card"
         android:layout_alignBottom="@+id/sms_item_tekst"
-        android:layout_marginTop="-26dp"
+        android:layout_marginTop="-6dp"
         android:layout_marginEnd="-234dp"
         android:layout_marginBottom="8dp"
         android:layout_toStartOf="@+id/sms_item_tekst"
