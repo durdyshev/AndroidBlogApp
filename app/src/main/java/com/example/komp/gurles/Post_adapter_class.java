@@ -471,7 +471,7 @@ holder.videoplayknopka.setOnClickListener(new View.OnClickListener() {
        shuwagt=(TextView)mView.findViewById(R.id.recycle_yeke_haly_video_shuwagt);
        sonwagt=(TextView)mView.findViewById(R.id.recycle_yeke_haly_video_obshywagt);
        videoprogress=(ProgressBar)mView.findViewById(R.id.recycle_yeke_haly_video_progress);
-        videoskacat=(ProgressBar)mView.findViewById(R.id.recycle_yeke_haly_video_skacatprogress);
+
         videoplayknopka=(CircleImageView)mView.findViewById(R.id.recycle_yeke_haly_video_play);
         }
 

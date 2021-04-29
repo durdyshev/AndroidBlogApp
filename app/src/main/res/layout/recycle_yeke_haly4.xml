@@ -281,20 +281,6 @@
                     android:layout_marginTop="0dp"
                     android:layout_marginEnd="0dp" />
 
-                <ProgressBar
-                    android:id="@+id/recycle_yeke_haly_video_skacatprogress"
-                    style="?android:attr/progressBarStyle"
-                    android:layout_width="291dp"
-                    android:layout_height="143dp"
-                    android:layout_alignStart="@+id/recycle_yeke_haly_videoview"
-                    android:layout_alignTop="@+id/recycle_yeke_haly_videoview"
-                    android:layout_alignBottom="@+id/recycle_yeke_haly_videoview"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginStart="70dp"
-                    android:layout_marginTop="97dp"
-                    android:layout_marginEnd="50dp"
-                    android:layout_marginBottom="60dp" />
-
                 <LinearLayout
                     android:id="@+id/recycle_yeke_haly_video_detail"
                     android:layout_width="match_parent"
