@@ -131,11 +131,11 @@ public class BildirisFragment extends Fragment {
                 null,null,null,ContactsContract.Contacts.DISPLAY_NAME+" ASC");
         while (cursor.moveToNext()){
 
-          final  String name=cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-          final  String nomer=cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)).replaceAll(" ","");
+            final  String name=cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            final  String nomer=cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)).replaceAll(" ","");
 
-if(name.isEmpty() && !nomer.isEmpty() ){ady.add(nomer);number.add(nomer);}
-if(!name.isEmpty() && !nomer.isEmpty()){ady.add(name);number.add(nomer);}
+            if(name.isEmpty() && !nomer.isEmpty() ){ady.add(nomer);number.add(nomer);}
+            if(!name.isEmpty() && !nomer.isEmpty()){ady.add(name);number.add(nomer);}
 
 
 
@@ -153,93 +153,93 @@ if(!name.isEmpty() && !nomer.isEmpty()){ady.add(name);number.add(nomer);}
         firebaseFirestore.collection("ulanyjylar").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-               if(task.isSuccessful()){
-                   if (task.getResult().exists()){
-                    String kontakt=task.getResult().getString("kontakt");
+                if(task.isSuccessful()){
+                    if (task.getResult().exists()){
+                        String kontakt=task.getResult().getString("kontakt");
 
 
-                       if(!kontakt.equals(String.valueOf(number.size()))){
+                        if(!kontakt.equals(String.valueOf(number.size()))){
 
 
-                           Map<String,Object> kontakto=new HashMap<>();
-                           kontakto.put("kontakt",String.valueOf(number.size()));
-                           firebaseFirestore.collection("ulanyjylar").document(user_id).update(kontakto);
-                           for(i=0;i<number.size();i++){
-                               Log.d(TAG,number.get(i));
-                               Log.d(TAG,ady.get(i));
-                               final String dost_ady=ady.get(i);
+                            Map<String,Object> kontakto=new HashMap<>();
+                            kontakto.put("kontakt",String.valueOf(number.size()));
+                            firebaseFirestore.collection("ulanyjylar").document(user_id).update(kontakto);
+                            for(i=0;i<number.size();i++){
+                                Log.d(TAG,number.get(i));
+                                Log.d(TAG,ady.get(i));
+                                final String dost_ady=ady.get(i);
 
-                               firebaseFirestore.collection("ulanyjylar").whereEqualTo("number",number.get(i)).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                   @Override
-                                   public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                       if(!task.getResult().isEmpty()){
-                                           for (DocumentSnapshot document : task.getResult()) {
-                                               final String idi=document.getString("user_id");
-                                               firebaseFirestore.collection("ulanyjylar").document(user_id).collection("blok").whereEqualTo("user_id",idi).get()
-                                                       .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                           @Override
-                                                           public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                               if(task.getResult().isEmpty()){
-                                                                   Map<String,Object> postMap=new HashMap<>();
-                                                                   postMap.put("user_id",idi);
-                                                                   postMap.put("ady",dost_ady);
+                                firebaseFirestore.collection("ulanyjylar").whereEqualTo("number",number.get(i)).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if(!task.getResult().isEmpty()){
+                                            for (DocumentSnapshot document : task.getResult()) {
+                                                final String idi=document.getString("user_id");
+                                                firebaseFirestore.collection("ulanyjylar").document(user_id).collection("blok").whereEqualTo("user_id",idi).get()
+                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                if(task.getResult().isEmpty()){
+                                                                    Map<String,Object> postMap=new HashMap<>();
+                                                                    postMap.put("user_id",idi);
+                                                                    postMap.put("ady",dost_ady);
 
-                                                                   if(!idi.equals(user_id)){
-                                                                       firebaseFirestore.collection("ulanyjylar").document(user_id).collection("dostlar").document(idi).set(postMap)
-                                                                               .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                                   @Override
-                                                                                   public void onComplete(@NonNull Task<Void> task) {
-                                                                                       Toast.makeText(getContext(),"Basarili",Toast.LENGTH_LONG).show();
-                                                                                   }
-                                                                               });
-                                                                   }
-                                                               }
+                                                                    if(!idi.equals(user_id)){
+                                                                        firebaseFirestore.collection("ulanyjylar").document(user_id).collection("dostlar").document(idi).set(postMap)
+                                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                    @Override
+                                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                                        Toast.makeText(getContext(),"Basarili",Toast.LENGTH_LONG).show();
+                                                                                    }
+                                                                                });
+                                                                    }
+                                                                }
 
-                                                           }
-                                                       });
-                                           }
-                                       }
-                                   }
-                               });
+                                                            }
+                                                        });
+                                            }
+                                        }
+                                    }
+                                });
 
-                           }
-                           Query sirala=firebaseFirestore.collection("/ulanyjylar/"+user_id+"/dostlar").orderBy("ady",Query.Direction.ASCENDING);
-                           sirala.addSnapshotListener(getActivity(),new EventListener<QuerySnapshot>() {
-                               @Override
-                               public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                            }
+                            Query sirala=firebaseFirestore.collection("/ulanyjylar/"+user_id+"/dostlar").orderBy("ady",Query.Direction.ASCENDING);
+                            sirala.addSnapshotListener(getActivity(),new EventListener<QuerySnapshot>() {
+                                @Override
+                                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
-                                   for(DocumentChange doc: documentSnapshots.getDocumentChanges()){
-                                       if(doc.getType()==DocumentChange.Type.ADDED){
-                                           Obshydostlar_adapter obshydostlar_adapter=doc.getDocument().toObject(Obshydostlar_adapter.class);
-                                           dostlar.add(obshydostlar_adapter);
-                                           obshydostlar_adapterclass.notifyDataSetChanged();
-
-
-                                       }
-                                   }
-                               }
-                           });
-
-                       }
-                       else{
-                           Query sirala=firebaseFirestore.collection("/ulanyjylar/"+user_id+"/dostlar").orderBy("ady",Query.Direction.ASCENDING);
-                           sirala.addSnapshotListener(getActivity(),new EventListener<QuerySnapshot>() {
-                               @Override
-                               public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-
-                                   for(DocumentChange doc: documentSnapshots.getDocumentChanges()){
-                                       if(doc.getType()==DocumentChange.Type.ADDED){
-                                           Obshydostlar_adapter obshydostlar_adapter=doc.getDocument().toObject(Obshydostlar_adapter.class);
-                                           dostlar.add(obshydostlar_adapter);
-                                           obshydostlar_adapterclass.notifyDataSetChanged();
+                                    for(DocumentChange doc: documentSnapshots.getDocumentChanges()){
+                                        if(doc.getType()==DocumentChange.Type.ADDED){
+                                            Obshydostlar_adapter obshydostlar_adapter=doc.getDocument().toObject(Obshydostlar_adapter.class);
+                                            dostlar.add(obshydostlar_adapter);
+                                            obshydostlar_adapterclass.notifyDataSetChanged();
 
 
-                                       }
-                                   }
-                               }
-                           });
-                       }
-                }}
+                                        }
+                                    }
+                                }
+                            });
+
+                        }
+                        else{
+                            Query sirala=firebaseFirestore.collection("/ulanyjylar/"+user_id+"/dostlar").orderBy("ady",Query.Direction.ASCENDING);
+                            sirala.addSnapshotListener(getActivity(),new EventListener<QuerySnapshot>() {
+                                @Override
+                                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                                    for(DocumentChange doc: documentSnapshots.getDocumentChanges()){
+                                        if(doc.getType()==DocumentChange.Type.ADDED){
+                                            Obshydostlar_adapter obshydostlar_adapter=doc.getDocument().toObject(Obshydostlar_adapter.class);
+                                            dostlar.add(obshydostlar_adapter);
+                                            obshydostlar_adapterclass.notifyDataSetChanged();
+
+
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }}
             }
         });
 
@@ -249,7 +249,5 @@ if(!name.isEmpty() && !nomer.isEmpty()){ady.add(name);number.add(nomer);}
 
 
 
+    }
 }
-}
-
-

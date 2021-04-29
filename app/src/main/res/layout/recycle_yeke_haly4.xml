@@ -148,6 +148,7 @@
 
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="12dp"
+                        android:fontFamily="sans-serif-light"
                         android:text="0 adam halady"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -161,6 +162,7 @@
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="5dp"
+                        android:fontFamily="sans-serif-black"
                         android:text="Ata Watanym Turkmenistan" />
 
                     <TextView
@@ -173,26 +175,13 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="0dp"
                         android:layout_marginBottom="8dp"
+                        android:fontFamily="sans-serif-light"
                         android:text="teswirleri gör(0)"
                         android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
             </LinearLayout>
-
-            <ProgressBar
-                android:id="@+id/progressBar2"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/recycle_yeke_haly_linear"
-                android:layout_alignStart="@+id/recycle_yeke_haly_viewpager"
-                android:layout_alignTop="@+id/recycle_yeke_haly_viewpager"
-                android:layout_alignEnd="@+id/recycle_yeke_haly_viewpager"
-                android:layout_marginStart="176dp"
-                android:layout_marginTop="120dp"
-                android:layout_marginEnd="187dp"
-                android:layout_marginBottom="186dp" />
 
             <TextView
                 android:id="@+id/recycle_yeke_haly_ulanyjy"

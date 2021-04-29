@@ -188,14 +188,15 @@ firebaseFirestore.collection("/ulanyjylar/").document(mAuth.getCurrentUser().get
             Map<String, Object> userMap = new HashMap<>();
             userMap.put("token", FieldValue.delete());
             firebaseFirestore.collection("ulanyjylar").document(user_id).update(userMap);
-                        mAuth.signOut();
-
-
-
-
-            Intent intent=new Intent(getBaseContext(),Login.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            mAuth.signOut();
+            Intent intent=new Intent(getBaseContext(),Login.class);
             startActivity(intent);
             finish();
+
+
+
+
+
         }
         if(item.getItemId()==R.id.menu_sazla_knopka){
             Intent intent=new Intent(MainActivity.this,Sazlamalar.class);

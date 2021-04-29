@@ -68,6 +68,11 @@ public class Register extends AppCompatActivity {
                                             String deviceToken=FirebaseInstanceId.getInstance().getToken();
                                             Map<String, Object> userMap = new HashMap<>();
                                             userMap.put("token", deviceToken);
+                                            userMap.put("typing","hickim");
+                                            userMap.put("kontakt","");
+                                            userMap.put("arkafon","");
+                                            userMap.put("pikir","");
+                                            userMap.put("number","");
 
                                             firebaseFirestore.collection("ulanyjylar").document(currenuserid).set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override

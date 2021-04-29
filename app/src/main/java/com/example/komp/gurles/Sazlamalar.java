@@ -1,6 +1,7 @@
 package com.example.komp.gurles;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -78,26 +79,32 @@ public class Sazlamalar extends AppCompatActivity {
         sazla_progres.setVisibility(View.VISIBLE);
         Sakla.setEnabled(false);
         mAuth=FirebaseAuth.getInstance();
+
         firebaseFirestore.collection("ulanyjylar").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @SuppressLint("CheckResult")
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
                     if(task.getResult().exists()){
-                        String name=task.getResult().getString("ady");
-                        String image=task.getResult().getString("surat");
-                        String id=task.getResult().getString("id");
+                        if(task.getResult().getString("surat")!=null) {
+                            String name = task.getResult().getString("ady");
+                            String image = task.getResult().getString("surat");
+                            String id = task.getResult().getString("id");
 
-                        Esasysurat= Uri.parse(image);
-                        Ady.setText(name);
-                        Id.setText(id);
+                            Esasysurat = Uri.parse(image);
+                            Ady.setText(name);
+                            Id.setText(id);
 
-                        RequestOptions placeholderreq=new RequestOptions();
-                        placeholderreq.placeholder(R.mipmap.profil);
-                        Glide.with(Sazlamalar.this).setDefaultRequestOptions(placeholderreq).load(image).into(surat);
+                            RequestOptions placeholderreq = new RequestOptions();
+                            placeholderreq.placeholder(R.mipmap.profil);
+                            Glide.with(Sazlamalar.this).setDefaultRequestOptions(placeholderreq).load(image).into(surat);
+                        }  }
+                    else{
+            Toast.makeText(Sazlamalar.this,"Resim",Toast.LENGTH_LONG).show();
                     }
                 }
                 else{
-
+                    Toast.makeText(Sazlamalar.this,"Resim2",Toast.LENGTH_LONG).show();
                 }
                 sazla_progres.setVisibility(View.INVISIBLE);
                 Sakla.setEnabled(true);
@@ -199,7 +206,9 @@ public class Sazlamalar extends AppCompatActivity {
                     userMap.put("id", id);
                     userMap.put("surat", skacatedilen.toString());
                     userMap.put("user_id", user_id);
-                    userMap.put("typing","hickim");
+
+
+
                     firebaseFirestore.collection("ulanyjylar").document(user_id).update(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
