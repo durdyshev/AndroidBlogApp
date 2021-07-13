@@ -1,12 +1,17 @@
 package com.example.komp.gurles;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -67,6 +72,7 @@ context=getActivity();
         mAuth=FirebaseAuth.getInstance();
         user_id=mAuth.getCurrentUser().getUid();
         if(mAuth.getCurrentUser()!=null) {
+
 
             firebaseFirestore.collection("/ulanyjylar/" + user_id + "/dostlar/").get().addOnCompleteListener(getActivity(),new OnCompleteListener<QuerySnapshot>() {
                 @Override

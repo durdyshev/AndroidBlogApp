@@ -140,6 +140,56 @@ private List<String> arkafonlist;
             }
         });
 
+        nomer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                final EditText ad_edit;CircleImageView goybolsun,uytget;TextView obshy_tekst;
+                dialog.setContentView(R.layout.uytget_layout);
+                ad_edit=(EditText)dialog.findViewById(R.id.uytget_layout_edittext);
+                goybolsun=(CircleImageView) dialog.findViewById(R.id.uytget_layout_goybolsun);
+                uytget=(CircleImageView) dialog.findViewById(R.id.uytget_layout_uytget_knopka);
+                obshy_tekst=(TextView)dialog.findViewById(R.id.uytget_layout_tekst);
+                ad_edit.setText(tekst_nomer.getText().toString());
+                obshy_tekst.setText("Number");
+                dialog.show();
+
+                uytget.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final String ady_tekst=ad_edit.getText().toString();
+                        if(!TextUtils.isEmpty(ady_tekst)){
+
+                            Map<String,Object>usermap=new HashMap<>();
+                            usermap.put("number",ady_tekst);
+                            firebaseFirestore.collection("ulanyjylar").document(user_id).update(usermap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Toast.makeText(Profil.this,"Number is changed",Toast.LENGTH_LONG).show();
+                                    dialog.dismiss();
+                                    tekst_nomer.setText(ady_tekst);
+                                }
+                            });
+                        }
+                    }
+                });
+                goybolsun.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+
+
+
+
+
+
+
+            }
+        });
+
         id.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

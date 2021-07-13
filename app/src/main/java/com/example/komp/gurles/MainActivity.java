@@ -1,12 +1,17 @@
 package com.example.komp.gurles;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -66,19 +71,19 @@ public class MainActivity extends AppCompatActivity {
                     switch (item.getItemId()){
                         case R.id.menu_esasy:
                             replacefragment(esasyFragment);
-                            mainToolbar.setTitle("Lenta");
+                            mainToolbar.setTitle("Home");
                             return true;
                         case R.id.menu_bildirisler:
                             replacefragment(bildirisFragment);
-                            mainToolbar.setTitle("Dostlar");
+                            mainToolbar.setTitle("Friends");
                             return true;
                         case R.id.menu_sms:
                             replacefragment(smsFragment);
-                            mainToolbar.setTitle("Sms");
+                            mainToolbar.setTitle("Chat");
                             return true;
                         case R.id.menu_profil:
                             replacefragment(profilFragment);
-                            mainToolbar.setTitle("Profil");
+                            mainToolbar.setTitle("Profile");
 
                             return true;
 
@@ -93,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
         mainToolbar=(android.support.v7.widget.Toolbar)findViewById(R.id.main_toolbar);
         setSupportActionBar(mainToolbar);
-        getSupportActionBar().setTitle("Geples");
+        getSupportActionBar().setTitle("Line");
         post_gos_knopka=(FloatingActionButton)findViewById(R.id.post_gos);
         post_gos_knopka.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +108,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            }
+        }
 
     }
     @Override
@@ -187,11 +197,18 @@ firebaseFirestore.collection("/ulanyjylar/").document(mAuth.getCurrentUser().get
             songorulme(FieldValue.serverTimestamp());
             Map<String, Object> userMap = new HashMap<>();
             userMap.put("token", FieldValue.delete());
-            firebaseFirestore.collection("ulanyjylar").document(user_id).update(userMap);
-            mAuth.signOut();
-            Intent intent=new Intent(getBaseContext(),Login.class);
-            startActivity(intent);
-            finish();
+            firebaseFirestore.collection("ulanyjylar").document(user_id).update(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+                        mAuth.signOut();
+                        Intent intent=new Intent(MainActivity.this,Login.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                }
+            });
+
 
 
 

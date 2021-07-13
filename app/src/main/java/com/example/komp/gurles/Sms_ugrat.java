@@ -1,15 +1,20 @@
 package com.example.komp.gurles;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.nfc.Tag;
+import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -138,6 +143,14 @@ public class Sms_ugrat extends AppCompatActivity {
         linearLayoutManager.setStackFromEnd(true);
         sms_recycler.setLayoutManager(linearLayoutManager);
         sms_recycler.setHasFixedSize(true);
+
+        if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(Sms_ugrat.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(Sms_ugrat.this,"bbb",Toast.LENGTH_LONG).show();
+                ActivityCompat.requestPermissions(Sms_ugrat.this, new String[]{Manifest.permission.CALL_PHONE}, 1);
+            }
+        }
+
 
         firebaseFirestore.collection("ulanyjylar").document(gelenuser_id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -391,6 +404,12 @@ public class Sms_ugrat extends AppCompatActivity {
                     sms.setText("");
 
 
+
+
+
+
+
+
                 }
 
             }
@@ -540,6 +559,13 @@ public class Sms_ugrat extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId()==R.id.sms_menu_telefon){
+
+            if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.M) {
+                if (ContextCompat.checkSelfPermission(Sms_ugrat.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(Sms_ugrat.this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+                }
+            }
+
             if(call==null){
                 call=sinchClient.getCallClient().callUser(gelenuser_id);
                 call.addCallListener(new SinchCallListener());

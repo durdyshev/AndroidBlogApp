@@ -578,11 +578,11 @@ public void pager(){
         public void atgetir(String at,String type) {
             ady=mView.findViewById(R.id.recycle_yeke_haly_ulanyjy);
             if(type.equals("post")){
-                ady.setText(at+"  >> post paýlaşdy.");
+                ady.setText(at+"  >> has posted.");
             }
             else if(type.equals("profil")){
 
-                ady.setText(at+"  >> profil surat üýtgetdi.");
+                ady.setText(at+"  >> has changed profil image.");
             }
 
         }
@@ -603,7 +603,7 @@ public void pager(){
             }
             else {
                     like_sany.setVisibility(View.VISIBLE);
-                like_sany.setText(i+" adam halady");
+                like_sany.setText("Likes "+i);
             }
         }
 
@@ -612,7 +612,7 @@ public void pager(){
             if(komment_san.equals("0")){komment_sany.setVisibility(View.GONE);}
             else{
                 komment_sany.setVisibility(View.VISIBLE);
-            komment_sany.setText("teswirleri gör"+ "("+komment_san+")");
+            komment_sany.setText("Comments"+ "("+komment_san+")");
             }
         }
 

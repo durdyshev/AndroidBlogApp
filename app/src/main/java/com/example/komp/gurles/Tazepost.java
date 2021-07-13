@@ -1,13 +1,18 @@
 package com.example.komp.gurles;
 
+import android.Manifest;
 import android.content.ClipData;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -106,7 +111,13 @@ public class Tazepost extends AppCompatActivity {
         Postprogress.setVisibility(View.INVISIBLE);
         post_video=(CircleImageView)findViewById(R.id.tazepost_video);
 
-
+        if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(Tazepost.this, android.Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(Tazepost.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(Tazepost.this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ) {
+                ActivityCompat.requestPermissions(Tazepost.this, new String[]{android.Manifest.permission.READ_CONTACTS}, 1);
+                ActivityCompat.requestPermissions(Tazepost.this, new String[]{android.Manifest.permission.CALL_PHONE}, 1);
+                ActivityCompat.requestPermissions(Tazepost.this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+            }
+        }
         post_video.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

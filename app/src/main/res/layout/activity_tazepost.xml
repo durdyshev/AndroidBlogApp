@@ -26,6 +26,7 @@
         android:background="@android:color/darker_gray"
         android:cropToPadding="false"
         android:scaleType="fitCenter"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tazepost_toolbar" />
 
@@ -35,7 +36,7 @@
         android:layout_height="41dp"
         android:layout_marginTop="8dp"
         android:ems="10"
-        android:hint="@string/informasiyalar"
+        android:hint="Description"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.648"
@@ -48,7 +49,7 @@
         android:layout_height="50dp"
         android:layout_marginBottom="8dp"
         android:background="@color/colorAccent"
-        android:text="@string/paylas"
+        android:text="Post"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
         android:textSize="20sp"
@@ -62,12 +63,13 @@
         android:layout_width="376dp"
         android:layout_height="292dp"
         android:layout_marginStart="4dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="4dp"
         android:numColumns="3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.555"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tazepost_video">
+        app:layout_constraintTop_toBottomOf="@+id/tazepost_info">
 
     </GridView>
 
@@ -81,20 +83,22 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/tazepost_info"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.824"
+        app:layout_constraintHorizontal_bias="0.068"
         app:layout_constraintStart_toEndOf="@+id/post_surat"
         app:layout_constraintTop_toBottomOf="@+id/tazepost_toolbar"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@mipmap/gallery_image" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/tazepost_video"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
         android:src="@mipmap/video"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.914"
+        app:layout_constraintHorizontal_bias="0.804"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tazepost_info">
+        app:layout_constraintTop_toBottomOf="@+id/tazepost_toolbar">
 
     </de.hdodenhof.circleimageview.CircleImageView>
 

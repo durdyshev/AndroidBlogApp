@@ -1,9 +1,12 @@
 package com.example.komp.gurles;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.firebase.messaging.RemoteMessage;
@@ -11,6 +14,8 @@ import com.sinch.android.rtc.NotificationResult;
 import com.sinch.android.rtc.SinchHelpers;
 
 import java.util.Objects;
+
+import static android.media.RingtoneManager.TYPE_NOTIFICATION;
 
 @SuppressLint("MissingFirebaseInstanceTokenRefresh")
 public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
@@ -33,6 +38,10 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 new NotificationCompat.Builder(this,getString(R.string.default_notification_channel_id))
                 .setSmallIcon(R.mipmap.ic_launcher)
                .setContentTitle(messageTitle)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                        .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
+
+
                 .setContentText(messagebody);
         Intent intent=new Intent(click_action);
         intent.putExtra("ady",dataady);

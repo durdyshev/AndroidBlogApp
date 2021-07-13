@@ -54,7 +54,7 @@
                             android:id="@+id/fragment_profil_ady"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Ady"
+                            android:text="Name"
                             android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -87,7 +87,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Dost Gos"
+                            android:text="Add Friend"
                             android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -117,7 +117,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Sazlamalar"
+                            android:text="Settings"
                             android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -155,7 +155,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:text="Blok"
+                            android:text="Blocked"
                             android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -185,7 +185,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Saklananlar"
+                            android:text="Saved"
                             android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -216,7 +216,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Postlar"
+                            android:text="Posts"
                             android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />
