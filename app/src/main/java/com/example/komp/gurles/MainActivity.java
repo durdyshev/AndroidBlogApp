@@ -22,10 +22,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.sinch.android.rtc.SinchClient;
+import com.sinch.android.rtc.calling.Call;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +42,9 @@ public class MainActivity extends AppCompatActivity {
     private Fragment bildirisFragment;
     private Fragment profilFragment;
     private Fragment smsFragment;
-    private DatabaseReference userreference;
+    private SinchClass sinchClass;
+    private Call call;
+    private SinchClient sinchClient;
 
 
 
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
 
+        sinchClass=new SinchClass(sinchClient,call,MainActivity.this,mAuth.getCurrentUser().getUid());
         asakky_knopkalar=(BottomNavigationView)findViewById(R.id.main_bottom_nav);
         BottomNavigationViewHelper.disableShiftMode(asakky_knopkalar);
         firebaseFirestore=FirebaseFirestore.getInstance();

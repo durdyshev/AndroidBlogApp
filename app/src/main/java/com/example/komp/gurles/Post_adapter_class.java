@@ -3,6 +3,8 @@ package com.example.komp.gurles;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -34,6 +36,8 @@ import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,6 +50,7 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -616,13 +621,17 @@ public void pager(){
             }
         }
 
-        public void ugrat(List<String> suraturl) {
+        public void ugrat(final List<String> suraturl) {
             adapter = new ViewpagerAdapter(context, suraturl);
             viewPager.setAdapter(adapter);
             dotscount=0;
             dotscount = adapter.getCount();
             dots = new ImageView[dotscount];
             linearLayout.removeAllViews();
+
+
+
+
 
                 for (int i = 0; i < dotscount; i++) {
 
@@ -636,6 +645,22 @@ public void pager(){
                     linearLayout.addView(dots[i], params);
 
                 }
+
+            String url_text =  String.valueOf(suraturl.get(0));
+
+            Glide.with(context.getApplicationContext())
+                    .asBitmap()
+                    .load(url_text)
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(Bitmap bitmap,
+                                                    Transition<? super Bitmap> transition) {
+                            int w = bitmap.getWidth();
+                            int h = bitmap.getHeight();
+                            Toast.makeText(context,String.valueOf(h),Toast.LENGTH_SHORT).show();
+                            viewPager.getLayoutParams().height=h*3;
+                        }
+                    });
 
                 dots[0].setImageDrawable(ContextCompat.getDrawable(context, R.drawable.active_dot));
                 surat_sanaw.setText("1/"+dotscount);
@@ -651,6 +676,24 @@ public void pager(){
                         for( i = 0; i< dotscount; i++){
                             dots[i].setImageDrawable(ContextCompat.getDrawable(context, R.drawable.non_active_dot));
                         surat_sanaw.setText((position+1)+"/"+dotscount);
+                            String url_text =  String.valueOf(suraturl.get(i));
+
+                            Glide.with(context.getApplicationContext())
+                                    .asBitmap()
+                                    .load(url_text)
+                                    .into(new SimpleTarget<Bitmap>() {
+                                        @Override
+                                        public void onResourceReady(Bitmap bitmap,
+                                                                    Transition<? super Bitmap> transition) {
+                                            int w = bitmap.getWidth();
+                                            int h = bitmap.getHeight();
+                           //                 Toast.makeText(context,String.valueOf(h),Toast.LENGTH_SHORT).show();
+                                           viewPager.getLayoutParams().height=h*3;
+                                        }
+                                    });
+
+                         //viewPager.getLayoutParams().height=50;
+                        //Toast.makeText(context,String.valueOf(suraturl.get(i)),Toast.LENGTH_SHORT).show();
                         }
 
                         dots[position].setImageDrawable(ContextCompat.getDrawable(context, R.drawable.active_dot));

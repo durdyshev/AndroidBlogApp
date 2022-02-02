@@ -9,15 +9,20 @@
     <EditText
         android:id="@+id/recycle_yeke_haly_komment_edit"
         android:layout_width="400dp"
-        android:layout_height="49dp"
+        android:layout_height="42dp"
 
         android:layout_below="@+id/main_blog_post"
-        android:layout_marginTop="0dp"
 
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
         android:background="@drawable/search"
         android:ems="10"
         android:hint="Write a Comment ..."
-        android:inputType="text" />
+        android:inputType="text"
+        android:paddingStart="5dp" />
 
     <ImageButton
         android:id="@+id/recycle_yeke_haly_komment_ugrat"
@@ -63,26 +68,24 @@
                 android:id="@+id/recycle_yeke_haly_arkafon"
                 android:layout_width="415dp"
                 android:layout_height="179dp"
-                android:layout_alignStart="@+id/recycle_yeke_haly_viewpager"
-                android:layout_alignEnd="@+id/recycle_yeke_haly_viewpager"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="-4dp"
-                android:layout_marginTop="67dp"
-                android:layout_marginEnd="0dp"
-                android:scaleType="center" />
+                android:layout_below="@+id/recycle_yeke_haly_tarih"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="8dp"
+                android:scaleType="center"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/recycle_yeke_haly_linear"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
                 android:layout_above="@+id/recycle_yeke_haly_comment"
-                android:layout_alignTop="@+id/recycle_yeke_haly_viewpager"
+                android:layout_below="@+id/recycle_yeke_haly_viewpager"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginStart="-2dp"
-                android:layout_marginTop="354dp"
                 android:layout_marginEnd="2dp"
-                android:layout_marginBottom="-11dp"
                 android:gravity="center_vertical|center_horizontal"
                 android:orientation="horizontal"
                 android:textAlignment="center" />
@@ -91,10 +94,11 @@
                 android:id="@+id/recycle_yeke_haly_linear_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/recycle_yeke_haly_linear"
+                android:layout_alignTop="@+id/recycle_yeke_haly_linear"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="0dp"
+                android:layout_marginTop="9dp"
                 android:layout_marginEnd="0dp"
                 android:orientation="vertical">
 
@@ -146,7 +150,7 @@
                         android:layout_height="wrap_content"
 
 
-                        android:layout_marginStart="12dp"
+                        android:layout_marginStart="8dp"
                         android:layout_marginTop="12dp"
                         android:fontFamily="sans-serif-light"
                         android:text="0 adam halady"
@@ -159,11 +163,12 @@
                         android:layout_height="match_parent"
 
 
-                        android:layout_marginStart="12dp"
+                        android:layout_marginStart="8dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="5dp"
                         android:fontFamily="sans-serif-black"
-                        android:text="Ata Watanym Turkmenistan" />
+                        android:text="Ata Watanym Turkmenistan"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/recycle_yeke_haly_komment_san"
@@ -171,7 +176,7 @@
                         android:layout_height="wrap_content"
 
 
-                        android:layout_marginStart="12dp"
+                        android:layout_marginStart="8dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="0dp"
                         android:layout_marginBottom="8dp"
@@ -215,6 +220,19 @@
                 android:textAlignment="center"
                 android:textSize="13sp" />
 
+            <android.support.v4.view.ViewPager
+                android:id="@+id/recycle_yeke_haly_viewpager"
+                android:layout_width="match_parent"
+
+                android:layout_height="350dp"
+                android:layout_below="@+id/recycle_yeke_haly_tarih"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="8dp"
+                android:background="#e3e3e3">
+
+            </android.support.v4.view.ViewPager>
+
             <TextView
                 android:id="@+id/recycle_yeke_haly_surat_sanawy"
                 android:layout_width="wrap_content"
@@ -224,20 +242,9 @@
                 android:layout_marginTop="11dp"
                 android:layout_marginEnd="12dp"
                 android:background="@drawable/tegelek_knopka"
-                android:text="TextView" />
-
-            <android.support.v4.view.ViewPager
-                android:id="@+id/recycle_yeke_haly_viewpager"
-                android:layout_width="match_parent"
-                android:layout_height="350dp"
-                android:layout_below="@+id/recycle_yeke_haly_tarih"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                android:background="#e3e3e3">
-
-            </android.support.v4.view.ViewPager>
+                android:padding="2dp"
+                android:text="TextView"
+                android:textSize="15sp" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/recycle_yeke_haly_profil"
@@ -260,7 +267,8 @@
                 android:layout_marginStart="99dp"
                 android:layout_marginTop="163dp"
                 android:layout_marginEnd="100dp"
-                android:src="@drawable/profile_placeholder" />
+                android:src="@drawable/profile_placeholder"
+                android:visibility="gone" />
 
             <RelativeLayout
                 android:id="@+id/recycle_yeke_haly_video_relative"
@@ -268,7 +276,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/recycle_yeke_haly_tarih"
                 android:layout_alignBottom="@+id/recycle_yeke_haly_viewpager"
-                android:layout_marginBottom="0dp">
+                android:layout_marginBottom="0dp"
+                android:visibility="gone">
 
                 <VideoView
                     android:id="@+id/recycle_yeke_haly_videoview"

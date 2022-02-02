@@ -93,8 +93,15 @@ public class SmsAdapterClass extends RecyclerView.Adapter<SmsAdapterClass.ViewHo
         final String smsid=gelenlist.get(position).BlogPostId;
         final String id=gelenlist.get(position).getFrom();
         final String tipi=gelenlist.get(position).getType();
-       // final long millisecond = gelenlist.get(position).getTime().getTime();
-       // holder.tazewagt(millisecond);
+
+try {
+    final long millisecond = gelenlist.get(position).getTime().getTime();
+  //  holder.tazewagt(millisecond);
+}
+catch (Exception e){
+holder.setwagt("hey");
+}
+
 
         final Boolean okalma=gelenlist.get(position).getSeen();
 
@@ -179,7 +186,7 @@ public class SmsAdapterClass extends RecyclerView.Adapter<SmsAdapterClass.ViewHo
                         informasiya=documentSnapshot.getString("informasiya");
 
                         wagto=documentSnapshot.getDate("wagt");
-                        millisecond=wagto.getTime();
+                        //millisecond=wagto.getTime();
                         firebaseFirestore.collection("ulanyjylar").document(sms_tekst).collection("postlar").document(gelenlist.get(position).getBlogpost()).collection("Like").addSnapshotListener(new EventListener<QuerySnapshot>() {
                             @Override
                             public void onEvent(QuerySnapshot sansnapshot, FirebaseFirestoreException e) {
@@ -289,9 +296,10 @@ holder.sms_surat.setOnClickListener(new View.OnClickListener() {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
 
+                    try {
+                        surat = task.getResult().getString("surat");
+                    } catch (Exception e){}
 
-
-                    surat = task.getResult().getString("surat");
                 }
 
 
@@ -416,7 +424,7 @@ holder.sms_surat.setOnClickListener(new View.OnClickListener() {
         }
         public void profilsurat(String profil_surat) {
             sms_profil=mView.findViewById(R.id.sms_item_profil);
-            Glide.with(context).load(profil_surat).into(sms_profil);
+            Glide.with(context.getApplicationContext()).load(profil_surat).into(sms_profil);
         }
         public void smssurat(String sms) {
             sms_surat=mView.findViewById(R.id.sms_item_surat);
@@ -429,7 +437,8 @@ holder.sms_surat.setOnClickListener(new View.OnClickListener() {
             GetTimeAgo getTimeAgo= new GetTimeAgo();
 
             String lastSeenTime = getTimeAgo.getTimeAgo(millisecond, context);
-            sms_wagt.setText(lastSeenTime);
+            setwagt(lastSeenTime);
+            //sms_wagt.setText(lastSeenTime);
         }
         public void postid(String id){
             sms_wagt.setText(id);

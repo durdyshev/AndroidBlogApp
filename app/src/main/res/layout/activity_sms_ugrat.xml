@@ -7,146 +7,166 @@
     android:background="#e3e3e3"
     tools:context=".Sms_ugrat">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/sms_ugrat_toolbar"
-        android:layout_width="0dp"
-        android:layout_height="54dp"
-        android:background="@color/colorPrimary"
-        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:layout_constraintEnd_toEndOf="@+id/swipe_refresh"
+    <FrameLayout
+        android:id="@+id/sms_ugrat_framelayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="5dp"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="5dp">
+    </FrameLayout>
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/sms_ugrat_geri"
-                android:layout_width="32dp"
-                android:layout_height="45dp"
-                android:src="@mipmap/back" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/sms_ugrat_profil"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:src="@drawable/profile_placeholder" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            tools:layout_editor_absoluteX="98dp">
-
-            <TextView
-                android:id="@+id/sms_ugrat_ady"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:text="TextView"
-                android:textColor="@color/cardview_light_background"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/sms_ugrat_last_seen"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textColor="@color/cardview_light_background" />
-        </LinearLayout>
-
-    </android.support.v7.widget.Toolbar>
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sms_ugrat_toolbar">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/sms_ugrat_recycler"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/sms_ugrat_toolbar"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:scrollbarSize="2dp"
-            android:scrollbarThumbVertical="@android:color/darker_gray"
-            android:scrollbars="vertical"
-            app:layout_constraintBottom_toTopOf="@+id/sms_ugrat_tekst"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sms_ugrat_toolbar"
-            app:fastScrollEnabled="true"
-            app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
-            app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
-            app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
-            app:fastScrollVerticalTrackDrawable="@drawable/line_drawable">
+            app:layout_constraintTop_toTopOf="parent">
 
-        </android.support.v7.widget.RecyclerView>
-    </android.support.v4.widget.SwipeRefreshLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="5dp">
 
-    <LinearLayout
-        android:id="@+id/linearLayout3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/ak"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="0dp">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/sms_ugrat_geri"
+                    android:layout_width="32dp"
+                    android:layout_height="45dp"
+                    android:src="@mipmap/back" />
 
-        <EditText
-            android:id="@+id/sms_ugrat_tekst"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="5"
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/sms_ugrat_profil"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:src="@drawable/profile_placeholder" />
+            </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingStart="10dp"
+                tools:layout_editor_absoluteX="98dp"
+                tools:layout_editor_absoluteY="3dp">
+
+                <TextView
+                    android:id="@+id/sms_ugrat_ady"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:textColor="@color/cardview_light_background"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/sms_ugrat_last_seen"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="TextView"
+                    android:textColor="@color/cardview_light_background" />
+            </LinearLayout>
+
+        </android.support.v7.widget.Toolbar>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sms_ugrat_toolbar">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/sms_ugrat_recycler"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:scrollbarSize="2dp"
+                android:scrollbarThumbVertical="@android:color/darker_gray"
+                android:scrollbars="vertical"
+                app:fastScrollEnabled="true"
+                app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+                app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"
+                app:layout_constraintBottom_toTopOf="@+id/sms_ugrat_tekst"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sms_ugrat_toolbar">
+
+            </android.support.v7.widget.RecyclerView>
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:background="@color/ak"
-            android:ems="10"
-            android:hint="@string/yaz_bir_zatlar_mat_tvoyu"
-            android:inputType="textMultiLine"
-            />
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-        <ImageView
-            android:id="@+id/sms_ugrat_surat"
-            android:layout_width="47dp"
-            android:layout_height="44dp"
-            android:layout_marginBottom="4dp"
-            app:srcCompat="@mipmap/surat" />
+            <EditText
+                android:id="@+id/sms_ugrat_tekst"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_weight="5"
 
-        <ImageButton
-            android:id="@+id/sms_ugrat_knopka"
-            android:layout_width="47dp"
-            android:layout_height="44dp"
+                android:background="@color/ak"
+                android:ems="10"
+                android:hint="@string/yaz_bir_zatlar_mat_tvoyu"
+                android:inputType="textMultiLine" />
 
-            android:layout_marginBottom="4dp"
-            android:background="@color/ak"
-            android:visibility="gone"
-            app:srcCompat="@mipmap/send" />
+            <ImageView
+                android:id="@+id/sms_ugrat_surat"
+                android:layout_width="47dp"
+                android:layout_height="44dp"
+                android:layout_marginBottom="4dp"
+                app:srcCompat="@mipmap/surat" />
 
-        <ImageButton
-            android:id="@+id/sms_ugrat_audio"
-            android:layout_width="47dp"
-            android:layout_height="44dp"
+            <ImageButton
+                android:id="@+id/sms_ugrat_knopka"
+                android:layout_width="47dp"
+                android:layout_height="44dp"
 
-            android:layout_marginBottom="4dp"
-            android:background="@color/ak"
-            app:srcCompat="@mipmap/microfone" />
-    </LinearLayout>
+                android:layout_marginBottom="4dp"
+                android:background="@color/ak"
+                android:visibility="gone"
+                app:srcCompat="@mipmap/send" />
+
+            <ImageButton
+                android:id="@+id/sms_ugrat_audio"
+                android:layout_width="47dp"
+                android:layout_height="44dp"
+
+                android:layout_marginBottom="4dp"
+                android:background="@color/ak"
+                app:srcCompat="@mipmap/microfone" />
+        </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
 
 
 </android.support.constraint.ConstraintLayout>

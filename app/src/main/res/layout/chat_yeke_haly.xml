@@ -29,88 +29,98 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/chat_yeke_haly_profil"
-                android:layout_width="71dp"
-                android:layout_height="49dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="4dp"
-                android:src="@drawable/profile_placeholder"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/obshy_dostlar_yeke_haly_ady"
-                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/chat_yeke_haly_ady"
-                android:layout_width="106dp"
-                android:layout_height="28dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:text="@string/ulanyjy"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.321"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.3" />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/chat_yeke_haly_profil"
+                        android:layout_width="75dp"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:src="@drawable/profile_placeholder" />
+                </LinearLayout>
 
-            <TextView
-                android:id="@+id/chat_yeke_haly_son"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="18dp"
-                android:text="son"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="3dp">
 
-                android:textSize="15sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0" />
+                    <TextView
+                        android:id="@+id/chat_yeke_haly_ady"
+                        android:layout_width="106dp"
+                        android:layout_height="28dp"
+                        android:layout_marginEnd="8dp"
+                        android:text="@string/ulanyjy"
 
-            <TextView
-                android:id="@+id/chat_yeke_haly_message"
-                android:layout_width="146dp"
-                android:layout_height="26dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="231dp"
-                android:text="TextView"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/chat_yeke_haly_profil"
-                app:layout_constraintTop_toBottomOf="@+id/chat_yeke_haly_ady" />
+                    <TextView
+                        android:id="@+id/chat_yeke_haly_message"
+                        android:layout_width="146dp"
+                        android:layout_height="26dp"
+                        android:text="TextView"
 
-            <TextView
-                android:id="@+id/chat_yeke_mesaj_sany"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/search"
-                android:text="3"
-                android:textAlignment="center"
+                        android:textSize="15sp" />
 
-                android:textColorHighlight="@color/face"
-                android:textColorHint="@color/face"
-                android:textColorLink="@color/face"
-                android:textDirection="firstStrongRtl"
-                android:textSize="22sp"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/chat_yeke_haly_son"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.8" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/chat_yeke_mesaj_sany"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@drawable/search"
+                        android:text="3"
+                        android:textAlignment="center"
+
+                        android:textColorHighlight="@color/face"
+                        android:textColorHint="@color/face"
+                        android:textColorLink="@color/face"
+                        android:textDirection="firstStrongRtl"
+                        android:textSize="22sp"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/chat_yeke_haly_son"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|center_horizontal|center_vertical|end"
+
+                        android:layout_marginEnd="5dp"
+                        android:gravity="center_horizontal|end"
+                        android:text="son"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+            </LinearLayout>
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>

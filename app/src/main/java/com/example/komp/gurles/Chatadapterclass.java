@@ -27,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +43,7 @@ public class Chatadapterclass extends RecyclerView.Adapter<Chatadapterclass.View
     private String name,profile_picture;
     private FirebaseAuth mAuth;
     private int bas=0;
+   private long millisecond;
 
 
 
@@ -64,10 +66,22 @@ public class Chatadapterclass extends RecyclerView.Adapter<Chatadapterclass.View
     @Override
     public void onBindViewHolder(@NonNull final Chatadapterclass.ViewHolder holder, int position) {
         final String id=gelenlist.get(position).getFrom();
-        long millisecond = gelenlist.get(position).getTime().getTime();
-        String dateString = android.text.format.DateFormat.format("dd/MM hh:mm", new Date(millisecond)).toString();
-        holder.setwagt(dateString,user_id,id);
 
+
+       try
+       {
+           millisecond = gelenlist.get(position).getTime().getTime();
+
+
+           String dateString = android.text.format.DateFormat.format("dd/MM hh:mm", new Date(millisecond)).toString();
+
+           holder.time_set(dateString);
+       }
+       catch (Exception e){
+           holder.time_set("Now");
+       }
+
+        holder.setwagt(user_id,id);
 
 
    //    holder.sanamak(user_id,id);
@@ -232,8 +246,11 @@ public class Chatadapterclass extends RecyclerView.Adapter<Chatadapterclass.View
             sanaw=mView.findViewById(R.id.chat_yeke_mesaj_sany);
         }
 
-        public void setwagt(String dateString, final String user_id, final String id) {
+        public void time_set(String dateString){
             wagt.setText(dateString);
+        }
+        public void setwagt(final String user_id, final String id) {
+
             firebaseFirestore.collection("/ulanyjylar/"+id+"/hatlar/"+user_id+"/hat").addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {

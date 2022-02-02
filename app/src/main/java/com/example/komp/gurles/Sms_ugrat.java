@@ -2,6 +2,7 @@ package com.example.komp.gurles;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,6 +15,8 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -29,13 +32,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -77,11 +84,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
 
 public class Sms_ugrat extends AppCompatActivity {
+
     private EditText sms;
     private TextView ady,son;
     private ImageButton sms_ugrat;
     private CircleImageView profil;
-    private String gelenuser_id,gelenady,user_id;
+    private  String gelenuser_id,gelenady,user_id;
     private Toolbar mToolbar;
     private FirebaseAuth mAuth;
     private FirebaseFirestore firebaseFirestore;
@@ -104,6 +112,8 @@ public class Sms_ugrat extends AppCompatActivity {
     private String fileName=null;
     private String audio_san="0";
     private static final String LOG_TAG = "AudioRecordTest";
+
+    private Dialog dialog;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -130,6 +140,8 @@ public class Sms_ugrat extends AppCompatActivity {
         swipeRefreshLayout=(SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
         user_id=mAuth.getCurrentUser().getUid();
         mToolbar=(Toolbar)findViewById(R.id.sms_ugrat_toolbar);
+        dialog=new Dialog(Sms_ugrat.this);
+
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         gelenlist=new ArrayList<>();
@@ -138,6 +150,7 @@ public class Sms_ugrat extends AppCompatActivity {
         sms_recycler.setAdapter(smsAdapterClass);
 
         linearLayoutManager=new LinearLayoutManager(this);
+
 
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
@@ -159,7 +172,8 @@ public class Sms_ugrat extends AppCompatActivity {
                 String online= documentSnapshot.getString("status");
                 String profile=documentSnapshot.getString("surat");
                 String yazyar=documentSnapshot.getString("typing");
-                Glide.with(Sms_ugrat.this).load(profile).into(profil);
+
+                Glide.with(getApplicationContext()).load(profile).into(profil);
                 final Date last_active= documentSnapshot.getDate("son");
                 String dateString = android.text.format.DateFormat.format("dd/MM/yyyy hh:mm", new Date(String.valueOf(last_active))).toString();
 
@@ -194,8 +208,9 @@ public class Sms_ugrat extends AppCompatActivity {
 
                         gelenlist.add(smsAdapter);
                         // smsAdapterClass.notifyItemRangeInserted(0, documentSnapshots.size() - 1);
-                        smsAdapterClass.notifyDataSetChanged();
-                        //smsAdapterClass.notifyItemInserted(0);
+                     smsAdapterClass.notifyDataSetChanged();
+                       // smsAdapterClass.notifyItemInserted(0);
+
                         lastVisible = documentSnapshots.getDocuments()
                                 .get(documentSnapshots.size() -1);
 
@@ -260,13 +275,88 @@ public class Sms_ugrat extends AppCompatActivity {
         sinchClient.getCallClient().addCallClientListener(new CallClientListener() {
             @Override
             public void onIncomingCall(CallClient callClient, final Call incomingcall) {
-                final AlertDialog alertDialog=new AlertDialog.Builder(Sms_ugrat.this).create();
+
+
+                final CircleImageView profil,answer_call,end_call;
+                final TextView ady,wagt;
+                final LinearLayout linearLayout;
+                dialog.setContentView(R.layout.layout_caller);
+                int width = ViewGroup.LayoutParams.MATCH_PARENT;
+                int height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                dialog.getWindow().setLayout(width, height);
+                dialog.setCancelable(false);
+                linearLayout=(LinearLayout)dialog.findViewById(R.id.layout_caller_linearlayout);
+                profil=(CircleImageView) dialog.findViewById(R.id.layout_caller_image);
+                answer_call=(CircleImageView)dialog.findViewById(R.id.layout_caller_answer);
+                end_call=(CircleImageView) dialog.findViewById(R.id.layout_caller_end);
+                ady=(TextView)dialog.findViewById(R.id.layout_caller_name);
+
+                firebaseFirestore.collection("ulanyjylar").document(incomingcall.getRemoteUserId()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+
+                        String dost_ady= documentSnapshot.getString("ady");
+                        String dost_profil= documentSnapshot.getString("surat");
+
+                        ady.setText(dost_ady);
+                        RequestOptions requestOptions=new RequestOptions();
+                        requestOptions.centerInside();
+                      //  Glide.with(Sms_ugrat.this).load(dost_profil).apply(requestOptions).into(profil);
+                        Glide.with(getApplicationContext()).load(dost_profil).apply(requestOptions).into(profil);
+
+
+
+                    }
+                });
+                end_call.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                        incomingcall.hangup();
+
+                    }
+                });
+                answer_call.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        incomingcall.answer();
+
+                        linearLayout.setVisibility(View.GONE);
+
+                        //  call=incomingcall;
+
+//                        call.answer();
+                        incomingcall.addCallListener(new SinchCallListener4());
+                        Toast.makeText(Sms_ugrat.this,"Jan baslady",Toast.LENGTH_LONG).show();
+                    }
+                });
+
+
+
+                dialog.show();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+             /*   final AlertDialog alertDialog=new AlertDialog.Builder(Sms_ugrat.this).create();
               //  alertDialog.setTitle("Jan gelyar");
                 alertDialog.setButton(android.app.AlertDialog.BUTTON_NEUTRAL, "Ocur", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         alertDialog.dismiss();
-                        call.hangup();
+                        incomingcall.hangup();
+                      //  call.hangup();
                     }
                 });
                 alertDialog.setButton(android.app.AlertDialog.BUTTON_POSITIVE, "Ac", new DialogInterface.OnClickListener() {
@@ -274,35 +364,16 @@ public class Sms_ugrat extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         call=incomingcall;
                         call.answer();
-                        call.addCallListener(new SinchCallListener());
+                        call.addCallListener(new SinchCallListener4());
                         Toast.makeText(Sms_ugrat.this,"Jan baslady",Toast.LENGTH_LONG).show();
                     }
                 });
 
-              alertDialog.show();
+              alertDialog.show();*/
             }
         });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        audio.setOnTouchListener(new View.OnTouchListener() {
+      audio.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction()==MotionEvent.ACTION_DOWN){
@@ -367,7 +438,7 @@ public class Sms_ugrat extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!sms.getText().toString().isEmpty()){
-                    Map<String, Object> userMap = new HashMap<>();
+                    final Map<String, Object> userMap = new HashMap<>();
                     userMap.put("time",  FieldValue.serverTimestamp());
                     userMap.put("message", sms.getText().toString());
                     userMap.put("type","text");
@@ -375,12 +446,12 @@ public class Sms_ugrat extends AppCompatActivity {
                     userMap.put("from", user_id);
                     userMap.put("blogpost","");
 
-                    Map<String, Object> map = new HashMap<>();
+                    final Map<String, Object> map = new HashMap<>();
                     map.put("time",  FieldValue.serverTimestamp());
                     map.put("from",gelenuser_id);
 
 
-                    Map<String, Object> chatmap = new HashMap<>();
+                    final Map<String, Object> chatmap = new HashMap<>();
                     chatmap.put("time",  FieldValue.serverTimestamp());
                     chatmap.put("from",user_id);
 
@@ -390,18 +461,24 @@ public class Sms_ugrat extends AppCompatActivity {
                     not.put("from",user_id);
                     not.put("type","message");
 
+                    Object object=new Object();
+
+
+               //     SmsAdapter smsAdapter=doc.getDocument().toObject(SmsAdapter.class).within(BlogPostId);
+
+
+                gelenlist.add(0,new SmsAdapter(sms.getText().toString(),"text",user_id,null,false,"assa"));
                     firebaseFirestore.collection("/ulanyjylar/"+gelenuser_id+"/smsNotification").add(not);
-
-
                     firebaseFirestore.collection("ulanyjylar").document(gelenuser_id).collection("hatlar").document(user_id).collection("hat").add(userMap);
-
                     firebaseFirestore.collection("ulanyjylar").document(user_id).collection("chat").document(gelenuser_id).set(map);
                     firebaseFirestore.collection("ulanyjylar").document(gelenuser_id).collection("chat").document(user_id).set(chatmap);
-
-
                     firebaseFirestore.collection("ulanyjylar").document(user_id).collection("hatlar").document(gelenuser_id).collection("hat").add(userMap);
-
                     sms.setText("");
+                  //  smsAdapterClass.notifyItemChanged(0);
+                    smsAdapterClass.notifyItemInserted(0);
+                    gelenlist.remove(gelenlist.size()-1);
+                    smsAdapterClass.notifyItemRemoved(gelenlist.size());
+                  smsAdapterClass.notifyDataSetChanged();
 
 
 
@@ -567,10 +644,12 @@ public class Sms_ugrat extends AppCompatActivity {
             }
 
             if(call==null){
+
+
                 call=sinchClient.getCallClient().callUser(gelenuser_id);
-                call.addCallListener(new SinchCallListener());
-                opencallerdialog(call);
-            }
+                call.addCallListener(new SinchCallListener4());
+               opencallerdialog(call);
+      }
         }
         if(item.getItemId()==R.id.sms_menu_video){
             if(call==null){
@@ -622,23 +701,67 @@ public class Sms_ugrat extends AppCompatActivity {
     }
 
     private void opencallerdialog(final Call call) {
-        final AlertDialog alertDialog1=new AlertDialog.Builder(Sms_ugrat.this).create();
-       // alertDialog1.setMessage("Jan edilyar");
-        alertDialog1.setButton(android.app.AlertDialog.BUTTON_NEUTRAL, "Ocur", new DialogInterface.OnClickListener() {
+        final  CircleImageView profil,end_call;final ImageView arkafon;
+        final TextView ady,wagt;
+        dialog.setContentView(R.layout.layout_call);
+        int width = ViewGroup.LayoutParams.MATCH_PARENT;
+        int height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setLayout(width, height);
+        dialog.setCancelable(false);
+        profil=(CircleImageView) dialog.findViewById(R.id.layout_call_image);
+        end_call=(CircleImageView) dialog.findViewById(R.id.layout_call_end);
+        ady=(TextView)dialog.findViewById(R.id.layout_call_name);
+
+        firebaseFirestore.collection("ulanyjylar").document(gelenuser_id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                alertDialog1.dismiss();
-                call.hangup();
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+
+                String dost_ady= documentSnapshot.getString("ady");
+                String dost_profil= documentSnapshot.getString("surat");
+
+                ady.setText(dost_ady);
+                RequestOptions requestOptions=new RequestOptions();
+                requestOptions.centerInside();
+                Glide.with(Sms_ugrat.this).load(dost_profil).apply(requestOptions).into(profil);
+
+
+
             }
         });
-        alertDialog1.show();
+        end_call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                call.hangup();
+
+            }
+        });
+
+
+
+        dialog.show();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     }
 
-    private class SinchCallListener implements CallListener {
+    private class SinchCallListener4 implements CallListener {
         @Override
         public void onCallProgressing(Call call) {
             Toast.makeText(Sms_ugrat.this,"Jan baslady",Toast.LENGTH_LONG).show();
+
         }
 
         @Override
@@ -650,6 +773,7 @@ public class Sms_ugrat extends AppCompatActivity {
         @Override
         public void onCallEnded(Call endedcall) {
             Toast.makeText(Sms_ugrat.this,"Jan gutardy",Toast.LENGTH_LONG).show();
+            dialog.dismiss();
 
 
             call = null;
@@ -760,6 +884,12 @@ public class Sms_ugrat extends AppCompatActivity {
         Map<String,Object> elmappo=new HashMap<>();
         elmappo.put("typing","hickim");
         firebaseFirestore.collection("ulanyjylar").document(user_id).update(elmappo);
+
+    }
+    private void replacefragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction=getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.sms_ugrat_framelayout,fragment);
+        fragmentTransaction.commit();
 
     }
 }

@@ -92,6 +92,9 @@ firebaseFirestore.collection("ulanyjylar").document(id).addSnapshotListener(new 
               final  CircleImageView profil;final ImageView arkafon;
                 final TextView ady,ido,sany; Button glawny,yaz,blok;
                 dialog.setContentView(layout.layout);
+                int width = ViewGroup.LayoutParams.MATCH_PARENT;
+                int height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                dialog.getWindow().setLayout(width, height);
                 arkafon=(ImageView) dialog.findViewById(R.id.dost_onizleme_arkafon);
                 profil=(CircleImageView) dialog.findViewById(R.id.dost_onizleme_profil);
                 ady=(TextView)dialog.findViewById(R.id.dost_onizleme_ady);
@@ -107,13 +110,14 @@ firebaseFirestore.collection("ulanyjylar").document(id).addSnapshotListener(new 
                         String dost_profil= documentSnapshot.getString("surat");
                         String arka= documentSnapshot.getString("arkafon");
                         ady.setText(ady_data);
-                        ido.setText(dost_id);
-                        sany.setText(dost_size);
+                        ido.setText(dost_pikir);
+                      //  sany.setText(dost_size);
                         RequestOptions requestOptions=new RequestOptions();
                         requestOptions.centerInside();
      Glide.with(context).load(dost_profil).apply(requestOptions).into(profil);
 
-     if(arka.equals("default")){
+     if(arka.equals("")){
+       //  arkafon.setImageResource(drawable.background);
          Glide.with(context).load(drawable.background).apply(requestOptions).into(arkafon);
 
      }
@@ -207,6 +211,7 @@ firebaseFirestore.collection("ulanyjylar").document(id).addSnapshotListener(new 
 
         }
         public void suratindir(String suraturl){
+
 
             Glide.with(context).load(suraturl).into(imageView);
         }

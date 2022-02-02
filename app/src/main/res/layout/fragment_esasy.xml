@@ -11,16 +11,17 @@
         android:id="@+id/blog_list_gornus"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"
 
-        android:scrollbarThumbVertical="@android:color/darker_gray"
-        android:scrollbarSize="5dp"
-        app:fastScrollEnabled="true"
         app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
         app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
         app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
         app:fastScrollVerticalTrackDrawable="@drawable/line_drawable">
 
     </android.support.v7.widget.RecyclerView>
+    <!--  android:scrollbars="vertical"
 
+          android:scrollbarThumbVertical="@android:color/darker_gray"
+          android:scrollbarSize="5dp"
+          app:fastScrollEnabled="true"
+          -->
 </FrameLayout>
