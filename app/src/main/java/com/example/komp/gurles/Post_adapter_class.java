@@ -67,7 +67,7 @@ public class Post_adapter_class extends RecyclerView.Adapter<Post_adapter_class.
     public FirebaseFirestore firebaseFirestore;
     public String user_id,profil_surat,adyy;
     public FirebaseAuth mauth;
-    private String san,komment_san;
+    private String san=null,komment_san=null;
    private FirebaseFirestoreSettings settings;
     Post_adapter_class(List<Postadapter>blog_list){
         this.blog_list=blog_list;
@@ -181,16 +181,21 @@ else if(tipi.equals("profil")){
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
-                san = String.valueOf(documentSnapshots.size());
-                holder.updatelikescount(san);
+                if (String.valueOf(documentSnapshots.size())!=null) {
+                    holder.updatelikescount(documentSnapshots.size());
+                }
+
+
+
             }
 
         });
         firebaseFirestore.collection("/ulanyjylar/" + id + "/postlar/" + blogpostid + "/Komment").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                komment_san = String.valueOf(documentSnapshots.size());
-                holder.updatecommentscount(komment_san);
+            if(String.valueOf(documentSnapshots.size())!=null){
+                holder.updatecommentscount(documentSnapshots.size());
+            }
             }
 
         });
@@ -492,7 +497,7 @@ holder.videoplayknopka.setOnClickListener(new View.OnClickListener() {
             Uri uri=Uri.parse(video);
             videoView.setVideoURI(uri);
             videoView.requestFocus();
-            videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+       /*     videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
                 @Override
                 public boolean onInfo(MediaPlayer mp, int what, int extra) {
                     if(what == mp.MEDIA_INFO_BUFFERING_START){
@@ -503,7 +508,7 @@ holder.videoplayknopka.setOnClickListener(new View.OnClickListener() {
                     }
                     return false;
                 }
-            });
+            });*/
 
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -602,22 +607,23 @@ public void pager(){
             BlogTime.setText(Date);
         }
 
-        public void updatelikescount(String i) {
-            if(i.equals("0")){
+        public void updatelikescount(int i) {
+            if(i==0){
                 like_sany.setVisibility(View.GONE);
             }
             else {
                     like_sany.setVisibility(View.VISIBLE);
-                like_sany.setText("Likes "+i);
+                like_sany.setText("Likes "+String.valueOf(i));
             }
         }
 
-        public void updatecommentscount(String komment_san) {
+        public void updatecommentscount(int komment_san) {
             komment_sany=(TextView)mView.findViewById(R.id.recycle_yeke_haly_komment_san);
-            if(komment_san.equals("0")){komment_sany.setVisibility(View.GONE);}
+            if(komment_san==0){
+                komment_sany.setVisibility(View.GONE);}
             else{
                 komment_sany.setVisibility(View.VISIBLE);
-            komment_sany.setText("Comments"+ "("+komment_san+")");
+            komment_sany.setText("Comments"+ "("+String.valueOf(komment_san)+")");
             }
         }
 

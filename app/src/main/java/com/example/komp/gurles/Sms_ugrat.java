@@ -312,7 +312,10 @@ public class Sms_ugrat extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         dialog.dismiss();
-                        incomingcall.hangup();
+                        if(call!=null){
+                            call.hangup();
+                        }
+
 
                     }
                 });
@@ -326,6 +329,30 @@ public class Sms_ugrat extends AppCompatActivity {
                         //  call=incomingcall;
 
 //                        call.answer();
+                        call.addCallListener(new CallListener() {
+                            @Override
+                            public void onCallProgressing(Call call) {
+
+                            }
+
+                            @Override
+                            public void onCallEstablished(Call call) {
+
+                            }
+
+                            @Override
+                            public void onCallEnded(Call call) {
+                                Toast.makeText(Sms_ugrat.this,"Jan gutardy",Toast.LENGTH_LONG).show();
+                                dialog.dismiss();
+                                  call = null;
+                                  setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
+                            }
+
+                            @Override
+                            public void onShouldSendPushNotification(Call call, List<PushPair> list) {
+
+                            }
+                        });
                         incomingcall.addCallListener(new SinchCallListener4());
                         Toast.makeText(Sms_ugrat.this,"Jan baslady",Toast.LENGTH_LONG).show();
                     }
@@ -701,7 +728,7 @@ public class Sms_ugrat extends AppCompatActivity {
     }
 
     private void opencallerdialog(final Call call) {
-        final  CircleImageView profil,end_call;final ImageView arkafon;
+        final  CircleImageView profil,end_call,mute,unmute;
         final TextView ady,wagt;
         dialog.setContentView(R.layout.layout_call);
         int width = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -711,6 +738,8 @@ public class Sms_ugrat extends AppCompatActivity {
         profil=(CircleImageView) dialog.findViewById(R.id.layout_call_image);
         end_call=(CircleImageView) dialog.findViewById(R.id.layout_call_end);
         ady=(TextView)dialog.findViewById(R.id.layout_call_name);
+        mute=(CircleImageView) dialog.findViewById(R.id.layout_call_mute);
+        unmute=(CircleImageView)dialog.findViewById(R.id.layout_call_unmute);
 
         firebaseFirestore.collection("ulanyjylar").document(gelenuser_id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -768,6 +797,7 @@ public class Sms_ugrat extends AppCompatActivity {
         public void onCallEstablished(Call call) {
             Toast.makeText(Sms_ugrat.this,"Ulasildi",Toast.LENGTH_LONG).show();
             setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+
         }
 
         @Override
@@ -776,7 +806,7 @@ public class Sms_ugrat extends AppCompatActivity {
             dialog.dismiss();
 
 
-            call = null;
+         call = null;
             SinchError a = endedcall.getDetails().getError();
             setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
 
@@ -886,11 +916,6 @@ public class Sms_ugrat extends AppCompatActivity {
         firebaseFirestore.collection("ulanyjylar").document(user_id).update(elmappo);
 
     }
-    private void replacefragment(Fragment fragment) {
-        FragmentTransaction fragmentTransaction=getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.sms_ugrat_framelayout,fragment);
-        fragmentTransaction.commit();
 
-    }
 }
 

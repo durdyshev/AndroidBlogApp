@@ -54,7 +54,7 @@ public class ProfilFragment extends Fragment {
     private String user_id;
     private FirebaseFirestore firebaseFirestore;
     private String image;
-    private ImageView profil_surat;
+    private CircleImageView profil_surat;
 
 
     public ProfilFragment() {
@@ -69,7 +69,7 @@ public class ProfilFragment extends Fragment {
 mAuth=FirebaseAuth.getInstance();
 firebaseFirestore=FirebaseFirestore.getInstance();
 user_id=mAuth.getCurrentUser().getUid();
-profil_surat=(ImageView)view.findViewById(R.id.fragment_profil_surat);
+profil_surat=(CircleImageView) view.findViewById(R.id.fragment_profil_surat);
 ady=(TextView)view.findViewById(R.id.fragment_profil_ady);
 
 
