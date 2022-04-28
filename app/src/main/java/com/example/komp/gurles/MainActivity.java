@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
 
-        sinchClass=new SinchClass(sinchClient,call,MainActivity.this,mAuth.getCurrentUser().getUid());
         asakky_knopkalar=(BottomNavigationView)findViewById(R.id.main_bottom_nav);
         BottomNavigationViewHelper.disableShiftMode(asakky_knopkalar);
         firebaseFirestore=FirebaseFirestore.getInstance();
@@ -123,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
+
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser == null){
             Intent intent=new Intent(MainActivity.this,Login.class);
@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
         else{
+            sinchClass=new SinchClass(sinchClient,call,MainActivity.this,mAuth.getCurrentUser().getUid());
 
             // Informasiyalar firestorda bamy sony barlayas
             user_id=mAuth.getCurrentUser().getUid();
@@ -159,14 +160,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        status("online");
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser != null){
+            status("online");
+        }
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        status("offline");
-        songorulme(FieldValue.serverTimestamp());
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser != null){
+            status("offline");
+            songorulme(FieldValue.serverTimestamp());
+        }
+
     }
 
 
@@ -196,22 +205,23 @@ firebaseFirestore.collection("/ulanyjylar/").document(mAuth.getCurrentUser().get
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId()==R.id.menu_cyk_knopka){
-            user_id=mAuth.getCurrentUser().getUid();
-            status("offline");
-            songorulme(FieldValue.serverTimestamp());
-            Map<String, Object> userMap = new HashMap<>();
-            userMap.put("token", FieldValue.delete());
-            firebaseFirestore.collection("ulanyjylar").document(user_id).update(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if(task.isSuccessful()){
-                        mAuth.signOut();
-                        Intent intent=new Intent(MainActivity.this,Login.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                }
-            });
+
+          //  status("offline");
+            //songorulme(FieldValue.serverTimestamp());
+
+            try{
+                Thread.sleep(1000);
+                Map<String, Object> userMap = new HashMap<>();
+                userMap.put("token", FieldValue.delete());
+                firebaseFirestore.collection("ulanyjylar").document(mAuth.getCurrentUser().getUid()).update(userMap);
+                Intent intent=new Intent(MainActivity.this,Login.class);
+                startActivity(intent);
+                finish();
+                mAuth.signOut();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
 
 
 
