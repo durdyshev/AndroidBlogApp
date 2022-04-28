@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -254,6 +255,9 @@ private List<String> arkafonlist;
             public void onClick(View v) {
                 final EditText ad_edit;CircleImageView goybolsun,uytget;TextView obshy_tekst;
                 dialog.setContentView(R.layout.uytget_layout);
+                int width = ViewGroup.LayoutParams.MATCH_PARENT;
+                int height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                dialog.getWindow().setLayout(width, height);
                 ad_edit=(EditText)dialog.findViewById(R.id.uytget_layout_edittext);
                 goybolsun=(CircleImageView) dialog.findViewById(R.id.uytget_layout_goybolsun);
                 uytget=(CircleImageView) dialog.findViewById(R.id.uytget_layout_uytget_knopka);

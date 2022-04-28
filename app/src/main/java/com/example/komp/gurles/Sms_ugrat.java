@@ -312,7 +312,10 @@ public class Sms_ugrat extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         dialog.dismiss();
-                        incomingcall.hangup();
+                        if(call!=null){
+                            call.hangup();
+                        }
+
 
                     }
                 });
@@ -326,6 +329,30 @@ public class Sms_ugrat extends AppCompatActivity {
                         //  call=incomingcall;
 
 //                        call.answer();
+                        call.addCallListener(new CallListener() {
+                            @Override
+                            public void onCallProgressing(Call call) {
+
+                            }
+
+                            @Override
+                            public void onCallEstablished(Call call) {
+
+                            }
+
+                            @Override
+                            public void onCallEnded(Call call) {
+                                Toast.makeText(Sms_ugrat.this,"Jan gutardy",Toast.LENGTH_LONG).show();
+                                dialog.dismiss();
+                                  call = null;
+                                  setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
+                            }
+
+                            @Override
+                            public void onShouldSendPushNotification(Call call, List<PushPair> list) {
+
+                            }
+                        });
                         incomingcall.addCallListener(new SinchCallListener4());
                         Toast.makeText(Sms_ugrat.this,"Jan baslady",Toast.LENGTH_LONG).show();
                     }
@@ -779,7 +806,7 @@ public class Sms_ugrat extends AppCompatActivity {
             dialog.dismiss();
 
 
-            call = null;
+         call = null;
             SinchError a = endedcall.getDetails().getError();
             setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
 
