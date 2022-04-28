@@ -128,7 +128,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="ffffff" />
-                                                <entry key="imagePath" value="C:\Users\user\AppData\Local\Temp\baseline_call_24.xml" />
+                                                <entry key="imagePath" value="C:\Users\user\AppData\Local\Temp\baseline_mic_off_24.xml" />
                                                 <entry key="paddingPercent" value="10" />
                                               </map>
                                             </option>
@@ -140,7 +140,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/call/baseline_call_24.xml" />
+                                                <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/mic_off/baseline_mic_off_24.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -183,9 +183,9 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="backgroundColor" value="13c313" />
+                                      <entry key="backgroundColor" value="868080" />
                                       <entry key="iconShape" value="CIRCLE" />
-                                      <entry key="outputName" value="phone_answer" />
+                                      <entry key="outputName" value="phone_unmute" />
                                     </map>
                                   </option>
                                 </PersistentState>

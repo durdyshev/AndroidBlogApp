@@ -61,11 +61,11 @@
 
                     <TextView
                         android:id="@+id/chat_yeke_haly_ady"
-                        android:layout_width="106dp"
-                        android:layout_height="28dp"
-                        android:layout_marginEnd="8dp"
-                        android:text="@string/ulanyjy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
 
+                        android:text="@string/ulanyjy"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -73,8 +73,9 @@
                         android:id="@+id/chat_yeke_haly_message"
                         android:layout_width="146dp"
                         android:layout_height="26dp"
-                        android:text="TextView"
 
+                        android:gravity="center_vertical"
+                        android:text="TextView"
                         android:textSize="15sp" />
 
                 </LinearLayout>
@@ -82,6 +83,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:gravity="center"
                     android:orientation="horizontal">
 
                     <TextView
@@ -92,15 +94,15 @@
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
                         android:background="@drawable/search"
+                        android:gravity="center"
+
                         android:text="3"
                         android:textAlignment="center"
-
                         android:textColorHighlight="@color/face"
                         android:textColorHint="@color/face"
                         android:textColorLink="@color/face"
                         android:textDirection="firstStrongRtl"
-                        android:textSize="22sp"
-                        android:visibility="invisible" />
+                        android:textSize="18sp" />
                 </LinearLayout>
 
                 <LinearLayout

@@ -3,14 +3,22 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Kilic/Desktop/Gurles/app/src/main/res/layout/activity_login.xml" value="0.2875905797101449" />
+        <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/drawable-v24/sms_left_color.xml" value="0.1" />
+        <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/drawable/active_dot.xml" value="0.1" />
+        <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/drawable/background_left.xml" value="0.171" />
+        <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/drawable/background_right.xml" value="0.1" />
+        <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/drawable/gradient_color.xml" value="0.2115" />
+        <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/drawable/rounded_widget.xml" value="0.171" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/drawable/search.xml" value="0.198" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/activity_at_uytget.xml" value="0.1" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/activity_dost_gos.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/activity_dost_yeke_haly.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/activity_main.xml" value="0.22" />
-        <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/activity_sms_ugrat.xml" value="0.25" />
+        <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/activity_sms_ugrat.xml" value="0.22" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/activity_tazepost.xml" value="0.1328125" />
-        <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/chat_yeke_haly.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/chat_yeke_haly.xml" value="0.25" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/fragment_bildiris.xml" value="0.25" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/fragment_dost_gozle_fragment.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/fragment_esasy.xml" value="0.20416666666666666" />
@@ -18,11 +26,13 @@
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/fragment_sinch.xml" value="0.10869565217391304" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/fragment_sinch_call.xml" value="0.10869565217391304" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/fragment_sms.xml" value="0.1" />
+        <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/jan_layout.xml" value="0.10869565217391304" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/layout.xml" value="0.22" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/layout_call.xml" value="0.21" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/layout_caller.xml" value="0.18" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/obshy_dostlar_yeke_haly.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/recycle_yeke_haly4.xml" value="0.25" />
+        <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/sms_item_left.xml" value="0.22" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/sms_item_right.xml" value="0.1" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/uytget_layout.xml" value="0.1" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/viewpager_item.xml" value="0.1" />

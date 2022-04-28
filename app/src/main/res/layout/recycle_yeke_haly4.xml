@@ -4,11 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="15dp">
+    android:layout_marginBottom="15dp"
+    android:background="@android:color/transparent">
 
     <EditText
         android:id="@+id/recycle_yeke_haly_komment_edit"
-        android:layout_width="400dp"
+        android:layout_width="match_parent"
         android:layout_height="42dp"
 
         android:layout_below="@+id/main_blog_post"
@@ -42,8 +43,10 @@
         android:id="@+id/main_blog_post"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
         android:backgroundTint="@color/cardview_light_background"
-        android:padding="20dp">
+        android:padding="20dp"
+        app:cardBackgroundColor="@android:color/transparent">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -51,17 +54,17 @@
 
             <ImageButton
                 android:id="@+id/popup"
-                android:layout_width="31dp"
-                android:layout_height="30dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
 
                 android:layout_alignBottom="@+id/recycle_yeke_haly_profil"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="22dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="0dp"
                 android:background="@color/cardview_shadow_end_color"
-                android:scaleType="fitEnd"
+                android:scaleType="fitCenter"
                 android:src="@mipmap/menu" />
 
             <ImageView
@@ -85,6 +88,7 @@
                 android:layout_below="@+id/recycle_yeke_haly_viewpager"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
+                android:layout_marginTop="2dp"
                 android:layout_marginEnd="2dp"
                 android:gravity="center_vertical|center_horizontal"
                 android:orientation="horizontal"
@@ -98,7 +102,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="0dp"
-                android:layout_marginTop="9dp"
+                android:layout_marginTop="25dp"
                 android:layout_marginEnd="0dp"
                 android:orientation="vertical">
 
@@ -113,8 +117,7 @@
                         android:layout_height="35dp"
 
 
-                        android:layout_marginStart="0dp"
-                        android:layout_marginTop="6dp"
+                        android:layout_weight="1"
                         android:src="@mipmap/heart" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -123,8 +126,7 @@
                         android:layout_height="35dp"
 
 
-                        android:layout_marginStart="7dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_weight="1"
                         android:src="@drawable/comment" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -132,10 +134,9 @@
                         android:layout_width="40dp"
                         android:layout_height="35dp"
 
-                        android:layout_marginStart="9dp"
-                        android:layout_marginTop="6dp"
-                        android:src="@drawable/share"
+                        android:layout_weight="1"
 
+                        android:src="@drawable/share"
                         app:srcCompat="@drawable/share" />
                 </LinearLayout>
 
@@ -154,7 +155,7 @@
                         android:layout_marginTop="12dp"
                         android:fontFamily="sans-serif-light"
                         android:text="0 adam halady"
-                        android:textSize="14sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -182,7 +183,7 @@
                         android:layout_marginBottom="8dp"
                         android:fontFamily="sans-serif-light"
                         android:text="teswirleri gör(0)"
-                        android:textSize="14sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -239,8 +240,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/recycle_yeke_haly_viewpager"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="11dp"
-                android:layout_marginEnd="12dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="15dp"
                 android:background="@drawable/tegelek_knopka"
                 android:padding="2dp"
                 android:text="TextView"
