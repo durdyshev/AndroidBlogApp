@@ -701,7 +701,7 @@ public class Sms_ugrat extends AppCompatActivity {
     }
 
     private void opencallerdialog(final Call call) {
-        final  CircleImageView profil,end_call;final ImageView arkafon;
+        final  CircleImageView profil,end_call,mute,unmute;
         final TextView ady,wagt;
         dialog.setContentView(R.layout.layout_call);
         int width = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -711,6 +711,8 @@ public class Sms_ugrat extends AppCompatActivity {
         profil=(CircleImageView) dialog.findViewById(R.id.layout_call_image);
         end_call=(CircleImageView) dialog.findViewById(R.id.layout_call_end);
         ady=(TextView)dialog.findViewById(R.id.layout_call_name);
+        mute=(CircleImageView) dialog.findViewById(R.id.layout_call_mute);
+        unmute=(CircleImageView)dialog.findViewById(R.id.layout_call_unmute);
 
         firebaseFirestore.collection("ulanyjylar").document(gelenuser_id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -768,6 +770,7 @@ public class Sms_ugrat extends AppCompatActivity {
         public void onCallEstablished(Call call) {
             Toast.makeText(Sms_ugrat.this,"Ulasildi",Toast.LENGTH_LONG).show();
             setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+
         }
 
         @Override
@@ -886,11 +889,6 @@ public class Sms_ugrat extends AppCompatActivity {
         firebaseFirestore.collection("ulanyjylar").document(user_id).update(elmappo);
 
     }
-    private void replacefragment(Fragment fragment) {
-        FragmentTransaction fragmentTransaction=getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.sms_ugrat_framelayout,fragment);
-        fragmentTransaction.commit();
 
-    }
 }
 

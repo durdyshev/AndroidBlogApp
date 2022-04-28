@@ -492,7 +492,7 @@ holder.videoplayknopka.setOnClickListener(new View.OnClickListener() {
             Uri uri=Uri.parse(video);
             videoView.setVideoURI(uri);
             videoView.requestFocus();
-            videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+       /*     videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
                 @Override
                 public boolean onInfo(MediaPlayer mp, int what, int extra) {
                     if(what == mp.MEDIA_INFO_BUFFERING_START){
@@ -503,7 +503,7 @@ holder.videoplayknopka.setOnClickListener(new View.OnClickListener() {
                     }
                     return false;
                 }
-            });
+            });*/
 
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override

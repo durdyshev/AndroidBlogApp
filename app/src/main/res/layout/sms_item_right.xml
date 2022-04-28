@@ -130,6 +130,7 @@
         android:paddingBottom="12dp"
         android:text="Nikola Tesla, Sırbistan'ın Similjan kasabasında 10 Temmuz 1856 tarihinde doğdu. Babası papaz, annesi ise ev aletleri ile ilgilenen, ev aletleri mucidi olarak tanınan bir kadındı. Tesla'nın Milca, Angelina ve Marica isimli üç kız kardeşi vardı. Tesla hiç evlenmedi. Kolay öfkelenen bir yapıya sahipti."
         android:textAlignment="center"
+        android:textColor="@color/ak"
         android:textIsSelectable="false"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
