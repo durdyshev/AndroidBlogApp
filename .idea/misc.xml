@@ -3,21 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/user/Desktop/Gurles/app/src/main/res/drawable/gradient_color.xml" value="0.183" />
-        <entry key="..\:/Users/user/Desktop/Gurles/app/src/main/res/drawable/gradient_knopka.xml" value="0.1" />
-        <entry key="..\:/Users/user/Desktop/Gurles/app/src/main/res/drawable/gradient_login.xml" value="0.1" />
-        <entry key="..\:/Users/user/Desktop/Gurles/app/src/main/res/drawable/rounded_widget.xml" value="0.183" />
-        <entry key="..\:/Users/user/Desktop/Gurles/app/src/main/res/drawable/roundimage.xml" value="0.1" />
-        <entry key="..\:/Users/user/Desktop/Gurles/app/src/main/res/layout/activity_login.xml" value="0.25" />
-        <entry key="..\:/Users/user/Desktop/Gurles/app/src/main/res/layout/activity_main.xml" value="0.20416666666666666" />
-        <entry key="..\:/Users/user/Desktop/Gurles/app/src/main/res/layout/activity_profil.xml" value="0.33" />
-        <entry key="..\:/Users/user/Desktop/Gurles/app/src/main/res/layout/activity_register.xml" value="0.22" />
-        <entry key="..\:/Users/user/Desktop/Gurles/app/src/main/res/layout/activity_sms_ugrat.xml" value="0.20416666666666666" />
-        <entry key="..\:/Users/user/Desktop/Gurles/app/src/main/res/layout/fragment_profil.xml" value="0.25" />
-        <entry key="..\:/Users/user/Desktop/Gurles/app/src/main/res/layout/jan_layout.xml" value="0.20416666666666666" />
-        <entry key="..\:/Users/user/Desktop/Gurles/app/src/main/res/layout/layout_call.xml" value="0.20416666666666666" />
-        <entry key="..\:/Users/user/Desktop/Gurles/app/src/main/res/layout/uytget_layout.xml" value="0.20416666666666666" />
-        <entry key="..\:/Users/user/Desktop/Gurles/app/src/main/res/menu/main_menu.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Kilic/Desktop/yeni/Gurles/app/src/main/res/layout/activity_login.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/drawable-v24/sms_left_color.xml" value="0.1" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/drawable/active_dot.xml" value="0.1" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/drawable/background_left.xml" value="0.171" />
@@ -28,6 +14,7 @@
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/activity_at_uytget.xml" value="0.1" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/activity_dost_gos.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/activity_dost_yeke_haly.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/activity_sms_ugrat.xml" value="0.22" />
         <entry key="..\:/Users/user/Documents/Gurles/app/src/main/res/layout/activity_tazepost.xml" value="0.1328125" />
