@@ -4,7 +4,7 @@
 * Glide (bumptech/glide)
 * Image Compressor (zetbaitsu/Compressor)
 * SinchAudioCall 
-#Check out these links to see pictures from app:
+# Check out these links to see pictures from app:
 * Pdf link: 
 https://drive.google.com/file/d/1dKs7KF7yNoRiyu9TGkTOh2FbUUCcW7fT/view?usp=sharing
 * Slideshow link:
