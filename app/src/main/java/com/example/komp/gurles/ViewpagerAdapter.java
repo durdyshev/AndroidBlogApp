@@ -49,8 +49,8 @@ public class ViewpagerAdapter extends PagerAdapter {
         activity.getWindowManager().getDefaultDisplay().getMetrics(dis);
         int height=dis.heightPixels;
         int width=dis.widthPixels;
-        image.setMinimumHeight(height);
-       image.setMinimumWidth(width);
+     //   image.setMinimumHeight(height);
+      // image.setMinimumWidth(width);
         try{
             RequestOptions requestOptions=new RequestOptions();
             requestOptions.centerInside();

@@ -1,10 +1,12 @@
 package com.example.komp.gurles;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +35,8 @@ public class Login extends AppCompatActivity {
     private ProgressBar progressBar;
     private FirebaseFirestore firebaseFirestore;
     private DatabaseReference userreference;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +49,8 @@ public class Login extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         progressBar=(ProgressBar)findViewById(R.id.login_progress);
         firebaseFirestore=FirebaseFirestore.getInstance();
-
+        sharedPreferences=getSharedPreferences("UserDetails",MODE_PRIVATE);
+        editor=sharedPreferences.edit();
         Reg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,6 +79,8 @@ public class Login extends AppCompatActivity {
 
                                 FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
                                 String uid=user.getUid();
+                                editor.putString("user_id",uid);
+                                editor.apply();
                                 userreference= FirebaseDatabase.getInstance().getReference().child("Ulanyjylar").child(uid);
                                 HashMap<String,Object> adymap=new HashMap<>();
                                 adymap.put("online",true);
@@ -82,7 +89,7 @@ public class Login extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){
-                                            Toast.makeText(Login.this,"reference doredildi",Toast.LENGTH_LONG).show();
+                                            Log.e("reference","Rference has been created");
                                         }
                                     }
                                 });
@@ -91,8 +98,7 @@ public class Login extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                if(task.isSuccessful()){
-                                   Toast.makeText(Login.this,"Token id",Toast.LENGTH_LONG).show();
-
+                                   Log.e("token id","Token id");
                                }
                                 }
                             });
@@ -103,7 +109,7 @@ public class Login extends AppCompatActivity {
 
                             }
                             else{
-                                Toast.makeText(Login.this,"Bir mesele ýüze çykdy",Toast.LENGTH_LONG).show();
+                                Toast.makeText(Login.this,task.getException().getMessage(),Toast.LENGTH_LONG).show();
 
                             }
                             progressBar.setVisibility(View.INVISIBLE);

@@ -34,6 +34,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -49,7 +50,7 @@ public class EsasyFragment extends Fragment {
     private String user_id;
     private Post_adapter_class post_adapter_class;
     private Activity context;
-
+    private FirebaseUtils firebaseUtils;
 
     public EsasyFragment() {
         // Required empty public constructor
@@ -60,7 +61,9 @@ public class EsasyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_esasy, container, false);
-context=getActivity();
+        context=getActivity();
+        firebaseUtils=new FirebaseUtils(context);
+        user_id=firebaseUtils.getFirebaseUserId();
         bloglist=new ArrayList<>();
         dostlist=new ArrayList<>();
         post_adapter_class=new Post_adapter_class(bloglist);
@@ -70,43 +73,38 @@ context=getActivity();
 
         firebaseFirestore=FirebaseFirestore.getInstance();
         mAuth=FirebaseAuth.getInstance();
-        user_id=mAuth.getCurrentUser().getUid();
         if(mAuth.getCurrentUser()!=null) {
 
-
-            firebaseFirestore.collection("/ulanyjylar/" + user_id + "/dostlar/").get().addOnCompleteListener(getActivity(),new OnCompleteListener<QuerySnapshot>() {
+            firebaseFirestore.collection("/ulanyjylar/" + user_id + "/dostlar/").get().addOnCompleteListener(Objects.requireNonNull(getActivity()),new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
                     if (task.isSuccessful()) {
                         for (DocumentSnapshot documentSnapshot : task.getResult()) {
                             String dostlar = documentSnapshot.getString("user_id");
-
                             dostlist.add(dostlar);
                         }
                         dostlist.add(user_id);
-                        if(!dostlist.isEmpty()){
-                            for (int i = 0; i < dostlist.size(); i++) {
-                                Query sirala = firebaseFirestore.collection("/ulanyjylar/" + dostlist.get(i) + "/postlar").orderBy("wagt", Query.Direction.DESCENDING);
-                                sirala.addSnapshotListener(context,new EventListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                                        if (documentSnapshots != null){
-                                            for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
-                                                if (doc.getType() == DocumentChange.Type.ADDED) {
-                                                    String BlogPostId = doc.getDocument().getId();
-                                                    Postadapter postadapter = doc.getDocument().toObject(Postadapter.class).within(BlogPostId);
+                        for (int i = 0; i < dostlist.size(); i++) {
+                            Query sirala = firebaseFirestore.collection("/ulanyjylar/" + dostlist.get(i) + "/postlar").orderBy("wagt", Query.Direction.DESCENDING);
+                            sirala.addSnapshotListener(context,new EventListener<QuerySnapshot>() {
+                                @Override
+                                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                                    if (documentSnapshots != null){
+                                        for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
+                                            if (doc.getType() == DocumentChange.Type.ADDED) {
+                                                String BlogPostId = doc.getDocument().getId();
+                                                Postadapter postadapter = doc.getDocument().toObject(Postadapter.class).within(BlogPostId);
 
-                                                    bloglist.add(postadapter);
-                                                    post_adapter_class.notifyDataSetChanged();
-                                                                                              }
-                                            }
+                                                bloglist.add(postadapter);
+                                                post_adapter_class.notifyDataSetChanged();
+                                                                                          }
                                         }
                                     }
-                                });
+                                }
+                            });
 
 
-                            }
                         }
 
 

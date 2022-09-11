@@ -30,6 +30,7 @@ import com.sinch.android.rtc.calling.Call;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -45,11 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private SinchClass sinchClass;
     private Call call;
     private SinchClient sinchClient;
-
-
-
-
-
+    private FirebaseUtils firebaseUtils;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         asakky_knopkalar=(BottomNavigationView)findViewById(R.id.main_bottom_nav);
         BottomNavigationViewHelper.disableShiftMode(asakky_knopkalar);
         firebaseFirestore=FirebaseFirestore.getInstance();
-
+        firebaseUtils= new FirebaseUtils(MainActivity.this);
 
         //Fragmentlar
         esasyFragment=new EsasyFragment();
@@ -101,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
         mainToolbar=(android.support.v7.widget.Toolbar)findViewById(R.id.main_toolbar);
         setSupportActionBar(mainToolbar);
-        getSupportActionBar().setTitle("Line");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Line");
         post_gos_knopka=(FloatingActionButton)findViewById(R.id.post_gos);
         post_gos_knopka.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,16 +121,16 @@ public class MainActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(currentUser == null){
+        if(currentUser == null || firebaseUtils.getFirebaseUserId().equals("")){
             Intent intent=new Intent(MainActivity.this,Login.class);
             startActivity(intent);
             finish();
         }
         else{
-            sinchClass=new SinchClass(sinchClient,call,MainActivity.this,mAuth.getCurrentUser().getUid());
+            sinchClass=new SinchClass(sinchClient,call,MainActivity.this, firebaseUtils.getFirebaseUserId());
 
             // Informasiyalar firestorda bamy sony barlayas
-            user_id=mAuth.getCurrentUser().getUid();
+            user_id= firebaseUtils.getFirebaseUserId();
             firebaseFirestore.collection("ulanyjylar").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -186,13 +183,13 @@ public class MainActivity extends AppCompatActivity {
         Map<String, Object> status = new HashMap<>();
         status.put("status", boslyk);
 
-firebaseFirestore.collection("/ulanyjylar/").document(mAuth.getCurrentUser().getUid()).update(status);
+firebaseFirestore.collection("/ulanyjylar/").document(firebaseUtils.getFirebaseUserId()).update(status);
     }
     private void songorulme(FieldValue boslyk) {
         Map<String, Object> map = new HashMap<>();
         map.put("son", boslyk);
 
-        firebaseFirestore.collection("/ulanyjylar/").document(mAuth.getCurrentUser().getUid()).update(map);
+        firebaseFirestore.collection("/ulanyjylar/").document(firebaseUtils.getFirebaseUserId()).update(map);
     }
 
     @Override
@@ -213,7 +210,7 @@ firebaseFirestore.collection("/ulanyjylar/").document(mAuth.getCurrentUser().get
                 Thread.sleep(1000);
                 Map<String, Object> userMap = new HashMap<>();
                 userMap.put("token", FieldValue.delete());
-                firebaseFirestore.collection("ulanyjylar").document(mAuth.getCurrentUser().getUid()).update(userMap);
+                firebaseFirestore.collection("ulanyjylar").document(firebaseUtils.getFirebaseUserId()).update(userMap);
                 Intent intent=new Intent(MainActivity.this,Login.class);
                 startActivity(intent);
                 finish();
