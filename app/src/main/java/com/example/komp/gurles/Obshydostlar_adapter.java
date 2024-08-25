@@ -5,20 +5,21 @@ public class Obshydostlar_adapter {
     private String profil_surat;
     private String user_id;
     private String id;
- private String number;
+    private String number;
 
-    public Obshydostlar_adapter(String number,String ady, String profil_surat, String user_id, String id) {
+    public Obshydostlar_adapter(String number, String ady, String profil_surat, String user_id, String id) {
         this.ady = ady;
         this.profil_surat = profil_surat;
         this.user_id = user_id;
         this.id = id;
-        this.number=number;
+        this.number = number;
     }
 
 
-    public Obshydostlar_adapter(){
+    public Obshydostlar_adapter() {
 
     }
+
     public String getNumber() {
         return number;
     }
@@ -58,8 +59,6 @@ public class Obshydostlar_adapter {
     public void setId(String id) {
         this.id = id;
     }
-
-
 
 
 }

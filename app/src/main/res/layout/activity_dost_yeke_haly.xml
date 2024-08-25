@@ -6,9 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".Dost_yeke_haly">
+    tools:context="com.example.komp.gurles.Dost_yeke_haly">
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -198,7 +198,7 @@
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/dost_yeke_haly_recycle_dostlar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -206,10 +206,9 @@
                     android:layout_marginTop="0dp"
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="4dp"
-                    android:visibility="visible"
-                    >
+                    android:visibility="visible">
 
-                </android.support.v7.widget.RecyclerView>
+                </androidx.recyclerview.widget.RecyclerView>
 
                 <Button
                     android:id="@+id/dost_yeke_haly_dost_hemmesi"
@@ -236,7 +235,7 @@
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/dost_yeke_haly_recycle_post"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -244,16 +243,16 @@
                     android:layout_marginTop="0dp"
                     android:layout_marginEnd="0dp"
                     android:foregroundGravity="fill_vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/linearLayout"
                     app:fastScrollEnabled="true"
                     app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
                     app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
                     app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
-                    app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"/>
+                    app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/dost_yeke_haly_recycle_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -294,7 +293,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -305,7 +304,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
 
-            </android.support.v7.widget.Toolbar>
+            </androidx.appcompat.widget.Toolbar>
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/dost_yeke_haly_profil"
@@ -321,6 +320,6 @@
 
         </RelativeLayout>
 
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 </RelativeLayout>
 

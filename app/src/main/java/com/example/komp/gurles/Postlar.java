@@ -1,10 +1,12 @@
 package com.example.komp.gurles;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.justblog.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
@@ -29,24 +31,24 @@ public class Postlar extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_postlar);
-        bloglist=new ArrayList<>();
+        setContentView(com.example.justblog.R.layout.activity_postlar);
+        bloglist = new ArrayList<>();
 
-        post_adapter_class=new Post_adapter_class(bloglist);
-        blog_list_view=findViewById(R.id.postlar_recycler);
+        post_adapter_class = new Post_adapter_class(bloglist);
+        blog_list_view = findViewById(R.id.postlar_recycler);
         blog_list_view.setAdapter(post_adapter_class);
         blog_list_view.setLayoutManager(new LinearLayoutManager(this));
 
-        firebaseFirestore=FirebaseFirestore.getInstance();
-        mAuth=FirebaseAuth.getInstance();
-        user_id=mAuth.getCurrentUser().getUid();
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        user_id = mAuth.getCurrentUser().getUid();
 
 
         Query sirala = firebaseFirestore.collection("/ulanyjylar/" + user_id + "/postlar").orderBy("wagt", Query.Direction.DESCENDING);
         sirala.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                if (documentSnapshots != null){
+                if (documentSnapshots != null) {
                     for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
                         if (doc.getType() == DocumentChange.Type.ADDED) {
                             String BlogPostId = doc.getDocument().getId();

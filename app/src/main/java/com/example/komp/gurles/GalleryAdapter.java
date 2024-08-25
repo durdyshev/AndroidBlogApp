@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.example.justblog.R;
+
 import java.util.ArrayList;
 
 public class GalleryAdapter extends BaseAdapter {
@@ -17,6 +19,7 @@ public class GalleryAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private ImageView ivGallery;
     ArrayList<Uri> mArrayUri;
+
     public GalleryAdapter(Context ctx, ArrayList<Uri> mArrayUri) {
 
         this.ctx = ctx;
@@ -32,6 +35,7 @@ public class GalleryAdapter extends BaseAdapter {
     public Object getItem(int position) {
         return mArrayUri.get(position);
     }
+
     @Override
     public long getItemId(int position) {
         return 0;
@@ -44,7 +48,7 @@ public class GalleryAdapter extends BaseAdapter {
         inflater = (LayoutInflater) ctx
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View itemView = inflater.inflate(R.layout.gv_item, parent, false);
+        View itemView = inflater.inflate(com.example.justblog.R.layout.gv_item, parent, false);
 
         ivGallery = (ImageView) itemView.findViewById(R.id.ivGallery);
 

@@ -1,46 +1,44 @@
 package com.example.komp.gurles;
 
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
-public class DostlarPageAdapter extends FragmentPagerAdapter {
-    public DostlarPageAdapter(FragmentManager fm) {
+public class DostlarPageAdapter extends FragmentStatePagerAdapter {
+
+
+    public DostlarPageAdapter(@NonNull FragmentManager fm) {
         super(fm);
     }
 
+    @NonNull
     @Override
-    public android.support.v4.app.Fragment getItem(int position) {
-
-        switch (position){
+    public Fragment getItem(int position) {
+        switch (position) {
             case 0:
-                Dost_yeke_haly_dostlar_hemmesi_fragment dost_yeke_haly_dostlar_hemmesi_fragment=new Dost_yeke_haly_dostlar_hemmesi_fragment();
-                return dost_yeke_haly_dostlar_hemmesi_fragment;
-
-            case 1: Dost_yeke_haly_dostlar_hemmesi_menzes_fragment dost_yeke_haly_dostlar_hemmesi_menzes_fragment=new Dost_yeke_haly_dostlar_hemmesi_menzes_fragment();
-                return dost_yeke_haly_dostlar_hemmesi_menzes_fragment;
-
-            default:return null;
+                return new Dost_yeke_haly_dostlar_hemmesi_fragment();
+            case 1:
+                return new Dost_yeke_haly_dostlar_hemmesi_menzes_fragment();
+            default:
+                throw new IllegalArgumentException("Invalid position: " + position);
         }
-
     }
 
     @Override
     public int getCount() {
         return 2;
     }
-    public CharSequence getPageTitle(int position){
-        switch (position){
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        switch (position) {
             case 0:
                 return "Hemmesi";
-
             case 1:
                 return "Meňzeş";
-
             default:
                 return null;
         }
-
-
     }
 }
-

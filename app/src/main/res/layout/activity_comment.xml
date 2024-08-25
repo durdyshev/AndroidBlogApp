@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fitsSystemWindows="true"
-    tools:context=".Comment">
+    tools:context="com.example.komp.gurles.Comment">
 
 
     <LinearLayout
@@ -42,7 +42,7 @@
 
     </LinearLayout>
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/comment_edit_linear"
@@ -64,8 +64,6 @@
                 android:id="@+id/comment_popup"
                 android:layout_width="63dp"
                 android:layout_height="51dp"
-
-                android:layout_above="@+id/comment_viewpager"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="4dp"
@@ -212,7 +210,8 @@
                         android:layout_marginEnd="64dp"
                         android:gravity="center_vertical|center_horizontal"
                         android:text="@string/tarih"
-                        android:textAlignment="viewStart" />
+                        android:textAlignment="viewStart"
+                        tools:ignore="RtlCompat" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -246,7 +245,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/komment_like_recycler"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
@@ -280,7 +279,7 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/komment_recycler"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -294,7 +293,7 @@
                         app:layout_constraintBottom_toBottomOf="parent">
 
 
-                    </android.support.v7.widget.RecyclerView>
+                    </androidx.recyclerview.widget.RecyclerView>
                 </LinearLayout>
 
             </LinearLayout>
@@ -309,7 +308,7 @@
                 android:layout_marginEnd="12dp"
                 android:text="TextView" />
 
-            <android.support.v4.view.ViewPager
+            <androidx.viewpager.widget.ViewPager
                 android:id="@+id/viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="350dp"
@@ -317,7 +316,7 @@
                 android:layout_marginTop="5dp" />
 
         </RelativeLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 
 </RelativeLayout>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    tools:context=".At_uytget">
+    tools:context="com.example.komp.gurles.At_uytget">
 
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/sms_item_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
@@ -32,6 +32,6 @@
                 tools:layout_editor_absoluteX="137dp"
                 tools:layout_editor_absoluteY="124dp" />
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>

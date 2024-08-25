@@ -1,25 +1,16 @@
 package com.example.komp.gurles;
 
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.justblog.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
@@ -40,8 +31,8 @@ public class SmsFragment extends Fragment {
     private List<Chatadapter> gelenlist;
     private Chatadapterclass chatadapterclass;
     private FirebaseAuth mAuth;
-private FirebaseFirestore firebaseFirestore;
-private String user_id;
+    private FirebaseFirestore firebaseFirestore;
+    private String user_id;
 
 
     public SmsFragment() {
@@ -54,26 +45,25 @@ private String user_id;
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_sms, container, false);
-        gelenlist=new ArrayList<>();
-        chat_list=view.findViewById(R.id.chat_recycler);
-        chatadapterclass=new Chatadapterclass(gelenlist);
+        View view = inflater.inflate(com.example.justblog.R.layout.fragment_sms, container, false);
+        gelenlist = new ArrayList<>();
+        chat_list = view.findViewById(R.id.chat_recycler);
+        chatadapterclass = new Chatadapterclass(gelenlist);
         chat_list.setLayoutManager(new LinearLayoutManager(getActivity()));
         chat_list.setAdapter(chatadapterclass);
-        firebaseFirestore=FirebaseFirestore.getInstance();
-        mAuth=FirebaseAuth.getInstance();
-        user_id=mAuth.getCurrentUser().getUid();
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        user_id = mAuth.getCurrentUser().getUid();
 
 
-
-        Query sirala=firebaseFirestore.collection("/ulanyjylar/"+user_id+"/chat").orderBy("time",Query.Direction.DESCENDING);
-        sirala.addSnapshotListener(getActivity(),new EventListener<QuerySnapshot>() {
+        Query sirala = firebaseFirestore.collection("/ulanyjylar/" + user_id + "/chat").orderBy("time", Query.Direction.DESCENDING);
+        sirala.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
-                for(DocumentChange doc: documentSnapshots.getDocumentChanges()){
-                    if(doc.getType()==DocumentChange.Type.ADDED){
-                        Chatadapter  chatadapter=doc.getDocument().toObject(Chatadapter.class);
+                for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
+                    if (doc.getType() == DocumentChange.Type.ADDED) {
+                        Chatadapter chatadapter = doc.getDocument().toObject(Chatadapter.class);
                         gelenlist.add(chatadapter);
                         chatadapterclass.notifyDataSetChanged();
 
@@ -82,13 +72,6 @@ private String user_id;
                 }
             }
         });
-
-
-
-
-
-
-
 
 
         return view;

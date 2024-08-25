@@ -2,51 +2,64 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 31
+
+    namespace 'com.example.justblog'
+    compileSdk 34
     defaultConfig {
         applicationId "com.example.komp.gurles"
-        minSdkVersion 19
-        targetSdkVersion 31
+        minSdkVersion 23 // Updated to a higher min SDK version for better compatibility
+        targetSdkVersion 34 // Updated to the latest target SDK version
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner" // Updated to AndroidX
     }
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 dependencies {
-
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:design:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation 'com.android.support:support-v4:27.1.1'
-    testImplementation 'junit:junit:4.12'
-    implementation 'com.google.firebase:firebase-auth:11.8.0'
-    implementation 'com.google.firebase:firebase-storage:11.8.0'
-    implementation 'com.google.firebase:firebase-firestore:11.8.0'
-    implementation 'com.google.firebase:firebase-database:11.8.0'
-    implementation 'com.firebaseui:firebase-ui-database:1.1.1'
-    implementation 'de.hdodenhof:circleimageview:3.0.0'
-    api 'com.theartofdev.edmodo:android-image-cropper:2.6.+'
-    implementation 'com.github.bumptech.glide:glide:4.8.0'
-    implementation 'id.zelory:compressor:2.1.0'
-    implementation 'com.android.support:cardview-v7:27.1.1'
+
+    implementation 'androidx.fragment:fragment:1.8.2'
+    implementation 'androidx.viewpager2:viewpager2:1.1.0' // Optional, if you use ViewPager2
+
+    // AndroidX dependencies replacing the old support libraries
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    // if still needed, otherwise migrate fully to AndroidX
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
+
+    // Firebase dependencies using the Firebase BoM for easier version management
+    implementation platform('com.google.firebase:firebase-bom:33.2.0')
+    // Update BOM to the latest version
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-storage'
+    implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-database'
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.firebaseui:firebase-ui-database:7.2.0'
+
+    // Third-party libraries updated to their latest versions
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.github.bumptech.glide:glide:4.15.1'
+    implementation 'id.zelory:compressor:3.0.1'
     implementation(name: 'sinch-android-rtc', version: '+', ext: 'aar')
+    implementation 'com.google.firebase:firebase-messaging:24.0.1' // Or the latest version
+    implementation("com.vanniktech:android-image-cropper:4.6.0")
+    implementation 'id.zelory:compressor:3.0.1'
 
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    // Annotation processor for Glide
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'
 
-
-    implementation 'com.google.firebase:firebase-messaging:11.8.0'
-
-    implementation 'com.google.firebase:firebase-core:11.8.0'
-    implementation 'com.android.support:gridlayout-v7:27.1.1'
-
+    // AndroidX testing dependencies
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 }

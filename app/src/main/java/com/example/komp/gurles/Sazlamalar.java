@@ -7,11 +7,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -20,8 +15,15 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.justblog.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,8 +34,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,8 +43,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Sazlamalar extends AppCompatActivity {
     private Toolbar mToolbar;
     private CircleImageView surat;
-    private Uri Esasysurat=null;
-    private Uri arkafon_uri=null;
+    private Uri Esasysurat = null;
+    private Uri arkafon_uri = null;
     private EditText Ady;
     private EditText Id;
     private Button Sakla;
@@ -53,40 +53,41 @@ public class Sazlamalar extends AppCompatActivity {
     private ProgressBar sazla_progres;
     private String user_id;
     private FirebaseFirestore firebaseFirestore;
-    private Boolean uytgedildi=false;
+    private Boolean uytgedildi = false;
     private FirebaseAuth mAuth;
     private ImageView arkafon;
-    private Boolean arkafon_click=false;
-    private Boolean Esasysurat_click=false;
+    private Boolean arkafon_click = false;
+    private Boolean Esasysurat_click = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sazlamalar);
-        firebaseAuth=FirebaseAuth.getInstance();
-        firebaseFirestore=FirebaseFirestore.getInstance();
-        storageReference= FirebaseStorage.getInstance().getReference();
-        mToolbar=(Toolbar)findViewById(R.id.sazlamalar_toolbar);
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        storageReference = FirebaseStorage.getInstance().getReference();
+        mToolbar = (Toolbar) findViewById(R.id.sazlamalar_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Sazlamalar");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        surat=(CircleImageView)findViewById(R.id.sazlamalar_surat);
-        Ady=(EditText)findViewById(R.id.sazlamalar_ady);
-        Sakla=(Button)findViewById(R.id.sazlamalar_sakla);
-        Id=(EditText)findViewById(R.id.sazlamalar_id);
-        sazla_progres=(ProgressBar)findViewById(R.id.sazlamalar_progres);
-        user_id=firebaseAuth.getCurrentUser().getUid();
-        arkafon=(ImageView)findViewById(R.id.sazlamalar_arkafon);
+        surat = (CircleImageView) findViewById(R.id.sazlamalar_surat);
+        Ady = (EditText) findViewById(R.id.sazlamalar_ady);
+        Sakla = (Button) findViewById(R.id.sazlamalar_sakla);
+        Id = (EditText) findViewById(R.id.sazlamalar_id);
+        sazla_progres = (ProgressBar) findViewById(R.id.sazlamalar_progres);
+        user_id = firebaseAuth.getCurrentUser().getUid();
+        arkafon = (ImageView) findViewById(R.id.sazlamalar_arkafon);
         sazla_progres.setVisibility(View.VISIBLE);
         Sakla.setEnabled(false);
-        mAuth=FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         firebaseFirestore.collection("ulanyjylar").document(user_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @SuppressLint("CheckResult")
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    if(task.getResult().exists()){
-                        if(task.getResult().getString("surat")!=null) {
+                if (task.isSuccessful()) {
+                    if (task.getResult().exists()) {
+                        if (task.getResult().getString("surat") != null) {
                             String name = task.getResult().getString("ady");
                             String image = task.getResult().getString("surat");
                             String id = task.getResult().getString("id");
@@ -98,13 +99,12 @@ public class Sazlamalar extends AppCompatActivity {
                             RequestOptions placeholderreq = new RequestOptions();
                             placeholderreq.placeholder(R.mipmap.profil);
                             Glide.with(Sazlamalar.this).setDefaultRequestOptions(placeholderreq).load(image).into(surat);
-                        }  }
-                    else{
-            Toast.makeText(Sazlamalar.this,"Resim",Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(Sazlamalar.this, "Resim", Toast.LENGTH_LONG).show();
                     }
-                }
-                else{
-                    Toast.makeText(Sazlamalar.this,"Resim2",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(Sazlamalar.this, "Resim2", Toast.LENGTH_LONG).show();
                 }
                 sazla_progres.setVisibility(View.INVISIBLE);
                 Sakla.setEnabled(true);
@@ -115,34 +115,33 @@ public class Sazlamalar extends AppCompatActivity {
 
 
             @Override
-            public void onClick(View view) { sazla_progres.setVisibility(View.VISIBLE);
+            public void onClick(View view) {
+                sazla_progres.setVisibility(View.VISIBLE);
                 Sakla.setEnabled(false);
 
-                final String userady=Ady.getText().toString();
-                final String id=Id.getText().toString();
-                if(!TextUtils.isEmpty(userady) && Esasysurat!=null && !TextUtils.isEmpty(id)){
-                    if(uytgedildi){
+                final String userady = Ady.getText().toString();
+                final String id = Id.getText().toString();
+                if (!TextUtils.isEmpty(userady) && Esasysurat != null && !TextUtils.isEmpty(id)) {
+                    if (uytgedildi) {
 
-                        final String randomname= FieldValue.serverTimestamp().toString();
-                        StorageReference surat_yolu =storageReference.child("profil_suratlar").child(user_id+randomname+".jpg");
+                        final String randomname = FieldValue.serverTimestamp().toString();
+                        StorageReference surat_yolu = storageReference.child("profil_suratlar").child(user_id + randomname + ".jpg");
                         surat_yolu.putFile(Esasysurat).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
 
-                                if(task.isSuccessful()){
-                                    surat_indir(task,userady,id);
+                                if (task.isSuccessful()) {
+                                    surat_indir(task, userady, id);
                                     Sakla.setEnabled(true);
-                                }
-                                else{
-                                    String error=task.getException().toString();
-                                    Toast.makeText(Sazlamalar.this,"Mesele ýüze çykdy:"+error,Toast.LENGTH_LONG).show();
+                                } else {
+                                    String error = task.getException().toString();
+                                    Toast.makeText(Sazlamalar.this, "Mesele ýüze çykdy:" + error, Toast.LENGTH_LONG).show();
                                 }
                                 sazla_progres.setVisibility(View.INVISIBLE);
                             }
                         });
-                    }
-                    else {
-                        surat_indir(null,userady,id);
+                    } else {
+                        surat_indir(null, userady, id);
                     }
                 }
 
@@ -153,8 +152,8 @@ public class Sazlamalar extends AppCompatActivity {
         surat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Esasysurat_click=true;
-                if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.M) {
+                Esasysurat_click = true;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (ContextCompat.checkSelfPermission(Sazlamalar.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                         Toast.makeText(Sazlamalar.this, "Surat almaga rugsat berin.", Toast.LENGTH_LONG).show();
                         ActivityCompat.requestPermissions(Sazlamalar.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
@@ -162,8 +161,7 @@ public class Sazlamalar extends AppCompatActivity {
                         surat_gyrk();
 
                     }
-                }
-                else{
+                } else {
                     surat_gyrk();
 
                 }
@@ -172,41 +170,43 @@ public class Sazlamalar extends AppCompatActivity {
 
 
             private void surat_gyrk() {
-                CropImage.activity()
+                //TODO
+              /*  CropImage.activity()
                         .setGuidelines(CropImageView.Guidelines.ON)
                         .setAspectRatio(1, 1)
-                        .start(Sazlamalar.this);
+                        .start(Sazlamalar.this);*/
             }
         });
     }
 
     private void surat_indir(@NonNull Task<UploadTask.TaskSnapshot> task, final String userady, final String id) {
-        final Uri skacatedilen;
-        if(task!=null){
+        final Uri skacatedilen = null;
+        if (task != null) {
             //Suraty indiryar
-            skacatedilen=task.getResult().getDownloadUrl();}
-        else{
+            //TODO
+            // skacatedilen = task.getResult().getDownloadUrl();
+        } else {
 
-            skacatedilen=Esasysurat;}
+            //skacatedilen = Esasysurat;
+        }
 
 
-        firebaseFirestore.collection("ulanyjylar").whereEqualTo("id",id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        firebaseFirestore.collection("ulanyjylar").whereEqualTo("id", id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(!task.getResult().isEmpty()){
+                if (!task.getResult().isEmpty()) {
                     Toast.makeText(Sazlamalar.this, "Id alynan", Toast.LENGTH_LONG).show();
                 }
 
 /*if(task.getResult().equals(id)){
     Toast.makeText(Sazlamalar.this, "Oz idiniz", Toast.LENGTH_LONG).show();
 }*/
-                else{
+                else {
                     Map<String, Object> userMap = new HashMap<>();
                     userMap.put("ady", userady);
                     userMap.put("id", id);
                     userMap.put("surat", skacatedilen.toString());
                     userMap.put("user_id", user_id);
-
 
 
                     firebaseFirestore.collection("ulanyjylar").document(user_id).update(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -228,10 +228,8 @@ public class Sazlamalar extends AppCompatActivity {
         });
 
 
-
-
-
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -244,12 +242,14 @@ public class Sazlamalar extends AppCompatActivity {
         status("offline");
         songorulme(FieldValue.serverTimestamp());
     }
+
     private void status(String boslyk) {
         Map<String, Object> status = new HashMap<>();
         status.put("status", boslyk);
 
         firebaseFirestore.collection("/ulanyjylar/").document(mAuth.getCurrentUser().getUid()).update(status);
     }
+
     private void songorulme(FieldValue boslyk) {
         Map<String, Object> map = new HashMap<>();
         map.put("son", boslyk);
@@ -261,16 +261,17 @@ public class Sazlamalar extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+        //TODO
+       /* if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 Esasysurat = result.getUri();
                 surat.setImageURI(Esasysurat);
-                uytgedildi=true;
+                uytgedildi = true;
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
-        }
+        }*/
 
     }
 

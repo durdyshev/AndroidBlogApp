@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.komp.gurles">
+    xmlns:tools="http://schemas.android.com/tools">
 
-
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
 
     <application
         android:allowBackup="true"
@@ -16,97 +23,90 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Dostlar_yeke_haly_dostlar_hemmesi"></activity>
+
+        <!-- Activities -->
         <activity
-            android:name=".Like"
-            android:screenOrientation="sensorPortrait"></activity>
-        <activity
-            android:name=".MainActivity"
-            android:screenOrientation="sensorPortrait">
+            android:name="com.example.komp.gurles.MainActivity"
+            android:exported="true"
+            android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- Other activities with appropriate android:exported values -->
+
         <activity
-            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat" />
-        <activity
-            android:name=".Sazlamalar"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="sensorPortrait" />
-        <activity android:name=".Login" />
-        <activity
-            android:name=".Tazepost"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".Register" />
-        <activity
-            android:name=".Dost_yeke_haly"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".Sms_paylas"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".Comment"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".surat"
-            android:parentActivityName=".Comment" />
-        <activity
-            android:name=".Blok"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".Saklanan"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".Postlar"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".Profil"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".At_uytget" />
-        <activity android:name=".Pikir_uytget" />
-        <activity
-            android:name=".Sms_ugrat"
-            android:parentActivityName=".MainActivity">
+            android:name="com.example.komp.gurles.Sms_ugrat"
+            android:exported="true"
+            android:parentActivityName="com.example.komp.gurles.MainActivity">
             <intent-filter>
                 <action android:name="in.komp.gurles.TARGETNOTIFICATION" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".DostGos"
-            android:parentActivityName=".MainActivity">
+            android:name="com.example.komp.gurles.DostGos"
+            android:exported="true"
+            android:parentActivityName="com.example.komp.gurles.MainActivity">
             <intent-filter>
                 <action android:name="in.komp.gurles.targetgelen" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="@string/default_notification_channel_id" />
+        <activity
+            android:name="com.example.komp.gurles.Login"
+            android:exported="true" />
+        <activity
+            android:name="com.example.komp.gurles.Register"
+            android:exported="true" />
+        <activity
+            android:name="com.example.komp.gurles.Tazepost"
+            android:exported="true" />
 
+        <activity
+            android:name="com.example.komp.gurles.Profil"
+            android:exported="true" />
+        <activity
+            android:name="com.example.komp.gurles.Sazlamalar"
+            android:exported="true" />
+        <activity
+            android:name="com.example.komp.gurles.Blok"
+            android:exported="true" />
+        <activity
+            android:name="com.example.komp.gurles.Saklanan"
+            android:exported="true" />
+        <activity
+            android:name="com.example.komp.gurles.Postlar"
+            android:exported="true" />
+
+        <!-- Services -->
         <service
-            android:name=".FirebaseMessagingService"
+            android:name="com.example.komp.gurles.FirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <service
+            android:name="com.sinch.android.rtc.internal.client.fcm.InstanceIDTokenService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
+
+        <!-- Meta-data -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
+
+        <!-- CropImageActivity (consider moving to its own library if applicable) -->
+        <activity
+            android:name="com.canhub.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
     </application>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-
-    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
-
 </manifest>

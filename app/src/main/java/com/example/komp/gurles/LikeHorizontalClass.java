@@ -2,14 +2,15 @@ package com.example.komp.gurles;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.justblog.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -19,7 +20,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class LikeHorizontalClass extends RecyclerView.Adapter<LikeHorizontalClass.ViewHolder>{
+public class LikeHorizontalClass extends RecyclerView.Adapter<LikeHorizontalClass.ViewHolder> {
     public Context context;
     public List<LikeAdapter> like;
     public List<String> idler;
@@ -27,17 +28,18 @@ public class LikeHorizontalClass extends RecyclerView.Adapter<LikeHorizontalClas
     private FirebaseFirestore firebaseFirestore;
 
 
-    public LikeHorizontalClass(List<LikeAdapter>like){
-        this.like=like;
+    public LikeHorizontalClass(List<LikeAdapter> like) {
+        this.like = like;
 
     }
+
     @NonNull
     @Override
     public LikeHorizontalClass.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_like_yeke_haly,parent,false);
-        context=parent.getContext();
-        dialog=new Dialog(context);
-        firebaseFirestore=FirebaseFirestore.getInstance();
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_like_yeke_haly, parent, false);
+        context = parent.getContext();
+        dialog = new Dialog(context);
+        firebaseFirestore = FirebaseFirestore.getInstance();
         return new LikeHorizontalClass.ViewHolder(view);
     }
 
@@ -45,22 +47,18 @@ public class LikeHorizontalClass extends RecyclerView.Adapter<LikeHorizontalClas
     public void onBindViewHolder(@NonNull final LikeHorizontalClass.ViewHolder holder, final int position) {
 
 
-final long millisecond=like.get(position).getWagt().getTime();
-        final String id=like.get(position).BlogPostId;
+        final long millisecond = like.get(position).getWagt().getTime();
+        final String id = like.get(position).BlogPostId;
 
         firebaseFirestore.collection("ulanyjylar").document(id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                String  picture= task.getResult().getString("surat");
+                String picture = task.getResult().getString("surat");
                 holder.profile(picture);
             }
 
         });
-
-
-
-
 
 
     }
@@ -70,23 +68,21 @@ final long millisecond=like.get(position).getWagt().getTime();
         return like.size();
     }
 
-    public class ViewHolder extends  RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         private View mView;
         private CircleImageView imageView;
 
 
-
-
         public ViewHolder(View itemView) {
             super(itemView);
-            mView=itemView;
+            mView = itemView;
 
-            imageView=(CircleImageView)mView.findViewById(R.id.comment_like_yeke_haly_profil);
+            imageView = (CircleImageView) mView.findViewById(R.id.comment_like_yeke_haly_profil);
 
         }
 
-        public void profile(String surat){
+        public void profile(String surat) {
             Glide.with(context).load(surat).into(imageView);
 
 
