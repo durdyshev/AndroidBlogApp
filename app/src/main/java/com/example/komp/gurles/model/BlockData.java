@@ -1,6 +1,6 @@
-package com.example.komp.gurles;
+package com.example.komp.gurles.model;
 
-public class BlokAdapter {
+public class BlockData {
     private String ady;
     private String profil_surat;
     private String user_id;
@@ -50,9 +50,9 @@ public class BlokAdapter {
 
 
 
-    public BlokAdapter(){}
+    public BlockData(){}
 
-    public BlokAdapter(String id,String ady, String profil_surat, String user_id, String number) {
+    public BlockData(String id, String ady, String profil_surat, String user_id, String number) {
         this.ady = ady;
         this.profil_surat = profil_surat;
         this.user_id = user_id;

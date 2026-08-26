@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.justblog.R;
+import com.example.komp.gurles.model.BlockData;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,12 +29,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class BlokAdapterClass extends RecyclerView.Adapter<BlokAdapterClass.ViewHolder> {
     public Context context;
-    public List<BlokAdapter> gelenlist;
+    public List<BlockData> gelenlist;
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth mAuth;
 
 
-    public BlokAdapterClass(List<BlokAdapter> gelenlist) {
+    public BlokAdapterClass(List<BlockData> gelenlist) {
         this.gelenlist = gelenlist;
     }
 

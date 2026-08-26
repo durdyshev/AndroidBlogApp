@@ -68,47 +68,42 @@ public class EsasyFragment extends Fragment {
         if (mAuth.getCurrentUser() != null) {
 
 
-            firebaseFirestore.collection("/ulanyjylar/" + user_id + "/dostlar/").get().addOnCompleteListener(getActivity(), new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            firebaseFirestore.collection("/ulanyjylar/" + user_id + "/dostlar/").get().addOnCompleteListener(getActivity(), task -> {
 
-                            if (task.isSuccessful()) {
-                                for (DocumentSnapshot documentSnapshot : task.getResult()) {
-                                    String dostlar = documentSnapshot.getString("user_id");
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot documentSnapshot : task.getResult()) {
+                        String dostlar = documentSnapshot.getString("user_id");
 
-                                    dostlist.add(dostlar);
-                                }
-                                dostlist.add(user_id);
-                                if (!dostlist.isEmpty()) {
-                                    for (int i = 0; i < dostlist.size(); i++) {
-                                        Query sirala = firebaseFirestore.collection("/ulanyjylar/" + dostlist.get(i) + "/postlar").orderBy("wagt", Query.Direction.DESCENDING);
-                                        sirala.addSnapshotListener(context, new EventListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                                                if (documentSnapshots != null) {
-                                                    for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
-                                                        if (doc.getType() == DocumentChange.Type.ADDED) {
-                                                            String BlogPostId = doc.getDocument().getId();
-                                                            Postadapter postadapter = doc.getDocument().toObject(Postadapter.class).within(BlogPostId);
+                        dostlist.add(dostlar);
+                    }
+                    dostlist.add(user_id);
+                    if (!dostlist.isEmpty()) {
+                        for (int i = 0; i < dostlist.size(); i++) {
+                            Query sirala = firebaseFirestore.collection("/ulanyjylar/" + dostlist.get(i) + "/postlar").orderBy("wagt", Query.Direction.DESCENDING);
+                            sirala.addSnapshotListener(context, new EventListener<QuerySnapshot>() {
+                                @Override
+                                public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                                    if (documentSnapshots != null) {
+                                        for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
+                                            if (doc.getType() == DocumentChange.Type.ADDED) {
+                                                String BlogPostId = doc.getDocument().getId();
+                                                Postadapter postadapter = doc.getDocument().toObject(Postadapter.class).within(BlogPostId);
 
-                                                            bloglist.add(postadapter);
-                                                            post_adapter_class.notifyDataSetChanged();
-                                                        }
-                                                    }
-                                                }
+                                                bloglist.add(postadapter);
+                                                post_adapter_class.notifyDataSetChanged();
                                             }
-                                        });
-
-
+                                        }
                                     }
                                 }
+                            });
 
 
-                            }
                         }
+                    }
 
 
-                    })
+                }
+            })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {

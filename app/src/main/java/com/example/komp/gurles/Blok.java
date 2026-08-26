@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.justblog.R;
+import com.example.justblog.databinding.ActivityBlokBinding;
+import com.example.komp.gurles.model.BlockData;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
@@ -19,8 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Blok extends AppCompatActivity {
+    private ActivityBlokBinding binding;
     private RecyclerView recyclerView;
-    private List<BlokAdapter> gelenlist;
+    private List<BlockData> gelenlist;
     private BlokAdapterClass blokAdapterClass;
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth mAuth;
@@ -47,7 +50,7 @@ public class Blok extends AppCompatActivity {
 
                 for(DocumentChange doc: documentSnapshots.getDocumentChanges()){
                     if(doc.getType()==DocumentChange.Type.ADDED){
-                        BlokAdapter blokAdapter=doc.getDocument().toObject(BlokAdapter.class);
+                        BlockData blokAdapter=doc.getDocument().toObject(BlockData.class);
                         gelenlist.add(blokAdapter);
                         blokAdapterClass.notifyDataSetChanged();
 
