@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:627576588678:android:8e4b3440f4be800b",
         "android_client_info": {
-          "package_name": "com.example.komp.gurles"
+          "package_name": "com.aura.dating"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "627576588678-4aeuf31vj0svmrkntgvvurvfiaf6t66h.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.komp.gurles",
+            "package_name": "com.aura.dating",
             "certificate_hash": "2565558a7c73bef0a353dda56341b7ae1fc4ebd3"
           }
         },
@@ -26,7 +26,7 @@
           "client_id": "627576588678-k74kctcs4tm0cp4gf1ckn0t700tg9vgs.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.komp.gurles",
+            "package_name": "com.aura.dating",
             "certificate_hash": "827caf130efd6236c197a8f247ea4f027f6b8c85"
           }
         },

@@ -1,222 +1,191 @@
-# Gurles (AndroidBlogApp)
+# Aura — Production-Ready Location-Based Social Discovery & Dating App
 
-**Gurles** (derived from the Turkmen word *gürleş*, meaning "to chat" or "to speak") is a comprehensive native Android social networking and real-time messaging application. Built entirely in Java, the application couples a Firebase cloud backend with Sinch RTC to host user accounts, coordinate social feeds with image-cropping/compressing utilities, synchronize chat channels, and support carrier-grade voice calls.
+[![Platform](https://img.shields.io/badge/Platform-Android-green.svg)](https://www.android.com/)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.22-blue.svg)](https://kotlinlang.org)
+[![Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-blueviolet.svg)](https://developer.android.com/jetpack/compose)
+[![Clean Architecture](https://img.shields.io/badge/Architecture-Clean%20%2B%20MVVM-orange.svg)](https://developer.android.com/topic/architecture)
+[![Backend](https://img.shields.io/badge/Backend-Supabase%20%2B%20PostgreSQL-3ECF8E.svg)](https://supabase.com)
+[![Firebase](https://img.shields.io/badge/Notifications-FCM-FFCA28.svg)](https://firebase.google.com/)
+
+Aura is a modern, location-based social discovery and dating application for adults aged 18+. Built from the ground up with Kotlin, Jetpack Compose, Material 3, Clean Architecture, Hilt, Room, Ktor, Supabase, and Firebase Cloud Messaging.
 
 ---
 
-## 🧭 Architectural Overview & User Flows
+## 🌟 Features
 
-The following diagram illustrates how the core activities, fragments, database storage, and external voice servers coordinate:
+- **2026 Mobile UI & Design System**: Custom Obsidian dark theme, glassmorphism surfaces, smooth spring swipe physics, status indicators, and shimmer skeleton loading.
+- **Adult (18+) Authentication & Onboarding**:
+  - Email signup, login, OTP verification, password recovery, and secure session management via Encrypted DataStore.
+  - Strict 18+ age verification on birthday selection.
+- **Privacy-Preserving Geolocation Discovery**:
+  - Uses Fused Location Provider with battery-efficient throttling (updates on >500m movement or >30 min intervals).
+  - Exact GPS coordinates are never exposed; distances are computed on the backend (Haversine formula) and displayed as approximate strings (`"2.4 km away"`).
+  - Nearby Radar view showing active members without disclosing precise coordinates.
+- **Atomic Swipe & Matching Engine**:
+  - Swipe actions: `PASS`, `LIKE`, and `SUPER_LIKE`.
+  - Stored PostgreSQL procedure `process_swipe` executes atomic reciprocal like detection, creates match and conversation, and triggers push notifications.
+  - Instant Match Celebration modal with quick chat kickoff.
+- **Real-Time Messaging & Chat**:
+  - Real-time chat powered by Supabase Realtime WebSocket channels + offline-first Room database cache.
+  - Supports `TEXT`, `IMAGE` (with automatic WebP compression), and `SYSTEM` message types.
+  - Read receipts, delivered ticks, and typing indicators.
+- **Safety, Moderation & Blocking**:
+  - Instant Block & Unblock: Blocked users disappear from discovery, matches, and chats.
+  - Comprehensive Reporting system (`SPAM`, `FAKE_PROFILE`, `HARASSMENT`, `INAPPROPRIATE_CONTENT`, `SCAM`, `OTHER`).
+  - GDPR-compliant soft account deletion (`soft_delete_user_account`).
+- **Push Notifications (FCM)**:
+  - Background and foreground alerts for `NEW_LIKE`, `NEW_MATCH`, `NEW_MESSAGE`, and `SUPER_LIKE`.
 
-```mermaid
-graph TD
-    subgraph "Client Application (Java / Android SDK)"
-        MainActivity["MainActivity (Host)"]
-        EsasyFragment["EsasyFragment (Feed)"]
-        SmsFragment["SmsFragment (Chats List)"]
-        ProfilFragment["ProfilFragment (User Profile)"]
-        Tazepost["Tazepost (Create Post)"]
-        SmsUgrat["Sms_ugrat (Direct Chat Screen)"]
-        DostGos["DostGos (Add Friend Portal)"]
-        DostYekeHaly["Dost_yeke_haly (Profile Inspector)"]
-    end
+---
 
-    subgraph "Firebase Cloud Suite"
-        FirebaseAuth["Firebase Auth (Login / Register)"]
-        FirestoreDb[("Cloud Firestore")]
-        FCM["Firebase Cloud Messaging"]
-        FirebaseStorage["Firebase Storage"]
-    end
+## 🏗 Technology Stack & Architecture
 
-    subgraph "External VoIP Server"
-        SinchServer["Sinch WebRTC VoIP Gateway"]
-    end
+### Android Client
+| Layer / Component | Technology |
+|---|---|
+| **UI Framework** | Jetpack Compose + Material 3 |
+| **Architecture** | Feature-Based Clean Architecture + MVVM |
+| **Dependency Injection** | Dagger Hilt 2.50 |
+| **Local Database** | Room 2.6.1 + Coroutine Flow |
+| **Networking** | Ktor Client (CIO Engine, WebSockets, JSON Serialization) |
+| **Image Loading** | Coil 2.6.0 |
+| **Location** | Google Play Services Fused Location Provider 21.2.0 |
+| **Storage & Security** | Jetpack DataStore Preferences + AndroidX Security Crypto |
+| **Push Notifications** | Firebase Cloud Messaging (FCM) |
+| **Testing** | JUnit 4, MockK, Kotlinx Coroutines Test, Turbine, Room Testing |
 
-    %% Auth Flow
-    MainActivity -->|"Check Session"| FirebaseAuth
-    
-    %% Fragment switching
-    MainActivity --> EsasyFragment
-    MainActivity --> SmsFragment
-    MainActivity --> ProfilFragment
-    
-    %% User Interactions
-    EsasyFragment -->|"Create Post"| Tazepost
-    Tazepost -->|"Upload Media"| FirebaseStorage
-    Tazepost -->|"Store Documents"| FirestoreDb
-    
-    SmsFragment -->|"Open Chat"| SmsUgrat
-    SmsUgrat -->|"Fetch / Send Messages"| FirestoreDb
-    SmsUgrat -->|"VoIP Audio Call"| SinchServer
-    
-    EsasyFragment -->|"Add Friends Button"| DostGos
-    DostGos -->|"Search Users / Request"| DostYekeHaly
-    DostYekeHaly -->|"Set Friendship Status"| FirestoreDb
-    
-    %% Push Notification Pipeline
-    FirestoreDb -->|"Triggers Notification Collection"| FCM
+### Backend (Supabase + PostgreSQL)
+| Component | Implementation |
+|---|---|
+| **Authentication** | Supabase Auth (GoTrue REST API) |
+| **Database** | PostgreSQL with UUIDs, foreign keys, and indexes |
+| **Security** | Strict Row Level Security (RLS) policies per table |
+| **Storage** | Supabase Storage bucket `profile-photos` and `chat-media` |
+| **Realtime** | Supabase Realtime (WebSocket PostgreSQL CDC channels) |
+| **Procedures** | `process_swipe`, `get_discovery_candidates`, `calculate_distance_km`, `soft_delete_user_account` |
+| **Edge Functions** | `send-push-notification`, `process-swipe`, `moderate-content` |
+
+---
+
+## 🏛 Clean Architecture Layers
+
+```
+UI (Jetpack Compose Screens & Design System)
+       ↓
+ViewModel (StateFlow & UI Events)
+       ↓
+UseCase (Domain Business Logic & Validations)
+       ↓
+Repository Interface (Domain Layer)
+       ↓
+Repository Implementation (Data Layer)
+     ↙                     ↘
+Local DataSource (Room)     Remote DataSource (Ktor / Supabase)
 ```
 
 ---
 
-## 📂 Codebase Translation Guide (Turkmen ➔ English Target)
+## 📁 Repository Directory Structure
 
-To help developers navigate the codebase, this table maps the Turkmen naming conventions used in Java classes, layout names, and database indexes directly to their English functional meanings:
-
-| File / Entity Name | Type | English Explanation / Role |
-| :--- | :--- | :--- |
-| **gürleş / gurles** | App Name / Pkg | "Converse" or "Speak" (the main name of this chat app). |
-| **Esasy** | Directory/Class | **Main / Primary**. `EsasyFragment` is the primary main feed page. |
-| **Täze post / Tazepost** | Class | **New Post**. Activity interface for uploading text and files. |
-| **Pikir üýtget / Pikir_uytget**| Class | **Change opinion / comment**. Form to modify comments on posts. |
-| **Sms ugrat / Sms_ugrat** | Class | **Send Message**. The activity rendering the direct chat bubble room. |
-| **Ýeke haly / yeke haly** | Layout/Class | **Individual state / Single list item layout** (e.g. `recycle_yeke_haly4.xml`). |
-| **Sazlamalar** | Class/Layout | **Settings**. View to custom-edit user profiles, bio descriptions, etc. |
-| **At üýtget / At_uytget** | Class | **Change name**. Inner menu to update display names. |
-| **Dost goş / DostGos** | Class/Layout | **Add Friend**. Main console to lookup and add users. |
-| **Dost gözle / Dost_gozle** | Class | **Search Friend**. Query logic searching user accounts. |
-| **Dost gelen / Dost_gelen** | Class | **Incoming Friend Request**. Sub-fragment listing received requests. |
-| **Obşiy dostlar / Obshydostlar**| Class/Adapter | **Shared Friends / Mutual Friends** (blend of Russian *obshiy* + Turkmen *dostlar*). |
-| **Saklanan** | Class | **Saved**. Bookmarks folder containing favored/saved posts. |
-| **Blok** | Class/Layout | **Block**. Features to black-list profiles and restrict message delivery. |
-| **Surat** | File/Field | **Picture / Image**. Variable used to reference avatar/post image URLs. |
-| **Wagt** | Db Field | **Time / Timestamp**. Databases store the server timestamps using this name. |
-| **Ady** | Db Field | **Name / Screen Name**. Screen name parameter stored in accounts doc. |
-| **Son / Şon** | Db Field | **Last / Active status**. Stores "last active" server timestamp. |
-| **Ýazýar / Yazyar** | Db Field | **Typing**. Transient field set when user is actively writing messages. |
-
----
-
-## 🗄️ Detailed Firestore Database Schema
-
-The app utilizes a NoSQL collection tree in Cloud Firestore. Below are the key data paths:
-
-### 1. `/ulanyjylar` (Users Collection)
-Root document mapping user detail nodes, status tickers, presence logs, and subcollections.
-- **Fields**:
-    - `ady` (String): Clean display name.
-    - `surat` (String): Profile image URL saved in Storage.
-    - `arkafon` (String): Biography banner image URL.
-    - `pikir` (String): User's profile status text/biography.
-    - `status` (String): Active status (`"online"` or `"offline"`).
-    - `son` (Timestamp): Timestamp representation of the user's last action/presence.
-    - `typing` (String): Stores the friend ID user is currently typing message to (else empty).
-    - `token` (String): Direct FCM client registration token.
-
-#### Subcollections under `/ulanyjylar/{userId}/`
-
-#### A. `postlar` (User's Posts)
-Stores individual multimedia entries uploaded by this user.
-- **Fields**:
-    - `informasiya` (String): Body explanation text of the post.
-    - `surat_url` (List<String>): List containing image storage URLs, or single video storage URL.
-    - `tipi` (String): Differentiate rendering components (`"post"`, `"video"`, `"profil"`).
-    - `wagt` (Timestamp): Creation server time.
-    - `user_id` (String): Reference tracking back to the author.
-- **Nested Collections under `postlar`**:
-    - `Like`: Documents created under `/ulanyjylar/{userId}/postlar/{postId}/Like/{likedUserId}` with field `{wagt: Timestamp}` indicating likes.
-    - `Komment`: Collection `/ulanyjylar/{userId}/postlar/{postId}/Komment/` storing:
-        - `sms` (String): Text message of comment.
-        - `userid` (String): User commenting.
-        - `wagt` (Timestamp): Comment timestamp.
-
-#### B. `dostlar` (Friends List)
-- **Document ID**: `{friendUserId}`
-- **Fields**:
-    - `user_id` (String): Friends Uid.
-    - `ady` (String): Friend's display name.
-
-#### C. `dost_ugradylan` & `dost_iberen` (Friend Requests Pipeline)
-Stores outbound pending invitations and incoming requests.
-- **dost_ugradylan** (Pending Sent): `/ulanyjylar/{myId}/dost_ugradylan/{targetId}`
-- **dost_iberen** (Pending Received): `/ulanyjylar/{targetId}/dost_iberen/{myId}`
-
-#### D. `hatlar` (Message Storage Root)
-Messages are written in two places so both users can paginate messages natively.
-- **Path**: `/ulanyjylar/{myId}/hatlar/{friendId}/hat/{messageDocId}`
-- **Fields**:
-    - `message` (String): Text string, Storage image URL, or Storage audio local path.
-    - `type` (String): Bubble renderer selector (`"text"`, `"surat"`, `"audio"`).
-    - `from` (String): Sender ID.
-    - `seen` (Boolean): Read check flag.
-    - `time` (Timestamp): Server time.
-    - `blogpost` (String): Non-empty if post share event occurred.
-
-#### E. `chat` (Active Chats Index)
-Serves to build the central Chats List UI (`SmsFragment`) representing conversation history.
-- **Path**: `/ulanyjylar/{myId}/chat/{friendId}`
-- **Fields**:
-    - `time` (Timestamp): Time of last conversation event.
-    - `from` (String): Sender origin.
-
-#### F. `blok` & `saklanan` (Bookmarks & Blocks)
-- **blok**: `/ulanyjylar/{myId}/blok/{blockedUserId}` -> Prevents contacts.
-- **saklanan**: `/ulanyjylar/{myId}/saklanan/{savedPostId}` -> Stores duplicate posts parameters locally.
-
----
-
-## 📞 VoIP Integration Guide (Sinch RTC)
-
-Real-time audio-calling is powered by Sinch. Clients request and host call clients using WebRTC protocol handshakes.
-
-### Credentials Setup
-Locate the VoIP registration configurations inside `Sms_ugrat.java` and `SinchClass.java`. Ensure these match your active Sinch app registry:
-
-```java
-// Located inside local calling instances:
-sinchClient = Sinch.getSinchClientBuilder()
-    .context(this)
-    .applicationKey("YOUR_SINCH_APP_KEY")
-    .applicationSecret("YOUR_SINCH_APP_SECRET")
-    .environmentHost("clientapi.sinch.com") // Target gateway cluster
-    .userId(user_id)
-    .build();
-
-sinchClient.setSupportCalling(true);
-sinchClient.startListeningOnActiveConnection();
-sinchClient.start();
+```
+AndroidBlogApp/
+├── app/
+│   ├── build.gradle
+│   └── src/
+│       ├── main/
+│       │   ├── AndroidManifest.xml
+│       │   └── java/com/aura/dating/
+│       │       ├── AuraApplication.kt
+│       │       ├── MainActivity.kt
+│       │       ├── core/
+│       │       │   ├── common/ (Result, AppError, DateTimeUtils, DistanceUtils, ImageCompressor, Dispatchers)
+│       │       │   ├── designsystem/ (Theme, Color, Type, Dimens, Components)
+│       │       │   ├── navigation/ (Screen, AuraNavHost)
+│       │       │   ├── network/ (SupabaseClientProvider, NetworkMonitor)
+│       │       │   ├── database/ (AuraDatabase, DAOs, Entities, Converters)
+│       │       │   ├── location/ (FusedLocationProvider)
+│       │       │   ├── notifications/ (AuraFirebaseMessagingService, NotificationHandler)
+│       │       │   └── security/ (DataStoreTokenStorage)
+│       │       ├── data/ (Auth, Profile, Discovery, Matching, Chat, Notifications, Moderation)
+│       │       ├── domain/ (Models, Repository Interfaces, UseCases)
+│       │       ├── feature/
+│       │       │   ├── onboarding/ (Splash, Welcome, LocationPermission)
+│       │       │   ├── auth/ (Login, Register, Verification, ForgotPassword)
+│       │       │   ├── profile_creation/ (CreateProfile, AddPhotos, SelectInterests, DatingPreferences)
+│       │       │   ├── home/ (MainScreen scaffold with floating bottom bar)
+│       │       │   ├── discover/ (DiscoverScreen, FilterSheet, CelebrationDialog, NearbyMapScreen)
+│       │       │   ├── profile/ (ProfileScreen, UserProfileDetailScreen, EditProfile, EditPhotos, EditInterests)
+│       │       │   ├── matches/ (MatchesScreen)
+│       │       │   ├── chat/ (ConversationScreen)
+│       │       │   ├── notifications/ (NotificationsScreen)
+│       │       │   └── settings/ (Settings, Privacy, NotificationSettings, BlockedUsers, AccountSettings)
+│       │       └── di/ (AppModule, DatabaseModule)
+│       └── test/ (Comprehensive Unit & Repository Tests)
+├── supabase/
+│   ├── migrations/
+│   │   ├── 01_schema_tables.sql
+│   │   ├── 02_indexes_and_constraints.sql
+│   │   ├── 03_functions_and_triggers.sql
+│   │   ├── 04_rls_policies.sql
+│   │   └── 05_admin_and_moderation.sql
+│   └── functions/
+│       ├── send-push-notification/index.ts
+│       ├── process-swipe/index.ts
+│       └── moderate-content/index.ts
+├── local.properties.example
+└── README.md
 ```
 
-*Note: Ensure permissions for microphone, recording audio, and phone calls (`Manifest.permission.RECORD_AUDIO`, `Manifest.permission.CALL_PHONE`) are requested at runtime before initiating calls.*
+---
+
+## 🗄 Database & Supabase Setup
+
+1. **Create a Supabase Project**: Go to [Supabase](https://supabase.com) and create a new project.
+2. **Execute Migrations**:
+   Run the SQL scripts located in `supabase/migrations/` sequentially in your Supabase SQL Editor:
+   - `01_schema_tables.sql` (Creates all tables and initial interests catalog)
+   - `02_indexes_and_constraints.sql` (Creates performance indexes)
+   - `03_functions_and_triggers.sql` (Creates `calculate_distance_km`, `process_swipe`, `get_discovery_candidates`, `unmatch_user`)
+   - `04_rls_policies.sql` (Enables Row Level Security and creates Storage bucket policies)
+   - `05_admin_and_moderation.sql` (Sets up moderation views and soft-delete procedure)
+3. **Storage Buckets**:
+   - Bucket `profile-photos` is created automatically as public with RLS folder restrictions `(storage.foldername(name))[1] = auth.uid()::text`.
+   - Bucket `chat-media` is created for chat attachments.
 
 ---
 
-## ⚙️ Initial Project Configuration & Installation
+## ⚙️ Environment Configuration
 
-Follow this checklist to setup the project landscape locally:
-
-### 1. Requirements
-- **JDK 17** configured inside development workspace.
-- **Android Studio Giraffe** (or newer version).
-- **Target SDK 34** and **Minimum SDK 23** configurations.
-
-### 2. Configure dependencies in Gradle
-Android dependencies are defined under `app/build.gradle`. Key components include the Firebase BOM platform alongside media compressors:
-
-```groovy
-dependencies {
-    // Firebase Bill of Materials (BOM)
-    implementation platform('com.google.firebase:firebase-bom:33.2.0')
-    implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.firebase:firebase-storage'
-    implementation 'com.google.firebase:firebase-firestore'
-    implementation 'com.google.firebase:firebase-database'
-    implementation 'com.google.firebase:firebase-messaging'
-
-    // Media & UI Tools
-    implementation 'com.github.bumptech.glide:glide:4.15.1'
-    implementation 'id.zelory:compressor:3.0.1'
-    implementation 'com.vanniktech:android-image-cropper:4.6.0'
-    implementation(name: 'sinch-android-rtc', version: '+', ext: 'aar')
-}
-```
-
-### 3. Setup Project Services
-1. Download a custom `google-services.json` configuring Firebase services.
-2. Put `google-services.json` into: `app/google-services.json`.
-3. Put the `sinch-android-rtc.aar` library binary under the `app/libs/` directory.
-4. Execute Gradle sync.
-5. Compile and install local developer builds:
-   ```powershell
-   ./gradlew assembleDebug
+1. Copy `local.properties.example` to `local.properties`:
+   ```properties
+   sdk.dir=C\:\\Users\\your_user\\AppData\\Local\\Android\\Sdk
+   SUPABASE_URL="https://your-project-ref.supabase.co"
+   SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+   GOOGLE_MAPS_API_KEY="AIzaSy..."
    ```
+2. Place your `google-services.json` from Firebase console into `app/google-services.json`.
+
+---
+
+## 🚀 Build & Test Instructions
+
+### Running Tests
+Execute unit tests across domain UseCases, repositories, and ViewModels:
+```bash
+./gradlew testDebugUnitTest
+```
+
+### Assembling the Debug APK
+```bash
+./gradlew assembleDebug
+```
+
+---
+
+## 🛡 Security & Privacy Rules
+
+- Exact coordinates are never exposed in profile responses.
+- Users can only read conversations and messages where they are participants.
+- Passwords and sensitive credentials are never stored locally.
+- Authenticated JWT tokens are stored in secure Android DataStore.
+- Image uploads are compressed to WebP on the client before upload to prevent server storage bloat.

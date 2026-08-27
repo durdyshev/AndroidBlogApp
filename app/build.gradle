@@ -1,17 +1,45 @@
-apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
+import java.util.Properties
+import java.io.FileInputStream
+
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'org.jetbrains.kotlin.plugin.compose'
+    id 'com.google.devtools.ksp'
+    id 'com.google.dagger.hilt.android'
+    id 'com.google.gms.google-services'
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localProperties.load(new FileInputStream(localPropertiesFile))
+}
 
 android {
+    namespace 'com.aura.dating'
+    compileSdk 35
 
-    namespace 'com.example.justblog'
-    compileSdk 34
     defaultConfig {
-        applicationId "com.example.komp.gurles"
-        minSdkVersion 23 // Updated to a higher min SDK version for better compatibility
-        targetSdkVersion 34 // Updated to the latest target SDK version
+        applicationId "com.aura.dating"
+        minSdk 26
+        targetSdk 35
         versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner" // Updated to AndroidX
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+
+        def supabaseUrl = localProperties.getProperty('SUPABASE_URL', '"https://xyzcompany.supabase.co"')
+        def supabaseKey = localProperties.getProperty('SUPABASE_ANON_KEY', '"public-anon-key-placeholder"')
+        def mapsKey = localProperties.getProperty('GOOGLE_MAPS_API_KEY', '"maps-api-key-placeholder"')
+
+        buildConfigField "String", "SUPABASE_URL", supabaseUrl.startsWith('"') ? supabaseUrl : "\"${supabaseUrl}\""
+        buildConfigField "String", "SUPABASE_ANON_KEY", supabaseKey.startsWith('"') ? supabaseKey : "\"${supabaseKey}\""
+        buildConfigField "String", "GOOGLE_MAPS_API_KEY", mapsKey.startsWith('"') ? mapsKey : "\"${mapsKey}\""
     }
 
     buildTypes {
@@ -19,51 +47,103 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            debuggable true
+        }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+        freeCompilerArgs += [
+            "-opt-in=kotlin.RequiresOptIn",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+        ]
+    }
+
     buildFeatures {
-        viewBinding true
+        compose true
+        buildConfig true
+    }
+
+    packaging {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += 'META-INF/INDEX.LIST'
+            excludes += 'META-INF/io.netty.versions.properties'
+        }
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // AndroidX Core & Lifecycle
+    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.7'
+    implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.8.7'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7'
+    implementation 'androidx.activity:activity-compose:1.9.3'
 
-    implementation 'androidx.fragment:fragment:1.8.2'
-    implementation 'androidx.viewpager2:viewpager2:1.1.0' // Optional, if you use ViewPager2
+    // Compose BoM & UI
+    def composeBom = platform('androidx.compose:compose-bom:2025.01.00')
+    implementation composeBom
+    androidTestImplementation composeBom
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-graphics'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.compose.material:material-icons-extended'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
 
-    // AndroidX dependencies replacing the old support libraries
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'com.google.android.material:material:1.12.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    // if still needed, otherwise migrate fully to AndroidX
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.gridlayout:gridlayout:1.0.0'
+    // Navigation Compose
+    implementation 'androidx.navigation:navigation-compose:2.8.5'
 
-    // Firebase dependencies using the Firebase BoM for easier version management
-    implementation platform('com.google.firebase:firebase-bom:33.2.0')
-    // Update BOM to the latest version
-    implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.firebase:firebase-storage'
-    implementation 'com.google.firebase:firebase-firestore'
-    implementation 'com.google.firebase:firebase-database'
+    // Hilt Dependency Injection
+    implementation 'com.google.dagger:hilt-android:2.54'
+    ksp 'com.google.dagger:hilt-compiler:2.54'
+    implementation 'androidx.hilt:hilt-navigation-compose:1.2.0'
+
+    // Room Database
+    def room_version = "2.6.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    ksp "androidx.room:room-compiler:$room_version"
+
+    // Ktor Client (Android Engine)
+    implementation "io.ktor:ktor-client-core:3.0.3"
+    implementation "io.ktor:ktor-client-android:3.0.3"
+    implementation "io.ktor:ktor-client-content-negotiation:3.0.3"
+    implementation "io.ktor:ktor-serialization-kotlinx-json:3.0.3"
+    implementation "io.ktor:ktor-client-logging:3.0.3"
+    implementation "io.ktor:ktor-client-websockets:3.0.2"
+
+    // Kotlinx Serialization & Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0'
+
+    // DataStore & Security
+    implementation 'androidx.datastore:datastore-preferences:1.1.1'
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+
+    // Image Loading (Coil)
+    implementation 'io.coil-kt:coil-compose:2.7.0'
+
+    // Fused Location Provider
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
+
+    // Firebase (FCM)
+    implementation platform('com.google.firebase:firebase-bom:33.7.0')
     implementation 'com.google.firebase:firebase-messaging'
-    implementation 'com.firebaseui:firebase-ui-database:7.2.0'
 
-    // Third-party libraries updated to their latest versions
-    implementation 'de.hdodenhof:circleimageview:3.1.0'
-    implementation 'com.github.bumptech.glide:glide:4.15.1'
-    implementation 'id.zelory:compressor:3.0.1'
-    implementation(name: 'sinch-android-rtc', version: '+', ext: 'aar')
-    implementation 'com.google.firebase:firebase-messaging:24.0.1' // Or the latest version
-    implementation("com.vanniktech:android-image-cropper:4.6.0")
-    implementation 'id.zelory:compressor:3.0.1'
-
-    // Annotation processor for Glide
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'
-
-    // AndroidX testing dependencies
+    // Unit Testing
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    testImplementation 'io.mockk:mockk:1.13.13'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0'
 }

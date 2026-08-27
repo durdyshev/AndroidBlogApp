@@ -1,0 +1,14 @@
+## ===================================================
+## Aura Dating & Social Discovery - Local Properties Example
+## ===================================================
+## Copy this file to local.properties and replace the placeholders
+
+# Android SDK Path
+sdk.dir=C\:\\Users\\your_username\\AppData\\Local\\Android\\Sdk
+
+# Supabase Credentials (from your Supabase Project Settings -> API)
+SUPABASE_URL="https://your-project-id.supabase.co"
+SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.your_anon_key_here"
+
+# Google Maps API Key (Optional, for Radar & Maps)
+GOOGLE_MAPS_API_KEY="AIzaSyYourGoogleMapsApiKeyHere"
