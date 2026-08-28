@@ -227,7 +227,10 @@ fun AuraNavHost(
             val userId = backStackEntry.arguments?.getString("userId") ?: ""
             UserProfileDetailScreen(
                 userId = userId,
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToConversation = { convId, name, photoUrl ->
+                    navController.navigate(Screen.Conversation.createRoute(convId, name, photoUrl))
+                }
             )
         }
 

@@ -15,6 +15,7 @@ import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.request.url
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.serialization.SerialName
@@ -55,6 +56,16 @@ data class PhotoShortDto(
 )
 
 @Serializable
+data class ConversationIdLookupDto(
+    val id: String
+)
+
+@Serializable
+data class ConversationParticipantLookupDto(
+    @SerialName("conversation_id") val conversationId: String
+)
+
+@Serializable
 data class MessageSupabaseDto(
     val id: String,
     @SerialName("conversation_id") val conversationId: String,
@@ -77,6 +88,7 @@ data class SoftDeleteMessageRequest(
 )
 
 interface ChatRemoteDataSource {
+    suspend fun resolveConversationId(rawId: String): Result<String>
     suspend fun getConversations(currentUserId: String): Result<List<Conversation>>
     suspend fun getMessages(conversationId: String, limit: Int = 50): Result<List<Message>>
     suspend fun sendMessage(
@@ -96,6 +108,72 @@ class SupabaseChatRemoteDataSource @Inject constructor(
     private val clientProvider: SupabaseClientProvider
 ) : ChatRemoteDataSource {
 
+    override suspend fun resolveConversationId(rawId: String): Result<String> {
+        if (rawId.isBlank()) return Result.Success(rawId)
+
+        // 1. Direct query: check if rawId is a valid conversation ID or match ID
+        val directLookup = clientProvider.safeApiCall(
+            block = { client, headers ->
+                client.get {
+                    url("${clientProvider.baseUrl}/rest/v1/conversations?or=(id.eq.$rawId,match_id.eq.$rawId)&select=id&limit=1")
+                    headers(this)
+                }
+            },
+            parser = { response ->
+                val list = response.body<List<ConversationIdLookupDto>>()
+                list.firstOrNull()?.id
+            }
+        )
+
+        if (directLookup is Result.Success && !directLookup.data.isNullOrBlank()) {
+            return Result.Success(directLookup.data)
+        }
+
+        // 2. Participant query: check if rawId is a participant user ID sharing a conversation
+        val participantLookup = clientProvider.safeApiCall(
+            block = { client, headers ->
+                client.get {
+                    url("${clientProvider.baseUrl}/rest/v1/conversation_participants?user_id=eq.$rawId&select=conversation_id&limit=1")
+                    headers(this)
+                }
+            },
+            parser = { response ->
+                val list = response.body<List<ConversationParticipantLookupDto>>()
+                list.firstOrNull()?.conversationId
+            }
+        )
+
+        if (participantLookup is Result.Success && !participantLookup.data.isNullOrBlank()) {
+            return Result.Success(participantLookup.data)
+        }
+
+        // 3. RPC call: rawId is a target partner user ID, get or create conversation
+        val rpcLookup = clientProvider.safeApiCall(
+            block = { client, headers ->
+                client.post {
+                    url("${clientProvider.baseUrl}/rest/v1/rpc/get_or_create_conversation")
+                    contentType(ContentType.Application.Json)
+                    headers(this)
+                    setBody(mapOf("p_target_user_id" to rawId))
+                }
+            },
+            parser = { response ->
+                response.bodyAsText().trim().removeSurrounding("\"")
+            }
+        )
+
+        if (rpcLookup is Result.Success && rpcLookup.data.isNotBlank()) {
+            return Result.Success(rpcLookup.data)
+        }
+
+        return Result.Success(rawId)
+    }
+
+    private suspend fun resolveActualConversationId(rawId: String): String {
+        val result = resolveConversationId(rawId)
+        return if (result is Result.Success) result.data else rawId
+    }
+
     override suspend fun getConversations(currentUserId: String): Result<List<Conversation>> {
         return clientProvider.safeApiCall(
             block = { client, headers ->
@@ -108,10 +186,9 @@ class SupabaseChatRemoteDataSource @Inject constructor(
                 val list = response.body<List<ConversationSupabaseDto>>()
                 list.mapNotNull { convDto ->
                     val otherParticipant = convDto.participants.firstOrNull { it.userId != currentUserId }
+                    val participantId = otherParticipant?.userId ?: ""
                     val profile = otherParticipant?.profile
-
-                    val participantId = profile?.id ?: otherParticipant?.userId ?: return@mapNotNull null
-                    val participantName = profile?.displayName ?: "Match"
+                    val participantName = profile?.displayName ?: "User"
                     val primaryPhoto = profile?.photos?.firstOrNull { it.isPrimary }?.photoUrl
                         ?: profile?.photos?.firstOrNull()?.photoUrl
 
@@ -139,10 +216,11 @@ class SupabaseChatRemoteDataSource @Inject constructor(
         conversationId: String,
         limit: Int
     ): Result<List<Message>> {
+        val targetConvId = resolveActualConversationId(conversationId)
         return clientProvider.safeApiCall(
             block = { client, headers ->
                 client.get {
-                    url("${clientProvider.baseUrl}/rest/v1/messages?conversation_id=eq.$conversationId&deleted_at=is.null&order=created_at.asc&limit=$limit")
+                    url("${clientProvider.baseUrl}/rest/v1/messages?conversation_id=eq.$targetConvId&deleted_at=is.null&order=created_at.asc&limit=$limit")
                     headers(this)
                 }
             },
@@ -171,10 +249,11 @@ class SupabaseChatRemoteDataSource @Inject constructor(
         messageType: MessageType,
         mediaUrl: String?
     ): Result<Message> {
+        val targetConvId = resolveActualConversationId(conversationId)
         val messageId = UUID.randomUUID().toString()
         val bodyMap = mapOf(
             "id" to messageId,
-            "conversation_id" to conversationId,
+            "conversation_id" to targetConvId,
             "sender_id" to senderId,
             "content" to content,
             "message_type" to messageType.name,
@@ -200,7 +279,7 @@ class SupabaseChatRemoteDataSource @Inject constructor(
                 clientProvider.safeApiCall(
                     block = { client, headers ->
                         client.patch {
-                            url("${clientProvider.baseUrl}/rest/v1/conversations?id=eq.$conversationId")
+                            url("${clientProvider.baseUrl}/rest/v1/conversations?id=eq.$targetConvId")
                             contentType(ContentType.Application.Json)
                             headers(this)
                             setBody(

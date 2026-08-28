@@ -5,14 +5,20 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import androidx.core.content.getSystemService
+import com.aura.dating.core.notifications.GlobalNotificationManager
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
 @HiltAndroidApp
 class AuraApplication : Application() {
 
+    @Inject
+    lateinit var globalNotificationManager: GlobalNotificationManager
+
     override fun onCreate() {
         super.onCreate()
         createNotificationChannels()
+        globalNotificationManager.startListening()
     }
 
     private fun createNotificationChannels() {

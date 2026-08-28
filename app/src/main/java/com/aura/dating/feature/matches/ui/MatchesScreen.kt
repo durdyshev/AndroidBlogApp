@@ -103,19 +103,16 @@ fun MatchesScreen(
                                 ) {
                                     items(uiState.matches, key = { it.id }) { match ->
                                         val existingConv = uiState.conversations.find { it.matchId == match.id || it.participantUserId == match.matchedUserId }
+                                        val convId = existingConv?.id ?: match.id
                                         Column(
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             modifier = Modifier
                                                 .clickable {
-                                                    if (existingConv != null) {
-                                                        onNavigateToConversation(
-                                                            existingConv.id,
-                                                            match.matchedUserName,
-                                                            match.matchedUserPhotoUrl
-                                                        )
-                                                    } else {
-                                                        onNavigateToUserProfile(match.matchedUserId)
-                                                    }
+                                                    onNavigateToConversation(
+                                                        convId,
+                                                        match.matchedUserName,
+                                                        match.matchedUserPhotoUrl
+                                                    )
                                                 }
                                                 .padding(vertical = Dimens.Spacing4)
                                         ) {

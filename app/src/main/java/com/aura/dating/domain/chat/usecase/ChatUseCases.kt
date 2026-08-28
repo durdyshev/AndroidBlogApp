@@ -83,3 +83,11 @@ class DeleteMessageUseCase @Inject constructor(
         return chatRepository.deleteMessage(messageId)
     }
 }
+
+class ResolveConversationIdUseCase @Inject constructor(
+    private val chatRepository: ChatRepository
+) {
+    suspend operator fun invoke(rawId: String): Result<String> {
+        return chatRepository.resolveConversationId(rawId)
+    }
+}

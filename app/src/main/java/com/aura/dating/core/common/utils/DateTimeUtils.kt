@@ -1,9 +1,11 @@
 package com.aura.dating.core.common.utils
 
 import java.text.SimpleDateFormat
+import java.time.Instant
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 
 object DateTimeUtils {
@@ -20,17 +22,33 @@ object DateTimeUtils {
     }
 
     fun parseIsoDate(isoString: String): Long {
+        if (isoString.isBlank()) return System.currentTimeMillis()
         return try {
-            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
-            format.parse(isoString.take(19))?.time ?: System.currentTimeMillis()
-        } catch (e: Exception) {
+            try {
+                Instant.parse(isoString).toEpochMilli()
+            } catch (_: Exception) {
+                val cleanIso = if (!isoString.endsWith("Z") && !isoString.contains("+")) {
+                    "${isoString.take(19)}Z"
+                } else {
+                    isoString
+                }
+                try {
+                    Instant.parse(cleanIso).toEpochMilli()
+                } catch (_: Exception) {
+                    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).apply {
+                        timeZone = TimeZone.getTimeZone("UTC")
+                    }
+                    format.parse(isoString.take(19))?.time ?: System.currentTimeMillis()
+                }
+            }
+        } catch (_: Exception) {
             System.currentTimeMillis()
         }
     }
 
     fun formatRelativeTime(timeMillis: Long): String {
         val now = System.currentTimeMillis()
-        val diff = now - timeMillis
+        val diff = (now - timeMillis).coerceAtLeast(0)
 
         return when {
             diff < TimeUnit.MINUTES.toMillis(1) -> "Just now"
@@ -38,19 +56,19 @@ object DateTimeUtils {
             diff < TimeUnit.DAYS.toMillis(1) -> "${TimeUnit.MILLISECONDS.toHours(diff)}h ago"
             diff < TimeUnit.DAYS.toMillis(7) -> "${TimeUnit.MILLISECONDS.toDays(diff)}d ago"
             else -> {
-                val format = SimpleDateFormat("MMM d", Locale.getDefault())
+                val format = SimpleDateFormat("d MMM, HH:mm", Locale.getDefault())
                 format.format(Date(timeMillis))
             }
         }
     }
 
     fun formatMessageTime(timeMillis: Long): String {
-        val format = SimpleDateFormat("h:mm a", Locale.getDefault())
+        val format = SimpleDateFormat("HH:mm", Locale.getDefault())
         return format.format(Date(timeMillis))
     }
 
     fun formatMatchedTime(timeMillis: Long): String {
-        val format = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault())
+        val format = SimpleDateFormat("d MMMM yyyy", Locale.getDefault())
         return format.format(Date(timeMillis))
     }
 }

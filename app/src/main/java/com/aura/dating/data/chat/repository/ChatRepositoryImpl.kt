@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,6 +32,10 @@ class ChatRepositoryImpl @Inject constructor(
     private val scope = CoroutineScope(Dispatchers.IO)
 
     override val conversationsFlow: Flow<List<Conversation>> = localDataSource.conversationsFlow
+
+    override suspend fun resolveConversationId(rawId: String): Result<String> {
+        return remoteDataSource.resolveConversationId(rawId)
+    }
 
     override fun getMessagesFlow(conversationId: String): Flow<List<Message>> {
         // Connect and observe incoming realtime messages, saving them locally into Room
@@ -99,6 +104,9 @@ class ChatRepositoryImpl @Inject constructor(
         if (result is Result.Success) {
             localDataSource.deleteMessage(tempId)
             localDataSource.saveMessage(result.data)
+            scope.launch {
+                realtimeManager.emitMessage(conversationId, result.data)
+            }
             return result
         } else {
             localDataSource.updateMessageStatus(tempId, MessageStatus.FAILED)
@@ -130,6 +138,10 @@ class ChatRepositoryImpl @Inject constructor(
         if (result is Result.Success) {
             localDataSource.saveMessage(result.data)
             localDataSource.updateLastMessage(conversationId, "📷 Photo", result.data.createdAtMillis, senderId)
+            scope.launch {
+                realtimeManager.emitMessage(conversationId, result.data)
+            }
+            return result
         }
         return result
     }

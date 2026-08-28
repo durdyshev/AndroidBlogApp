@@ -19,11 +19,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Verified
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -70,6 +73,7 @@ import com.aura.dating.feature.settings.ui.ReportUserSheet
 fun UserProfileDetailScreen(
     userId: String,
     onNavigateBack: () -> Unit,
+    onNavigateToConversation: ((String, String, String?) -> Unit)? = null,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -272,6 +276,40 @@ fun UserProfileDetailScreen(
                                 isSelected = true
                             )
                         }
+                    }
+                }
+
+                if (onNavigateToConversation != null && candidate != null) {
+                    Spacer(modifier = Modifier.height(Dimens.Spacing24))
+                    Button(
+                        onClick = {
+                            onNavigateToConversation(
+                                candidate.id,
+                                candidate.displayName,
+                                candidate.photos.firstOrNull()?.photoUrl
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(54.dp),
+                        shape = RoundedCornerShape(Dimens.RadiusPill),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = AuraRose
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ChatBubble,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(Dimens.Spacing8))
+                        Text(
+                            text = "Send Message",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
                     }
                 }
 

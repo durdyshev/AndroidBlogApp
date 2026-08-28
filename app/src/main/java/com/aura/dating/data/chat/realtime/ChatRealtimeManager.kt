@@ -59,7 +59,17 @@ class ChatRealtimeManager @Inject constructor(
     suspend fun emitTyping(conversationId: String, isTyping: Boolean) {
         val myId = tokenStorage.getUserId() ?: return
         val session = activeSessions[conversationId] ?: return
-        val broadcastMsg = """{"topic":"realtime:typing:$conversationId","event":"broadcast","payload":{"type":"broadcast","event":"typing","payload":{"user_id":"$myId","is_typing":$isTyping}},"ref":"${System.currentTimeMillis()}"}"""
+        val broadcastMsg = """{"topic":"realtime:chat:$conversationId","event":"broadcast","payload":{"type":"broadcast","event":"typing","payload":{"user_id":"$myId","is_typing":$isTyping}},"ref":"${System.currentTimeMillis()}"}"""
+        try {
+            session.send(Frame.Text(broadcastMsg))
+        } catch (_: Exception) {
+            // Ignore socket send errors
+        }
+    }
+
+    suspend fun emitMessage(conversationId: String, message: Message) {
+        val session = activeSessions[conversationId] ?: return
+        val broadcastMsg = """{"topic":"realtime:chat:$conversationId","event":"broadcast","payload":{"type":"broadcast","event":"new_message","payload":{"id":"${message.id}","conversation_id":"${message.conversationId}","sender_id":"${message.senderId}","content":"${message.content.replace("\"", "\\\"")}","message_type":"${message.messageType.name}","media_url":${message.mediaUrl?.let { "\"$it\"" } ?: "null"}}},"ref":"${System.currentTimeMillis()}"}"""
         try {
             session.send(Frame.Text(broadcastMsg))
         } catch (_: Exception) {
@@ -72,6 +82,7 @@ class ChatRealtimeManager @Inject constructor(
 
         val job = scope.launch {
             try {
+                val token = tokenStorage.getAccessToken() ?: clientProvider.anonKey
                 val wsUrl = clientProvider.baseUrl
                     .replace("https://", "wss://")
                     .replace("http://", "ws://") +
@@ -80,13 +91,13 @@ class ChatRealtimeManager @Inject constructor(
                 clientProvider.httpClient.webSocket(urlString = wsUrl) {
                     activeSessions[conversationId] = this
 
-                    // 1. Subscribe to postgres_changes for messages in this conversation
-                    val joinMessages = """{"topic":"realtime:public:messages:conversation_id=eq.$conversationId","event":"phx_join","payload":{},"ref":"1"}"""
-                    send(Frame.Text(joinMessages))
+                    // 1. Subscribe to chat broadcast topic (for instant message & typing broadcast)
+                    val joinChat = """{"topic":"realtime:chat:$conversationId","event":"phx_join","payload":{"access_token":"$token","config":{"broadcast":{"self":false}}},"ref":"1"}"""
+                    send(Frame.Text(joinChat))
 
-                    // 2. Subscribe to typing broadcast topic
-                    val joinTyping = """{"topic":"realtime:typing:$conversationId","event":"phx_join","payload":{"config":{"broadcast":{"self":false}}},"ref":"2"}"""
-                    send(Frame.Text(joinTyping))
+                    // 2. Subscribe to postgres_changes for messages table
+                    val joinMessages = """{"topic":"realtime:public:messages:conversation_id=eq.$conversationId","event":"phx_join","payload":{"access_token":"$token"},"ref":"2"}"""
+                    send(Frame.Text(joinMessages))
 
                     while (isActive) {
                         val incoming = incoming.receive()
@@ -111,7 +122,7 @@ class ChatRealtimeManager @Inject constructor(
             val event = jsonObject["event"]?.jsonPrimitive?.content
             val payload = jsonObject["payload"]?.jsonObject ?: return
 
-            // Handle typing broadcast event
+            // Handle broadcast events
             if (event == "broadcast") {
                 val broadcastEvent = payload["event"]?.jsonPrimitive?.content
                 if (broadcastEvent == "typing") {
@@ -121,13 +132,38 @@ class ChatRealtimeManager @Inject constructor(
 
                     scope.launch {
                         val myId = tokenStorage.getUserId()
-                        // Only propagate typing status if it originated from partner (not self)
                         if (senderId != null && senderId != myId) {
                             typingFlows[conversationId]?.emit(isTyping)
                         }
                     }
+                    return
+                } else if (broadcastEvent == "new_message") {
+                    val innerPayload = payload["payload"]?.jsonObject ?: return
+                    val id = innerPayload["id"]?.jsonPrimitive?.content ?: return
+                    val convId = innerPayload["conversation_id"]?.jsonPrimitive?.content ?: conversationId
+                    val senderId = innerPayload["sender_id"]?.jsonPrimitive?.content ?: return
+                    val content = innerPayload["content"]?.jsonPrimitive?.content ?: ""
+                    val messageTypeStr = innerPayload["message_type"]?.jsonPrimitive?.content ?: "TEXT"
+                    val mediaUrl = innerPayload["media_url"]?.jsonPrimitive?.content
+
+                    scope.launch {
+                        val myId = tokenStorage.getUserId()
+                        if (senderId != myId) {
+                            val msg = Message(
+                                id = id,
+                                conversationId = convId,
+                                senderId = senderId,
+                                content = content,
+                                messageType = try { MessageType.valueOf(messageTypeStr) } catch (_: Exception) { MessageType.TEXT },
+                                mediaUrl = mediaUrl,
+                                status = MessageStatus.DELIVERED,
+                                createdAtMillis = System.currentTimeMillis()
+                            )
+                            messageFlows[conversationId]?.emit(msg)
+                        }
+                    }
+                    return
                 }
-                return
             }
 
             // Handle new postgres record message
@@ -140,19 +176,21 @@ class ChatRealtimeManager @Inject constructor(
             val mediaUrl = record["media_url"]?.jsonPrimitive?.content
             val createdAt = record["created_at"]?.jsonPrimitive?.content
 
-            val msg = Message(
-                id = id,
-                conversationId = convId,
-                senderId = senderId,
-                content = content,
-                messageType = try { MessageType.valueOf(messageTypeStr) } catch (_: Exception) { MessageType.TEXT },
-                mediaUrl = mediaUrl,
-                status = MessageStatus.DELIVERED,
-                createdAtMillis = createdAt?.let { DateTimeUtils.parseIsoDate(it) } ?: System.currentTimeMillis()
-            )
-
             scope.launch {
-                messageFlows[conversationId]?.emit(msg)
+                val myId = tokenStorage.getUserId()
+                if (senderId != myId) {
+                    val msg = Message(
+                        id = id,
+                        conversationId = convId,
+                        senderId = senderId,
+                        content = content,
+                        messageType = try { MessageType.valueOf(messageTypeStr) } catch (_: Exception) { MessageType.TEXT },
+                        mediaUrl = mediaUrl,
+                        status = MessageStatus.DELIVERED,
+                        createdAtMillis = createdAt?.let { DateTimeUtils.parseIsoDate(it) } ?: System.currentTimeMillis()
+                    )
+                    messageFlows[conversationId]?.emit(msg)
+                }
             }
         } catch (_: Exception) {
             // Ignore parse errors

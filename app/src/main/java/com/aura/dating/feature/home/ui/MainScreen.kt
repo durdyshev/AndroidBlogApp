@@ -51,7 +51,7 @@ fun MainScreen(
                     myProfile = profileUiState.myProfile
                 )
             }
-            AuraTab.MATCHES, AuraTab.CHATS -> {
+            AuraTab.MATCHES -> {
                 MatchesScreen(
                     onNavigateToConversation = onNavigateToConversation,
                     onNavigateToUserProfile = onNavigateToUserProfile

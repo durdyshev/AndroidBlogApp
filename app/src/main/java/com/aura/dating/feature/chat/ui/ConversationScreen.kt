@@ -1,5 +1,6 @@
 package com.aura.dating.feature.chat.ui
 
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -96,8 +97,11 @@ fun ConversationScreen(
 
     LaunchedEffect(Unit) {
         viewModel.eventFlow.collect { event ->
-            if (event is ConversationEvent.NavigateBack) {
-                onNavigateBack()
+            when (event) {
+                is ConversationEvent.NavigateBack -> onNavigateBack()
+                is ConversationEvent.ShowToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
+                }
             }
         }
     }

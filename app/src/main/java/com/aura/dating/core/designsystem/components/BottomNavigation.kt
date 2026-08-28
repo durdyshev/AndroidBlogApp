@@ -46,8 +46,7 @@ import com.aura.dating.core.designsystem.theme.Dimens
 
 enum class AuraTab(val title: String, val icon: ImageVector) {
     DISCOVER("Discover", Icons.Default.AutoAwesome),
-    MATCHES("Matches", Icons.Default.Favorite),
-    CHATS("Chats", Icons.Default.ChatBubble),
+    MATCHES("Matches", Icons.Default.ChatBubble),
     PROFILE("Profile", Icons.Default.Person)
 }
 
@@ -113,8 +112,7 @@ fun AuraBottomNavigation(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         val badgeCount = when (tab) {
-                            AuraTab.MATCHES -> newMatchesCount
-                            AuraTab.CHATS -> unreadMessagesCount
+                            AuraTab.MATCHES -> unreadMessagesCount + newMatchesCount
                             else -> 0
                         }
 

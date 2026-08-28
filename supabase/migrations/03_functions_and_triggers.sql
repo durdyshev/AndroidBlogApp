@@ -336,3 +336,123 @@ BEGIN
       AND (user1_id = auth.uid() OR user2_id = auth.uid());
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 6. Get or Create Conversation Between Two Users Function
+CREATE OR REPLACE FUNCTION public.get_or_create_conversation(p_target_user_id UUID)
+RETURNS UUID AS $$
+DECLARE
+    v_my_id UUID := auth.uid();
+    v_user1_id UUID;
+    v_user2_id UUID;
+    v_match_id UUID;
+    v_conv_id UUID;
+BEGIN
+    IF v_my_id IS NULL THEN
+        RAISE EXCEPTION 'Not authenticated';
+    END IF;
+
+    IF v_my_id = p_target_user_id THEN
+        RAISE EXCEPTION 'Cannot converse with yourself';
+    END IF;
+
+    -- Order user IDs to enforce unique match constraint
+    IF v_my_id < p_target_user_id THEN
+        v_user1_id := v_my_id;
+        v_user2_id := p_target_user_id;
+    ELSE
+        v_user1_id := p_target_user_id;
+        v_user2_id := v_my_id;
+    END IF;
+
+    -- Create or reactivate Match
+    INSERT INTO public.matches (user1_id, user2_id, is_active, created_at)
+    VALUES (v_user1_id, v_user2_id, true, now())
+    ON CONFLICT (user1_id, user2_id)
+    DO UPDATE SET is_active = true, unmatched_by = NULL, unmatched_at = NULL
+    RETURNING id INTO v_match_id;
+
+    -- Create Conversation if not exists
+    INSERT INTO public.conversations (match_id, created_at, updated_at)
+    VALUES (v_match_id, now(), now())
+    ON CONFLICT (match_id) DO NOTHING;
+
+    SELECT id INTO v_conv_id FROM public.conversations WHERE match_id = v_match_id;
+
+    -- Ensure both participants exist
+    INSERT INTO public.conversation_participants (conversation_id, user_id, last_read_at)
+    VALUES (v_conv_id, v_user1_id, now())
+    ON CONFLICT (conversation_id, user_id) DO NOTHING;
+
+    INSERT INTO public.conversation_participants (conversation_id, user_id, last_read_at)
+    VALUES (v_conv_id, v_user2_id, now())
+    ON CONFLICT (conversation_id, user_id) DO NOTHING;
+
+    RETURN v_conv_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 7. Automatic Notification on New Message Trigger
+CREATE OR REPLACE FUNCTION public.handle_new_message_notification()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_sender_name TEXT;
+    v_recipient_id UUID;
+BEGIN
+    -- Find sender display name
+    SELECT display_name INTO v_sender_name FROM public.profiles WHERE id = NEW.sender_id;
+
+    -- Find the other participant in this conversation
+    SELECT user_id INTO v_recipient_id
+    FROM public.conversation_participants
+    WHERE conversation_id = NEW.conversation_id
+      AND user_id != NEW.sender_id
+    LIMIT 1;
+
+    -- If not found in conversation_participants, find via matches table
+    IF v_recipient_id IS NULL THEN
+        SELECT CASE WHEN m.user1_id = NEW.sender_id THEN m.user2_id ELSE m.user1_id END INTO v_recipient_id
+        FROM public.conversations c
+        JOIN public.matches m ON c.match_id = m.id
+        WHERE c.id = NEW.conversation_id;
+    END IF;
+
+    -- If recipient found, insert into notifications table
+    IF v_recipient_id IS NOT NULL THEN
+        INSERT INTO public.notifications (user_id, actor_id, type, title, body, data, is_read, created_at)
+        VALUES (
+            v_recipient_id,
+            NEW.sender_id,
+            'NEW_MESSAGE',
+            COALESCE(v_sender_name, 'New Message'),
+            CASE 
+                WHEN NEW.message_type = 'IMAGE' THEN '📷 Sent a photo'
+                ELSE NEW.content
+            END,
+            jsonb_build_object(
+                'conversation_id', NEW.conversation_id,
+                'message_id', NEW.id,
+                'sender_id', NEW.sender_id
+            ),
+            false,
+            now()
+        );
+    END IF;
+
+    -- Update last message in conversations table
+    UPDATE public.conversations
+    SET
+        last_message_text = CASE WHEN NEW.message_type = 'IMAGE' THEN '📷 Photo' ELSE NEW.content END,
+        last_message_at = NEW.created_at,
+        last_message_sender_id = NEW.sender_id,
+        updated_at = now()
+    WHERE id = NEW.conversation_id;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS trigger_on_new_message ON public.messages;
+CREATE TRIGGER trigger_on_new_message
+AFTER INSERT ON public.messages
+FOR EACH ROW
+EXECUTE FUNCTION public.handle_new_message_notification();

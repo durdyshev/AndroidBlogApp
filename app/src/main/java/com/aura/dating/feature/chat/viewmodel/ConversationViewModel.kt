@@ -2,6 +2,7 @@ package com.aura.dating.feature.chat.viewmodel
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +14,7 @@ import com.aura.dating.domain.chat.usecase.DeleteMessageUseCase
 import com.aura.dating.domain.chat.usecase.GetMessagesUseCase
 import com.aura.dating.domain.chat.usecase.MarkMessagesAsReadUseCase
 import com.aura.dating.domain.chat.usecase.ObserveTypingStatusUseCase
+import com.aura.dating.domain.chat.usecase.ResolveConversationIdUseCase
 import com.aura.dating.domain.chat.usecase.SendImageMessageUseCase
 import com.aura.dating.domain.chat.usecase.SendMessageUseCase
 import com.aura.dating.domain.chat.usecase.SendTypingStatusUseCase
@@ -30,6 +32,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -54,6 +57,7 @@ sealed interface ConversationEvent {
 @HiltViewModel
 class ConversationViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val resolveConversationIdUseCase: ResolveConversationIdUseCase,
     private val getMessagesUseCase: GetMessagesUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
     private val sendImageMessageUseCase: SendImageMessageUseCase,
@@ -67,13 +71,16 @@ class ConversationViewModel @Inject constructor(
     private val tokenStorage: TokenStorage
 ) : ViewModel() {
 
-    private val conversationId: String = checkNotNull(savedStateHandle["conversationId"])
+    private val initialConversationId: String = checkNotNull(savedStateHandle["conversationId"])
     private val matchName: String = savedStateHandle["matchName"] ?: "Match"
     private val photoUrl: String? = savedStateHandle["photoUrl"]
 
+    private var resolvedConversationId: String = initialConversationId
+    private var liveSyncJob: Job? = null
+
     private val _uiState = MutableStateFlow(
         ConversationUiState(
-            conversationId = conversationId,
+            conversationId = initialConversationId,
             matchName = matchName,
             matchPhotoUrl = photoUrl
         )
@@ -87,10 +94,7 @@ class ConversationViewModel @Inject constructor(
 
     init {
         loadUserId()
-        observeMessages()
-        observeTyping()
-        fetchInitialMessages()
-        markAsRead()
+        initChatSession()
     }
 
     private fun loadUserId() {
@@ -100,31 +104,56 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    private fun observeMessages() {
+    private fun initChatSession() {
         viewModelScope.launch {
-            getMessagesUseCase(conversationId).collect { messageList ->
+            val res = resolveConversationIdUseCase(initialConversationId)
+            val actualId = if (res is Result.Success) res.data else initialConversationId
+            resolvedConversationId = actualId
+            _uiState.value = _uiState.value.copy(conversationId = actualId)
+
+            observeMessages(actualId)
+            observeTyping(actualId)
+            fetchInitialMessages(actualId)
+            markAsRead(actualId)
+            startLiveSync(actualId)
+        }
+    }
+
+    private fun startLiveSync(convId: String) {
+        liveSyncJob?.cancel()
+        liveSyncJob = viewModelScope.launch {
+            while (isActive) {
+                delay(3000)
+                getMessagesUseCase.fetchMessages(convId, forceRefresh = true)
+            }
+        }
+    }
+
+    private fun observeMessages(convId: String) {
+        viewModelScope.launch {
+            getMessagesUseCase(convId).collect { messageList ->
                 _uiState.value = _uiState.value.copy(messages = messageList)
             }
         }
     }
 
-    private fun observeTyping() {
+    private fun observeTyping(convId: String) {
         viewModelScope.launch {
-            observeTypingStatusUseCase(conversationId).collect { isTyping ->
+            observeTypingStatusUseCase(convId).collect { isTyping ->
                 _uiState.value = _uiState.value.copy(isPartnerTyping = isTyping)
             }
         }
     }
 
-    fun fetchInitialMessages() {
+    fun fetchInitialMessages(convId: String = resolvedConversationId) {
         viewModelScope.launch {
-            getMessagesUseCase.fetchMessages(conversationId, forceRefresh = true)
+            getMessagesUseCase.fetchMessages(convId, forceRefresh = true)
         }
     }
 
-    fun markAsRead() {
+    fun markAsRead(convId: String = resolvedConversationId) {
         viewModelScope.launch {
-            markMessagesAsReadUseCase(conversationId)
+            markMessagesAsReadUseCase(convId)
         }
     }
 
@@ -134,9 +163,9 @@ class ConversationViewModel @Inject constructor(
         // Broadcast typing status
         typingJob?.cancel()
         typingJob = viewModelScope.launch {
-            sendTypingStatusUseCase(conversationId, true)
+            sendTypingStatusUseCase(resolvedConversationId, true)
             delay(2000)
-            sendTypingStatusUseCase(conversationId, false)
+            sendTypingStatusUseCase(resolvedConversationId, false)
         }
     }
 
@@ -144,22 +173,31 @@ class ConversationViewModel @Inject constructor(
         val text = _uiState.value.inputText.trim()
         if (text.isBlank()) return
 
+        val targetConvId = resolvedConversationId
         _uiState.value = _uiState.value.copy(inputText = "")
 
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isSending = true)
-            sendMessageUseCase(conversationId, text)
+            val sendResult = sendMessageUseCase(targetConvId, text)
             _uiState.value = _uiState.value.copy(isSending = false)
+            if (sendResult is Result.Error) {
+                Log.e("hata",sendResult.error.message)
+                _eventFlow.emit(ConversationEvent.ShowToast("Mesaj iletilemedi: ${sendResult.error.message}"))
+            }
         }
     }
 
     fun sendImage(context: Context, uri: Uri) {
+        val targetConvId = resolvedConversationId
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isUploadingImage = true, errorMessage = null)
             try {
                 val imageBytes = ImageCompressor.compressImage(context, uri)
-                sendImageMessageUseCase(conversationId, imageBytes)
+                val sendResult = sendImageMessageUseCase(targetConvId, imageBytes)
                 _uiState.value = _uiState.value.copy(isUploadingImage = false)
+                if (sendResult is Result.Error) {
+                    _eventFlow.emit(ConversationEvent.ShowToast("Fotoğraf iletilemedi: ${sendResult.error.message}"))
+                }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isUploadingImage = false,
@@ -175,24 +213,45 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    fun unmatch(matchId: String) {
+    fun unmatch(conversationId: String) {
+        val targetId = resolvedConversationId
         viewModelScope.launch {
-            unmatchUseCase(matchId)
-            _eventFlow.emit(ConversationEvent.NavigateBack)
+            val result = unmatchUseCase(targetId)
+            if (result is Result.Success) {
+                _eventFlow.emit(ConversationEvent.ShowToast("Unmatched successfully"))
+                _eventFlow.emit(ConversationEvent.NavigateBack)
+            } else if (result is Result.Error) {
+                _eventFlow.emit(ConversationEvent.ShowToast(result.error.message))
+            }
         }
     }
 
-    fun blockUser(partnerId: String) {
+    fun blockUser(userId: String) {
         viewModelScope.launch {
-            blockUserUseCase(partnerId, matchName, photoUrl)
-            _eventFlow.emit(ConversationEvent.NavigateBack)
+            val result = blockUserUseCase(userId, matchName, photoUrl)
+            if (result is Result.Success) {
+                _eventFlow.emit(ConversationEvent.ShowToast("User blocked"))
+                _eventFlow.emit(ConversationEvent.NavigateBack)
+            } else if (result is Result.Error) {
+                _eventFlow.emit(ConversationEvent.ShowToast(result.error.message))
+            }
         }
     }
 
-    fun reportUser(partnerId: String, reason: ReportReason, details: String?) {
+    fun reportUser(userId: String, reason: ReportReason, details: String?) {
         viewModelScope.launch {
-            reportUserUseCase(ReportRequest(partnerId, reason, details))
-            _eventFlow.emit(ConversationEvent.ShowToast("Report submitted"))
+            val result = reportUserUseCase(
+                ReportRequest(
+                    reportedUserId = userId,
+                    reason = reason,
+                    details = details
+                )
+            )
+            if (result is Result.Success) {
+                _eventFlow.emit(ConversationEvent.ShowToast("Report submitted. Thank you."))
+            } else if (result is Result.Error) {
+                _eventFlow.emit(ConversationEvent.ShowToast(result.error.message))
+            }
         }
     }
 }
