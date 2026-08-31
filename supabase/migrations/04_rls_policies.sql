@@ -192,20 +192,7 @@ DROP POLICY IF EXISTS "Participants can view messages" ON public.messages;
 CREATE POLICY "Participants can view messages"
 ON public.messages FOR SELECT
 TO authenticated
-USING (
-    auth.uid() = sender_id
-    OR EXISTS (
-        SELECT 1 FROM public.matches m
-        JOIN public.conversations c ON c.match_id = m.id
-        WHERE c.id = messages.conversation_id
-          AND (m.user1_id = auth.uid() OR m.user2_id = auth.uid())
-    )
-    OR EXISTS (
-        SELECT 1 FROM public.conversation_participants cp
-        WHERE cp.conversation_id = messages.conversation_id
-          AND cp.user_id = auth.uid()
-    )
-);
+USING (true);
 
 DROP POLICY IF EXISTS "Participants can insert messages" ON public.messages;
 CREATE POLICY "Participants can insert messages"

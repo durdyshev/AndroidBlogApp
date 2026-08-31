@@ -1,6 +1,7 @@
 package com.aura.dating
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -16,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import com.aura.dating.core.designsystem.theme.AuraTheme
 import com.aura.dating.core.designsystem.theme.DarkBackground
 import com.aura.dating.core.navigation.AuraNavHost
+import com.aura.dating.core.notifications.AuraNotificationService
 import com.aura.dating.core.notifications.GlobalNotificationManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -36,6 +38,7 @@ class MainActivity : ComponentActivity() {
 
         requestNotificationPermission()
         globalNotificationManager.startListening()
+        AuraNotificationService.start(this)
 
         setContent {
             AuraTheme(darkTheme = true) {
