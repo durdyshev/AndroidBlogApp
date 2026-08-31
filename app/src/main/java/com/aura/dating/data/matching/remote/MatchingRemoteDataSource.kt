@@ -153,6 +153,8 @@ class SupabaseMatchingRemoteDataSource @Inject constructor(
                         matchedUserPhotoUrl = primaryPhoto,
                         matchedUserDistanceKm = null,
                         matchedAtMillis = DateTimeUtils.parseIsoDate(matchDto.createdAt),
+                        isMatchedUserOnline = partner.isOnline,
+                        matchedUserLastSeenAtMillis = partner.lastSeenAt?.let { DateTimeUtils.parseIsoDate(it) },
                         isActive = matchDto.isActive
                     )
                 }

@@ -30,6 +30,7 @@ data class Conversation(
     val participantName: String,
     val participantPhotoUrl: String?,
     val isParticipantOnline: Boolean = false,
+    val participantLastSeenAtMillis: Long? = null,
     val lastMessageText: String? = null,
     val lastMessageAtMillis: Long = System.currentTimeMillis(),
     val lastMessageSenderId: String? = null,

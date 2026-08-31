@@ -23,6 +23,8 @@ import com.aura.dating.domain.moderation.model.ReportReason
 import com.aura.dating.domain.moderation.model.ReportRequest
 import com.aura.dating.domain.moderation.usecase.BlockUserUseCase
 import com.aura.dating.domain.moderation.usecase.ReportUserUseCase
+import com.aura.dating.domain.chat.repository.ChatRepository
+import com.aura.dating.domain.profile.repository.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -41,6 +43,9 @@ data class ConversationUiState(
     val matchName: String = "",
     val matchPhotoUrl: String? = null,
     val currentUserId: String = "",
+    val partnerUserId: String = "",
+    val isPartnerOnline: Boolean = false,
+    val partnerLastSeenAtMillis: Long? = null,
     val messages: List<Message> = emptyList(),
     val isPartnerTyping: Boolean = false,
     val inputText: String = "",
@@ -68,7 +73,9 @@ class ConversationViewModel @Inject constructor(
     private val unmatchUseCase: UnmatchUseCase,
     private val blockUserUseCase: BlockUserUseCase,
     private val reportUserUseCase: ReportUserUseCase,
-    private val tokenStorage: TokenStorage
+    private val tokenStorage: TokenStorage,
+    private val chatRepository: ChatRepository,
+    private val profileRepository: ProfileRepository
 ) : ViewModel() {
 
     private val initialConversationId: String = checkNotNull(savedStateHandle["conversationId"])
@@ -111,11 +118,45 @@ class ConversationViewModel @Inject constructor(
             resolvedConversationId = actualId
             _uiState.value = _uiState.value.copy(conversationId = actualId)
 
+            resolvePartnerInfo(actualId)
             observeMessages(actualId)
             observeTyping(actualId)
             fetchInitialMessages(actualId)
             markAsRead(actualId)
             startLiveSync(actualId)
+        }
+    }
+
+    private suspend fun resolvePartnerInfo(actualConvId: String) {
+        val convsRes = chatRepository.getConversations(forceRefresh = false)
+        if (convsRes is Result.Success) {
+            val conv = convsRes.data.firstOrNull { it.id == actualConvId || it.id == initialConversationId || it.participantName == matchName }
+            if (conv != null && conv.participantUserId.isNotBlank()) {
+                _uiState.value = _uiState.value.copy(
+                    partnerUserId = conv.participantUserId,
+                    isPartnerOnline = conv.isParticipantOnline,
+                    partnerLastSeenAtMillis = conv.participantLastSeenAtMillis
+                )
+                return
+            }
+        }
+
+        if (initialConversationId.length == 36 && initialConversationId != actualConvId) {
+            _uiState.value = _uiState.value.copy(partnerUserId = initialConversationId)
+            refreshPartnerPresence()
+        }
+    }
+
+    private suspend fun refreshPartnerPresence() {
+        val partnerId = _uiState.value.partnerUserId
+        if (partnerId.isNotBlank()) {
+            val profileRes = profileRepository.getUserProfile(partnerId)
+            if (profileRes is Result.Success) {
+                _uiState.value = _uiState.value.copy(
+                    isPartnerOnline = profileRes.data.isOnline,
+                    partnerLastSeenAtMillis = profileRes.data.lastSeenAtMillis
+                )
+            }
         }
     }
 
@@ -125,6 +166,7 @@ class ConversationViewModel @Inject constructor(
             while (isActive) {
                 delay(3000)
                 getMessagesUseCase.fetchMessages(convId, forceRefresh = true)
+                refreshPartnerPresence()
             }
         }
     }

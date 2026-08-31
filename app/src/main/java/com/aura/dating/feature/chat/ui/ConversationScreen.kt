@@ -151,7 +151,8 @@ fun ConversationScreen(
                     Avatar(
                         imageUrl = uiState.matchPhotoUrl,
                         name = uiState.matchName,
-                        size = 40.dp
+                        size = 40.dp,
+                        isOnline = uiState.isPartnerOnline
                     )
 
                     Spacer(modifier = Modifier.width(Dimens.Spacing12))
@@ -159,7 +160,11 @@ fun ConversationScreen(
                     Column(
                         modifier = Modifier
                             .weight(1f)
-                            .clickable { /* open profile */ }
+                            .clickable {
+                                if (uiState.partnerUserId.isNotBlank()) {
+                                    onNavigateToUserProfile(uiState.partnerUserId)
+                                }
+                            }
                     ) {
                         Text(
                             text = uiState.matchName,
@@ -169,9 +174,21 @@ fun ConversationScreen(
                         )
                         if (uiState.isPartnerTyping) {
                             Text(
-                                text = "typing...",
+                                text = "yazıyor...",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = AuraRose
+                            )
+                        } else if (uiState.isPartnerOnline) {
+                            Text(
+                                text = "Çevrimiçi",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = com.aura.dating.core.designsystem.theme.OnlineColor
+                            )
+                        } else {
+                            Text(
+                                text = com.aura.dating.core.common.utils.DateTimeUtils.formatLastSeen(uiState.partnerLastSeenAtMillis, false),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White.copy(alpha = 0.6f)
                             )
                         }
                     }

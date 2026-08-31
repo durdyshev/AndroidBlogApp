@@ -1,6 +1,7 @@
 package com.aura.dating.data.profile.remote
 
 import com.aura.dating.core.common.result.Result
+import com.aura.dating.core.common.utils.DateTimeUtils
 import com.aura.dating.core.network.SupabaseClientProvider
 import com.aura.dating.domain.profile.model.Gender
 import com.aura.dating.domain.profile.model.GenderPreference
@@ -23,6 +24,7 @@ import kotlinx.serialization.Serializable
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -37,6 +39,7 @@ data class ProfileDto(
     val latitude: Double? = null,
     val longitude: Double? = null,
     @SerialName("is_online") val isOnline: Boolean = false,
+    @SerialName("last_seen_at") val lastSeenAt: String? = null,
     @SerialName("profile_photos") val photos: List<PhotoDto> = emptyList(),
     @SerialName("user_interests") val userInterests: List<UserInterestDto> = emptyList(),
     @SerialName("user_preferences") val preferences: List<PreferencesDto> = emptyList()
@@ -126,6 +129,12 @@ data class UpdateLocationRequest(
     val p_longitude: Double
 )
 
+@Serializable
+data class UpdateOnlineStatusDto(
+    @SerialName("is_online") val isOnline: Boolean,
+    @SerialName("last_seen_at") val lastSeenAt: String
+)
+
 interface ProfileRemoteDataSource {
     suspend fun getProfile(userId: String): Result<UserProfile>
     suspend fun updateProfile(
@@ -142,6 +151,7 @@ interface ProfileRemoteDataSource {
     suspend fun setPrimaryPhoto(photoId: String): Result<Unit>
     suspend fun updatePreferences(preferences: UserPreferences): Result<UserPreferences>
     suspend fun updateLocation(latitude: Double, longitude: Double): Result<Unit>
+    suspend fun updateOnlineStatus(userId: String, isOnline: Boolean): Result<Unit>
     suspend fun getAllInterests(): Result<List<Interest>>
 }
 
@@ -397,6 +407,24 @@ class SupabaseProfileRemoteDataSource @Inject constructor(
         )
     }
 
+    override suspend fun updateOnlineStatus(userId: String, isOnline: Boolean): Result<Unit> {
+        val nowIso = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }.format(Date())
+
+        return clientProvider.safeApiCall(
+            block = { client, headers ->
+                client.patch {
+                    url("${clientProvider.baseUrl}/rest/v1/profiles?id=eq.$userId")
+                    contentType(ContentType.Application.Json)
+                    headers(this)
+                    setBody(UpdateOnlineStatusDto(isOnline = isOnline, lastSeenAt = nowIso))
+                }
+            },
+            parser = { }
+        )
+    }
+
     override suspend fun getAllInterests(): Result<List<Interest>> {
         return clientProvider.safeApiCall(
             block = { client, headers ->
@@ -448,7 +476,8 @@ class SupabaseProfileRemoteDataSource @Inject constructor(
                     showOnlyOnline = it.showOnlyOnline
                 )
             },
-            isOnline = dto.isOnline
+            isOnline = dto.isOnline,
+            lastSeenAtMillis = dto.lastSeenAt?.let { DateTimeUtils.parseIsoDate(it) } ?: System.currentTimeMillis()
         )
     }
 }

@@ -25,5 +25,6 @@ interface ProfileRepository {
     suspend fun setPrimaryPhoto(photoId: String): Result<Unit>
     suspend fun updatePreferences(preferences: UserPreferences): Result<UserPreferences>
     suspend fun updateLocation(latitude: Double, longitude: Double): Result<Unit>
+    suspend fun updateOnlineStatus(isOnline: Boolean): Result<Unit>
     suspend fun getAllInterests(): Result<List<Interest>>
 }

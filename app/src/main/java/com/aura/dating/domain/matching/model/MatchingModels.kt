@@ -25,5 +25,7 @@ data class Match(
     val matchedUserPhotoUrl: String?,
     val matchedUserDistanceKm: Double?,
     val matchedAtMillis: Long,
+    val isMatchedUserOnline: Boolean = false,
+    val matchedUserLastSeenAtMillis: Long? = null,
     val isActive: Boolean = true
 )

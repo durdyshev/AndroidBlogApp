@@ -71,4 +71,33 @@ object DateTimeUtils {
         val format = SimpleDateFormat("d MMMM yyyy", Locale.getDefault())
         return format.format(Date(timeMillis))
     }
+
+    fun formatLastSeen(lastSeenAtMillis: Long?, isOnline: Boolean): String {
+        if (isOnline) return "Online"
+        if (lastSeenAtMillis == null || lastSeenAtMillis <= 0L) return "Offline"
+
+        val now = System.currentTimeMillis()
+        val diff = (now - lastSeenAtMillis).coerceAtLeast(0)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
+        val hours = TimeUnit.MILLISECONDS.toHours(diff)
+        val days = TimeUnit.MILLISECONDS.toDays(diff)
+
+        return when {
+            minutes < 1 -> "Az önce görüldü"
+            minutes < 60 -> "$minutes dk önce görüldü"
+            hours < 24 -> {
+                val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                "Bugün ${timeFormat.format(Date(lastSeenAtMillis))}"
+            }
+            days == 1L -> {
+                val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                "Dün ${timeFormat.format(Date(lastSeenAtMillis))}"
+            }
+            days < 7 -> "$days gün önce"
+            else -> {
+                val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                dateFormat.format(Date(lastSeenAtMillis))
+            }
+        }
+    }
 }

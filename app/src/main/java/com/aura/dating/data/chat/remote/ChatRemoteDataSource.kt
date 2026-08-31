@@ -46,6 +46,7 @@ data class ProfileShortDto(
     val id: String,
     @SerialName("display_name") val displayName: String,
     @SerialName("is_online") val isOnline: Boolean = false,
+    @SerialName("last_seen_at") val lastSeenAt: String? = null,
     val photos: List<PhotoShortDto> = emptyList()
 )
 
@@ -178,7 +179,7 @@ class SupabaseChatRemoteDataSource @Inject constructor(
         return clientProvider.safeApiCall(
             block = { client, headers ->
                 client.get {
-                    url("${clientProvider.baseUrl}/rest/v1/conversations?select=id,match_id,last_message_text,last_message_at,last_message_sender_id,participants:conversation_participants(user_id,last_read_at,profile:profiles(id,display_name,is_online,photos:profile_photos(photo_url,is_primary)))&order=last_message_at.desc")
+                    url("${clientProvider.baseUrl}/rest/v1/conversations?select=id,match_id,last_message_text,last_message_at,last_message_sender_id,participants:conversation_participants(user_id,last_read_at,profile:profiles(id,display_name,is_online,last_seen_at,photos:profile_photos(photo_url,is_primary)))&order=last_message_at.desc")
                     headers(this)
                 }
             },
@@ -195,6 +196,8 @@ class SupabaseChatRemoteDataSource @Inject constructor(
                     val time = convDto.lastMessageAt?.let { DateTimeUtils.parseIsoDate(it) }
                         ?: System.currentTimeMillis()
 
+                    val lastSeenTime = profile?.lastSeenAt?.let { DateTimeUtils.parseIsoDate(it) }
+
                     Conversation(
                         id = convDto.id,
                         matchId = convDto.matchId,
@@ -202,6 +205,7 @@ class SupabaseChatRemoteDataSource @Inject constructor(
                         participantName = participantName,
                         participantPhotoUrl = primaryPhoto,
                         isParticipantOnline = profile?.isOnline ?: false,
+                        participantLastSeenAtMillis = lastSeenTime,
                         lastMessageText = convDto.lastMessageText,
                         lastMessageAtMillis = time,
                         lastMessageSenderId = convDto.lastMessageSenderId,

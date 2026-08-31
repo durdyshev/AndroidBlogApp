@@ -120,7 +120,8 @@ fun MatchesScreen(
                                                 imageUrl = match.matchedUserPhotoUrl,
                                                 name = match.matchedUserName,
                                                 size = 64.dp,
-                                                showBorderGradient = true
+                                                showBorderGradient = true,
+                                                isOnline = match.isMatchedUserOnline
                                             )
                                             Spacer(modifier = Modifier.height(Dimens.Spacing6))
                                             Text(

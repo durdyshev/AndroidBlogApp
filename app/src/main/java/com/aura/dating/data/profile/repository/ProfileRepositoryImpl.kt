@@ -127,6 +127,11 @@ class ProfileRepositoryImpl @Inject constructor(
         return remoteDataSource.updateLocation(latitude, longitude)
     }
 
+    override suspend fun updateOnlineStatus(isOnline: Boolean): Result<Unit> {
+        val userId = tokenStorage.getUserId() ?: return Result.Error(AppError.Unauthorized())
+        return remoteDataSource.updateOnlineStatus(userId, isOnline)
+    }
+
     override suspend fun getAllInterests(): Result<List<Interest>> {
         return remoteDataSource.getAllInterests()
     }

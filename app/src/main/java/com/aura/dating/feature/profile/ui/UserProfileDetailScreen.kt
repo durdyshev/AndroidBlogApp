@@ -240,6 +240,26 @@ fun UserProfileDetailScreen(
                     )
                 }
 
+                Spacer(modifier = Modifier.height(Dimens.Spacing8))
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    val isOnline = candidate?.isOnline == true
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .background(
+                                color = if (isOnline) com.aura.dating.core.designsystem.theme.OnlineColor else com.aura.dating.core.designsystem.theme.OfflineColor,
+                                shape = androidx.compose.foundation.shape.CircleShape
+                            )
+                    )
+                    Spacer(modifier = Modifier.width(Dimens.Spacing6))
+                    Text(
+                        text = DateTimeUtils.formatLastSeen(candidate?.lastSeenAtMillis, isOnline),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (isOnline) com.aura.dating.core.designsystem.theme.OnlineColor else Color.White.copy(alpha = 0.6f)
+                    )
+                }
+
                 if (!candidate?.bio.isNullOrBlank()) {
                     Spacer(modifier = Modifier.height(Dimens.Spacing20))
                     Text(
