@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarData
@@ -26,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import com.aura.dating.core.designsystem.theme.AuraRose
 import com.aura.dating.core.designsystem.theme.Dimens
 import com.aura.dating.core.designsystem.theme.PassColor
@@ -41,58 +43,60 @@ fun ConfirmationDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss
-    ) {
-        Surface(
-            shape = RoundedCornerShape(Dimens.RadiusExtraLarge),
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 6.dp
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(Dimens.Spacing24)
+    BasicAlertDialog(
+        onDismissRequest = onDismiss,
+        modifier = Modifier,
+        properties = DialogProperties(),
+        content = {
+            Surface(
+                shape = RoundedCornerShape(Dimens.RadiusExtraLarge),
+                color = MaterialTheme.colorScheme.surface,
+                tonalElevation = 6.dp
             ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(Dimens.Spacing12))
-                Text(
-                    text = message,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.height(Dimens.Spacing24))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Dimens.Spacing24)
                 ) {
-                    TextButton(onClick = onDismiss) {
-                        Text(
-                            text = dismissText,
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    TextButton(onClick = {
-                        onConfirm()
-                        onDismiss()
-                    }) {
-                        Text(
-                            text = confirmText,
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = if (isDestructive) PassColor else AuraRose
-                        )
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(Dimens.Spacing12))
+                    Text(
+                        text = message,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(Dimens.Spacing24))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        TextButton(onClick = onDismiss) {
+                            Text(
+                                text = dismissText,
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        TextButton(onClick = {
+                            onConfirm()
+                            onDismiss()
+                        }) {
+                            Text(
+                                text = confirmText,
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isDestructive) PassColor else AuraRose
+                            )
+                        }
                     }
                 }
             }
-        }
-    }
+        })
 }
 
 @Composable

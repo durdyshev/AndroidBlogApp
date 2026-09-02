@@ -72,17 +72,28 @@ class DiscoverViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
-            // Update GPS location if available
-            val location = locationProvider.getCurrentLocation() ?: locationProvider.getLastKnownLocation()
-            if (location != null) {
-                updateLocationUseCase(location.latitude, location.longitude)
+            // Fast location update from cache (instant)
+            val fastLocation = locationProvider.getLastKnownLocation()
+            if (fastLocation != null) {
+                launch { updateLocationUseCase(fastLocation.latitude, fastLocation.longitude) }
             }
 
+            // Fetch discovery candidates immediately without blocking
             val result = getDiscoveryCandidatesUseCase(forceRefresh = forceRefresh)
             _uiState.value = _uiState.value.copy(isLoading = false, isRefreshing = false)
 
             if (result is Result.Error) {
                 _uiState.value = _uiState.value.copy(errorMessage = result.error.message)
+            }
+
+            // Acquire high-accuracy GPS in background without blocking screen load
+            launch {
+                try {
+                    val freshLocation = locationProvider.getCurrentLocation()
+                    if (freshLocation != null && freshLocation != fastLocation) {
+                        updateLocationUseCase(freshLocation.latitude, freshLocation.longitude)
+                    }
+                } catch (_: Exception) {}
             }
         }
     }

@@ -125,20 +125,22 @@ class GlobalNotificationManager @Inject constructor(
                                 body = if (msg.messageType == MessageType.IMAGE) "📷 Sent a photo" else msg.content,
                                 type = NotificationType.NEW_MESSAGE,
                                 extraData = mapOf(
+                                    "message_id" to msg.id,
                                     "conversation_id" to msg.conversationId,
-                                    "sender_id" to msg.senderId
+                                    "sender_id" to msg.senderId,
+                                    "sender_name" to senderName
                                 )
                             )
                         }
                     }
                 }
 
-                // 2. Sync general notifications (Matches, Likes, etc.)
+                // 2. Sync general notifications (Matches, Likes, etc. - excluding messages which are synced separately)
                 val notifResult = notificationRepository.getNotifications()
                 if (notifResult is Result.Success) {
                     notifResult.data.forEach { notif ->
-                        if (!notif.isRead && seenNotificationIds.add(notif.id)) {
-                            Log.d("AuraNotif", "New notification detected: ${notif.title} - ${notif.body}")
+                        if (notif.type != NotificationType.NEW_MESSAGE && !notif.isRead && seenNotificationIds.add(notif.id)) {
+                            Log.d("AuraNotif", "New general notification detected: ${notif.title} - ${notif.body}")
                             notificationHandler.showNotification(
                                 title = notif.title,
                                 body = notif.body,
@@ -273,8 +275,10 @@ class GlobalNotificationManager @Inject constructor(
                             body = if (msg.messageType == MessageType.IMAGE) "📷 Sent a photo" else content,
                             type = NotificationType.NEW_MESSAGE,
                             extraData = mapOf(
+                                "message_id" to id,
                                 "conversation_id" to conversationId,
-                                "sender_id" to senderId
+                                "sender_id" to senderId,
+                                "sender_name" to senderName
                             )
                         )
                     }
@@ -289,7 +293,7 @@ class GlobalNotificationManager @Inject constructor(
             val actorId = record["actor_id"]?.jsonPrimitive?.content ?: ""
             val type = try { NotificationType.valueOf(typeStr) } catch (_: Exception) { NotificationType.SYSTEM }
 
-            if (seenNotificationIds.add(id)) {
+            if (type != NotificationType.NEW_MESSAGE && seenNotificationIds.add(id)) {
                 notificationHandler.showNotification(
                     title = title,
                     body = body,

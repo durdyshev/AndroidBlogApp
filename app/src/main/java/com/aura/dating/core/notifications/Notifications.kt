@@ -56,8 +56,8 @@ class NotificationHandler @Inject constructor(
 ) {
     companion object {
         const val ALERT_CHANNEL_ID = "aura_notifications"
-        private const val MESSAGES_GROUP_KEY = "aura_messages_group"
         private val unreadMessageBuffer = ConcurrentHashMap<String, MutableList<String>>()
+        private val recentNotificationTimestamps = ConcurrentHashMap<String, Long>()
 
         fun clearBufferForKey(key: String) {
             unreadMessageBuffer.remove(key)
@@ -105,11 +105,25 @@ class NotificationHandler @Inject constructor(
         extraData: Map<String, String> = emptyMap()
     ) {
         try {
-            ensureChannelExists()
-
             val conversationId = extraData["conversation_id"]?.takeIf { it.isNotBlank() }
             val senderId = extraData["sender_id"]?.takeIf { it.isNotBlank() }
             val groupKey = conversationId ?: senderId ?: "general_chat"
+
+            // Deduplication check to prevent dual triggers (Realtime + Background Sync / FCM)
+            val dedupKey = extraData["message_id"]?.takeIf { it.isNotBlank() } ?: "$type:$groupKey:$body"
+            val now = System.currentTimeMillis()
+            val lastSent = recentNotificationTimestamps[dedupKey] ?: 0L
+            if (now - lastSent < 2000L) {
+                Log.d("AuraNotification", "Duplicate notification ignored: $dedupKey")
+                return
+            }
+            recentNotificationTimestamps[dedupKey] = now
+            if (recentNotificationTimestamps.size > 200) {
+                val cutoff = now - 60000L
+                recentNotificationTimestamps.entries.removeIf { it.value < cutoff }
+            }
+
+            ensureChannelExists()
 
             val notifId = if (type == NotificationType.NEW_MESSAGE) {
                 Math.abs(groupKey.hashCode())
@@ -119,9 +133,14 @@ class NotificationHandler @Inject constructor(
             }
 
             val intent = Intent(context, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                action = "ACTION_OPEN_NOTIF_${notifId}"
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 extraData.forEach { (k, v) -> putExtra(k, v) }
                 putExtra("notification_type", type.name)
+                putExtra("title", title)
+                if (conversationId != null) putExtra("conversation_id", conversationId)
+                if (senderId != null) putExtra("sender_id", senderId)
+                if (!hasExtra("sender_name")) putExtra("sender_name", title)
             }
 
             val pendingIntent = PendingIntent.getActivity(
@@ -158,8 +177,6 @@ class NotificationHandler @Inject constructor(
                 .setDeleteIntent(deletePendingIntent)
 
             if (type == NotificationType.NEW_MESSAGE) {
-                notificationBuilder.setGroup(MESSAGES_GROUP_KEY)
-
                 // Track and stack unread messages from this sender
                 val messageList = unreadMessageBuffer.compute(groupKey) { _, existingList ->
                     (existingList ?: Collections.synchronizedList(mutableListOf())).apply { add(body) }

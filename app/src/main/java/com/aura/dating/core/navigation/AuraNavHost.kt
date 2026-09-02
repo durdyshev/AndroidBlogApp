@@ -49,7 +49,8 @@ import com.aura.dating.feature.settings.ui.SettingsScreen
 @Composable
 fun AuraNavHost(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onMainReady: (() -> Unit)? = null
 ) {
     NavHost(
         navController = navController,
@@ -208,6 +209,9 @@ fun AuraNavHost(
 
         // Main App Scaffold
         composable(Screen.Main.route) {
+            androidx.compose.runtime.LaunchedEffect(Unit) {
+                onMainReady?.invoke()
+            }
             MainScreen(
                 onNavigateToUserProfile = { userId ->
                     navController.navigate(Screen.UserProfileDetail.createRoute(userId))
@@ -288,9 +292,13 @@ fun AuraNavHost(
             route = Screen.Conversation.route,
             arguments = listOf(
                 navArgument("conversationId") { type = NavType.StringType },
-                navArgument("matchName") { type = NavType.StringType },
+                navArgument("matchName") {
+                    type = NavType.StringType
+                    defaultValue = "Chat"
+                },
                 navArgument("photoUrl") {
                     type = NavType.StringType
+                    defaultValue = ""
                     nullable = true
                 }
             )

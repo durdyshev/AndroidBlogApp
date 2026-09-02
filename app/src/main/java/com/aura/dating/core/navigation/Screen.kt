@@ -23,9 +23,12 @@ sealed class Screen(val route: String) {
     data object UserProfileDetail : Screen("user_profile/{userId}") {
         fun createRoute(userId: String) = "user_profile/$userId"
     }
-    data object Conversation : Screen("conversation/{conversationId}/{matchName}/{photoUrl}") {
-        fun createRoute(conversationId: String, matchName: String, photoUrl: String?) =
-            "conversation/$conversationId/$matchName/${android.net.Uri.encode(photoUrl ?: "")}"
+    data object Conversation : Screen("conversation/{conversationId}?matchName={matchName}&photoUrl={photoUrl}") {
+        fun createRoute(conversationId: String, matchName: String = "Chat", photoUrl: String? = null): String {
+            val encodedName = android.net.Uri.encode(matchName.ifBlank { "Chat" })
+            val encodedPhoto = if (!photoUrl.isNullOrBlank()) android.net.Uri.encode(photoUrl) else ""
+            return "conversation/$conversationId?matchName=$encodedName&photoUrl=$encodedPhoto"
+        }
     }
     data object NearbyMap : Screen("nearby_map")
     data object Notifications : Screen("notifications")
