@@ -17,7 +17,10 @@ interface ProfileRepository {
         birthDateMillis: Long,
         gender: Gender,
         bio: String?,
-        interestIds: List<String>
+        countryId: String? = null,
+        regionId: String? = null,
+        cityId: String? = null,
+        interestIds: List<String> = emptyList()
     ): Result<UserProfile>
     suspend fun uploadPhoto(imageBytes: ByteArray, isPrimary: Boolean): Result<ProfilePhoto>
     suspend fun deletePhoto(photoId: String, storagePath: String): Result<Unit>

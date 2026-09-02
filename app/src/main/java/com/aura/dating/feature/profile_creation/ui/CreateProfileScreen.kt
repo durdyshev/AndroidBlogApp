@@ -27,8 +27,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -208,6 +212,47 @@ fun CreateProfileScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
+                Spacer(modifier = Modifier.height(Dimens.Spacing24))
+
+                // Location Section
+                Text(
+                    text = "Your Location",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.height(Dimens.Spacing8))
+
+                // Country Selector
+                var showCountryPicker by remember { mutableStateOf(false) }
+                var showRegionPicker by remember { mutableStateOf(false) }
+                var showCityPicker by remember { mutableStateOf(false) }
+
+                LocationSelectionRow(
+                    label = "Country",
+                    value = uiState.selectedCountry?.name ?: "Select Country",
+                    isEnabled = true,
+                    onClick = { showCountryPicker = true }
+                )
+
+                Spacer(modifier = Modifier.height(Dimens.Spacing8))
+
+                LocationSelectionRow(
+                    label = "Region",
+                    value = uiState.selectedRegion?.name ?: if (uiState.selectedCountry == null) "Select Country first" else "Select Region",
+                    isEnabled = uiState.selectedCountry != null,
+                    onClick = { showRegionPicker = true }
+                )
+
+                Spacer(modifier = Modifier.height(Dimens.Spacing8))
+
+                LocationSelectionRow(
+                    label = "City",
+                    value = uiState.selectedCity?.name ?: if (uiState.selectedRegion == null) "Select Region first" else "Select City",
+                    isEnabled = uiState.selectedRegion != null,
+                    onClick = { showCityPicker = true }
+                )
+
                 if (uiState.errorMessage != null) {
                     Spacer(modifier = Modifier.height(Dimens.Spacing16))
                     Text(
@@ -224,7 +269,73 @@ fun CreateProfileScreen(
                     isLoading = uiState.isLoading,
                     onClick = { viewModel.submitBasicInfo() }
                 )
+
+                if (showCountryPicker) {
+                    com.aura.dating.feature.discover.ui.LocationPickerBottomSheet(
+                        title = "Select Country",
+                        items = uiState.countries.map { com.aura.dating.feature.discover.ui.CountryLocationItem(it) },
+                        selectedItem = uiState.selectedCountry?.let { com.aura.dating.feature.discover.ui.CountryLocationItem(it) },
+                        isLoading = uiState.isLoadingLocations && uiState.countries.isEmpty(),
+                        onItemSelected = { item -> viewModel.selectCountry(item.country) },
+                        onDismissRequest = { showCountryPicker = false }
+                    )
+                }
+
+                if (showRegionPicker) {
+                    com.aura.dating.feature.discover.ui.LocationPickerBottomSheet(
+                        title = "Select Region",
+                        items = uiState.regions.map { com.aura.dating.feature.discover.ui.RegionLocationItem(it) },
+                        selectedItem = uiState.selectedRegion?.let { com.aura.dating.feature.discover.ui.RegionLocationItem(it) },
+                        isLoading = uiState.isLoadingLocations && uiState.regions.isEmpty(),
+                        onItemSelected = { item -> viewModel.selectRegion(item.region) },
+                        onDismissRequest = { showRegionPicker = false }
+                    )
+                }
+
+                if (showCityPicker) {
+                    com.aura.dating.feature.discover.ui.LocationPickerBottomSheet(
+                        title = "Select City",
+                        items = uiState.cities.map { com.aura.dating.feature.discover.ui.CityLocationItem(it) },
+                        selectedItem = uiState.selectedCity?.let { com.aura.dating.feature.discover.ui.CityLocationItem(it) },
+                        isLoading = uiState.isLoadingLocations && uiState.cities.isEmpty(),
+                        onItemSelected = { item -> viewModel.selectCity(item.city) },
+                        onDismissRequest = { showCityPicker = false }
+                    )
+                }
             }
+        }
+    }
+}
+
+@Composable
+private fun LocationSelectionRow(
+    label: String,
+    value: String,
+    isEnabled: Boolean,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(Dimens.RadiusMedium))
+            .background(if (isEnabled) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f))
+            .clickable(enabled = isEnabled, onClick = onClick)
+            .padding(horizontal = Dimens.Spacing16, vertical = 14.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White.copy(alpha = 0.5f)
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = if (isEnabled) Color.White else Color.White.copy(alpha = 0.3f)
+            )
         }
     }
 }

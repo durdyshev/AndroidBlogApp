@@ -35,6 +35,11 @@ import com.aura.dating.feature.profile_creation.ui.CreateProfileScreen
 import com.aura.dating.feature.profile_creation.ui.DatingPreferencesScreen
 import com.aura.dating.feature.profile_creation.ui.SelectInterestsScreen
 import com.aura.dating.feature.profile_creation.viewmodel.CreateProfileViewModel
+import com.aura.dating.feature.discover.ui.LocationSearchScreen
+import com.aura.dating.feature.discover.ui.SearchResultsScreen
+import com.aura.dating.feature.discover.viewmodel.LocationSearchViewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.aura.dating.feature.settings.ui.AccountSettingsScreen
 import com.aura.dating.feature.settings.ui.BlockedUsersScreen
 import com.aura.dating.feature.settings.ui.NotificationSettingsScreen
@@ -209,6 +214,7 @@ fun AuraNavHost(
                 },
                 onNavigateToNearbyMap = { navController.navigate(Screen.NearbyMap.route) },
                 onNavigateToNotifications = { navController.navigate(Screen.Notifications.route) },
+                onNavigateToLocationSearch = { navController.navigate(Screen.LocationSearch.route) },
                 onNavigateToConversation = { convId, name, photoUrl ->
                     navController.navigate(Screen.Conversation.createRoute(convId, name, photoUrl))
                 },
@@ -216,6 +222,50 @@ fun AuraNavHost(
                 onNavigateToEditPhotos = { navController.navigate(Screen.EditPhotos.route) },
                 onNavigateToEditInterests = { navController.navigate(Screen.EditInterests.route) },
                 onNavigateToSettings = { navController.navigate(Screen.Settings.route) }
+            )
+        }
+
+        // Location Search Flow
+        composable(Screen.LocationSearch.route) { backStackEntry ->
+            val viewModel: LocationSearchViewModel = hiltViewModel(backStackEntry)
+            LocationSearchScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToResults = { title, subtitle ->
+                    navController.navigate(Screen.SearchResults.createRoute(title, subtitle))
+                },
+                viewModel = viewModel
+            )
+        }
+
+        composable(
+            route = Screen.SearchResults.route,
+            arguments = listOf(
+                navArgument("title") { type = NavType.StringType },
+                navArgument("subtitle") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val title = backStackEntry.arguments?.getString("title") ?: "People"
+            val subtitle = backStackEntry.arguments?.getString("subtitle") ?: ""
+            val parentEntry = androidx.compose.runtime.remember(backStackEntry) {
+                try { navController.getBackStackEntry(Screen.LocationSearch.route) } catch (_: Exception) { backStackEntry }
+            }
+            val viewModel: LocationSearchViewModel = hiltViewModel(parentEntry)
+            val profileViewModel: ProfileViewModel = hiltViewModel()
+            val profileUiState by profileViewModel.uiState.collectAsState()
+
+            SearchResultsScreen(
+                title = title,
+                subtitle = subtitle,
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToUserProfile = { userId ->
+                    navController.navigate(Screen.UserProfileDetail.createRoute(userId))
+                },
+                onNavigateToConversation = { convId, name, photoUrl ->
+                    navController.navigate(Screen.Conversation.createRoute(convId, name, photoUrl))
+                },
+                onAdjustFilters = { navController.popBackStack() },
+                myProfile = profileUiState.myProfile,
+                viewModel = viewModel
             )
         }
 

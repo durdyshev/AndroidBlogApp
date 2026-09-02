@@ -8,4 +8,14 @@ interface DiscoveryRepository {
     val candidatesFlow: Flow<List<DiscoveryCandidate>>
     suspend fun getCandidates(limit: Int = 20, forceRefresh: Boolean = false): Result<List<DiscoveryCandidate>>
     suspend fun removeCandidateLocally(candidateId: String)
+    suspend fun searchCandidatesByLocation(
+        countryId: String?,
+        regionId: String?,
+        cityId: String?,
+        minAge: Int,
+        maxAge: Int,
+        gender: String,
+        limit: Int = 20,
+        offset: Int = 0
+    ): Result<List<DiscoveryCandidate>>
 }

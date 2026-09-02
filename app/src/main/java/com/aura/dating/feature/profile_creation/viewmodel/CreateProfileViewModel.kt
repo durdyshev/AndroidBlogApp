@@ -6,6 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aura.dating.core.common.result.Result
 import com.aura.dating.core.common.utils.ImageCompressor
+import com.aura.dating.domain.location.model.City
+import com.aura.dating.domain.location.model.Country
+import com.aura.dating.domain.location.model.Region
+import com.aura.dating.domain.location.repository.LocationRepository
 import com.aura.dating.domain.profile.model.Gender
 import com.aura.dating.domain.profile.model.GenderPreference
 import com.aura.dating.domain.profile.model.Interest
@@ -34,6 +38,13 @@ data class ProfileCreationUiState(
     val birthDateMillis: Long = Calendar.getInstance().apply { add(Calendar.YEAR, -22) }.timeInMillis,
     val gender: Gender = Gender.MAN,
     val bio: String = "",
+    val selectedCountry: Country? = null,
+    val selectedRegion: Region? = null,
+    val selectedCity: City? = null,
+    val countries: List<Country> = emptyList(),
+    val regions: List<Region> = emptyList(),
+    val cities: List<City> = emptyList(),
+    val isLoadingLocations: Boolean = false,
     val photos: List<ProfilePhoto> = emptyList(),
     val availableInterests: List<Interest> = emptyList(),
     val selectedInterestIds: Set<String> = emptySet(),
@@ -60,7 +71,8 @@ class CreateProfileViewModel @Inject constructor(
     private val uploadPhotoUseCase: UploadPhotoUseCase,
     private val deletePhotoUseCase: DeletePhotoUseCase,
     private val getInterestsUseCase: GetInterestsUseCase,
-    private val updatePreferencesUseCase: UpdatePreferencesUseCase
+    private val updatePreferencesUseCase: UpdatePreferencesUseCase,
+    private val locationRepository: LocationRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileCreationUiState())
@@ -71,6 +83,7 @@ class CreateProfileViewModel @Inject constructor(
 
     init {
         loadInitialData()
+        loadCountries()
     }
 
     private fun loadInitialData() {
@@ -97,6 +110,81 @@ class CreateProfileViewModel @Inject constructor(
 
             _uiState.value = _uiState.value.copy(isLoading = false)
         }
+    }
+
+    fun loadCountries() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoadingLocations = true)
+            val result = locationRepository.getCountries()
+            if (result is Result.Success) {
+                _uiState.value = _uiState.value.copy(
+                    countries = result.data,
+                    isLoadingLocations = false
+                )
+            } else {
+                _uiState.value = _uiState.value.copy(isLoadingLocations = false)
+            }
+        }
+    }
+
+    fun selectCountry(country: Country?) {
+        if (_uiState.value.selectedCountry?.id == country?.id) return
+        _uiState.value = _uiState.value.copy(
+            selectedCountry = country,
+            selectedRegion = null,
+            selectedCity = null,
+            regions = emptyList(),
+            cities = emptyList()
+        )
+        if (country != null) {
+            loadRegions(country.id)
+        }
+    }
+
+    private fun loadRegions(countryId: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoadingLocations = true)
+            val result = locationRepository.getRegions(countryId)
+            if (result is Result.Success) {
+                _uiState.value = _uiState.value.copy(
+                    regions = result.data,
+                    isLoadingLocations = false
+                )
+            } else {
+                _uiState.value = _uiState.value.copy(isLoadingLocations = false)
+            }
+        }
+    }
+
+    fun selectRegion(region: Region?) {
+        if (_uiState.value.selectedRegion?.id == region?.id) return
+        _uiState.value = _uiState.value.copy(
+            selectedRegion = region,
+            selectedCity = null,
+            cities = emptyList()
+        )
+        if (region != null) {
+            loadCities(region.id)
+        }
+    }
+
+    private fun loadCities(regionId: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoadingLocations = true)
+            val result = locationRepository.getCities(regionId)
+            if (result is Result.Success) {
+                _uiState.value = _uiState.value.copy(
+                    cities = result.data,
+                    isLoadingLocations = false
+                )
+            } else {
+                _uiState.value = _uiState.value.copy(isLoadingLocations = false)
+            }
+        }
+    }
+
+    fun selectCity(city: City?) {
+        _uiState.value = _uiState.value.copy(selectedCity = city)
     }
 
     fun onDisplayNameChange(name: String) {
@@ -150,6 +238,9 @@ class CreateProfileViewModel @Inject constructor(
                 birthDateMillis = birthMillis,
                 gender = _uiState.value.gender,
                 bio = _uiState.value.bio,
+                countryId = _uiState.value.selectedCountry?.id,
+                regionId = _uiState.value.selectedRegion?.id,
+                cityId = _uiState.value.selectedCity?.id,
                 interestIds = _uiState.value.selectedInterestIds.toList()
             )
             _uiState.value = _uiState.value.copy(isLoading = false)

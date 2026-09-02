@@ -73,8 +73,31 @@ fun EditProfileScreen(
 
     var displayName by remember(profile?.displayName) { mutableStateOf(profile?.displayName ?: "") }
     var bio by remember(profile?.bio) { mutableStateOf(profile?.bio ?: "") }
+    var selectedCountry by remember(profile?.countryId) {
+        mutableStateOf(
+            if (profile?.countryId != null) com.aura.dating.domain.location.model.Country(profile.countryId, profile.countryName ?: "Selected Country")
+            else null
+        )
+    }
+    var selectedRegion by remember(profile?.regionId) {
+        mutableStateOf(
+            if (profile?.regionId != null && profile.countryId != null) com.aura.dating.domain.location.model.Region(profile.regionId, profile.countryId, profile.regionName ?: "Selected Region")
+            else null
+        )
+    }
+    var selectedCity by remember(profile?.cityId) {
+        mutableStateOf(
+            if (profile?.cityId != null && profile.regionId != null) com.aura.dating.domain.location.model.City(profile.cityId, profile.regionId, profile.cityName ?: "Selected City")
+            else null
+        )
+    }
+
+    var showCountryPicker by remember { mutableStateOf(false) }
+    var showRegionPicker by remember { mutableStateOf(false) }
+    var showCityPicker by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+        viewModel.loadCountries()
         viewModel.eventFlow.collect { event ->
             if (event is ProfileEvent.NavigateBack) {
                 onNavigateBack()
@@ -140,6 +163,48 @@ fun EditProfileScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
+                Spacer(modifier = Modifier.height(Dimens.Spacing24))
+
+                Text(
+                    text = "Home Location",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+
+                Spacer(modifier = Modifier.height(Dimens.Spacing8))
+
+                EditProfileLocationTile(
+                    label = "Country",
+                    value = selectedCountry?.name ?: "Select Country",
+                    isEnabled = true,
+                    onClick = { showCountryPicker = true }
+                )
+
+                Spacer(modifier = Modifier.height(Dimens.Spacing8))
+
+                EditProfileLocationTile(
+                    label = "Region",
+                    value = selectedRegion?.name ?: if (selectedCountry == null) "Select Country first" else "Select Region",
+                    isEnabled = selectedCountry != null,
+                    onClick = {
+                        selectedCountry?.let { viewModel.loadRegions(it.id) }
+                        showRegionPicker = true
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(Dimens.Spacing8))
+
+                EditProfileLocationTile(
+                    label = "City",
+                    value = selectedCity?.name ?: if (selectedRegion == null) "Select Region first" else "Select City",
+                    isEnabled = selectedRegion != null,
+                    onClick = {
+                        selectedRegion?.let { viewModel.loadCities(it.id) }
+                        showCityPicker = true
+                    }
+                )
+
                 Spacer(modifier = Modifier.height(Dimens.Spacing32))
             }
 
@@ -147,9 +212,92 @@ fun EditProfileScreen(
                 PrimaryButton(
                     text = "Save Changes",
                     isLoading = uiState.isLoading,
-                    onClick = { viewModel.updateProfile(displayName, bio) }
+                    onClick = {
+                        viewModel.updateProfile(
+                            displayName = displayName,
+                            bio = bio,
+                            countryId = selectedCountry?.id,
+                            regionId = selectedRegion?.id,
+                            cityId = selectedCity?.id
+                        )
+                    }
                 )
             }
+        }
+    }
+
+    if (showCountryPicker) {
+        com.aura.dating.feature.discover.ui.LocationPickerBottomSheet(
+            title = "Select Country",
+            items = uiState.countries.map { com.aura.dating.feature.discover.ui.CountryLocationItem(it) },
+            selectedItem = selectedCountry?.let { com.aura.dating.feature.discover.ui.CountryLocationItem(it) },
+            isLoading = uiState.isLoadingLocations && uiState.countries.isEmpty(),
+            onItemSelected = { item ->
+                selectedCountry = item.country
+                selectedRegion = null
+                selectedCity = null
+            },
+            onDismissRequest = { showCountryPicker = false }
+        )
+    }
+
+    if (showRegionPicker) {
+        com.aura.dating.feature.discover.ui.LocationPickerBottomSheet(
+            title = "Select Region",
+            items = uiState.regions.map { com.aura.dating.feature.discover.ui.RegionLocationItem(it) },
+            selectedItem = selectedRegion?.let { com.aura.dating.feature.discover.ui.RegionLocationItem(it) },
+            isLoading = uiState.isLoadingLocations && uiState.regions.isEmpty(),
+            onItemSelected = { item ->
+                selectedRegion = item.region
+                selectedCity = null
+            },
+            onDismissRequest = { showRegionPicker = false }
+        )
+    }
+
+    if (showCityPicker) {
+        com.aura.dating.feature.discover.ui.LocationPickerBottomSheet(
+            title = "Select City",
+            items = uiState.cities.map { com.aura.dating.feature.discover.ui.CityLocationItem(it) },
+            selectedItem = selectedCity?.let { com.aura.dating.feature.discover.ui.CityLocationItem(it) },
+            isLoading = uiState.isLoadingLocations && uiState.cities.isEmpty(),
+            onItemSelected = { item ->
+                selectedCity = item.city
+            },
+            onDismissRequest = { showCityPicker = false }
+        )
+    }
+}
+
+@Composable
+private fun EditProfileLocationTile(
+    label: String,
+    value: String,
+    isEnabled: Boolean,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(Dimens.RadiusMedium))
+            .background(if (isEnabled) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f))
+            .clickable(enabled = isEnabled, onClick = onClick)
+            .padding(horizontal = Dimens.Spacing16, vertical = 14.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White.copy(alpha = 0.5f)
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = if (isEnabled) Color.White else Color.White.copy(alpha = 0.3f)
+            )
         }
     }
 }

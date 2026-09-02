@@ -33,7 +33,10 @@ class UpdateProfileUseCase @Inject constructor(
         birthDateMillis: Long,
         gender: Gender,
         bio: String?,
-        interestIds: List<String>
+        countryId: String? = null,
+        regionId: String? = null,
+        cityId: String? = null,
+        interestIds: List<String> = emptyList()
     ): Result<UserProfile> {
         val trimmedName = displayName.trim()
         if (trimmedName.length < 2) {
@@ -50,6 +53,9 @@ class UpdateProfileUseCase @Inject constructor(
             birthDateMillis = birthDateMillis,
             gender = gender,
             bio = bio?.trim(),
+            countryId = countryId,
+            regionId = regionId,
+            cityId = cityId,
             interestIds = interestIds
         )
     }

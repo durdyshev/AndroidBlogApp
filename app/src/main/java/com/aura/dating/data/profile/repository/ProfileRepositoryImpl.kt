@@ -56,6 +56,9 @@ class ProfileRepositoryImpl @Inject constructor(
         birthDateMillis: Long,
         gender: Gender,
         bio: String?,
+        countryId: String?,
+        regionId: String?,
+        cityId: String?,
         interestIds: List<String>
     ): Result<UserProfile> {
         val userId = tokenStorage.getUserId()
@@ -67,6 +70,9 @@ class ProfileRepositoryImpl @Inject constructor(
             birthDateMillis = birthDateMillis,
             gender = gender,
             bio = bio,
+            countryId = countryId,
+            regionId = regionId,
+            cityId = cityId,
             interestIds = interestIds
         )
         if (result is Result.Success) {

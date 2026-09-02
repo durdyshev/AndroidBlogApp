@@ -16,6 +16,9 @@ data class DiscoveryCandidate(
     val distanceKm: Double?,
     val isOnline: Boolean,
     val lastSeenAtMillis: Long,
+    val countryName: String? = null,
+    val regionName: String? = null,
+    val cityName: String? = null,
     val photos: List<ProfilePhoto>,
     val interests: List<Interest>
 )

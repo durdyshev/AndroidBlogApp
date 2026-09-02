@@ -47,12 +47,16 @@ import com.aura.dating.data.notifications.remote.SupabaseNotificationRemoteDataS
 import com.aura.dating.data.notifications.repository.NotificationRepositoryImpl
 import com.aura.dating.data.profile.local.ProfileLocalDataSource
 import com.aura.dating.data.profile.local.RoomProfileLocalDataSource
+import com.aura.dating.data.location.remote.LocationRemoteDataSource
+import com.aura.dating.data.location.remote.SupabaseLocationRemoteDataSource
+import com.aura.dating.data.location.repository.LocationRepositoryImpl
 import com.aura.dating.data.profile.remote.ProfileRemoteDataSource
 import com.aura.dating.data.profile.remote.SupabaseProfileRemoteDataSource
 import com.aura.dating.data.profile.repository.ProfileRepositoryImpl
 import com.aura.dating.domain.auth.repository.AuthRepository
 import com.aura.dating.domain.chat.repository.ChatRepository
 import com.aura.dating.domain.discovery.repository.DiscoveryRepository
+import com.aura.dating.domain.location.repository.LocationRepository
 import com.aura.dating.domain.matching.repository.MatchingRepository
 import com.aura.dating.domain.moderation.repository.ModerationRepository
 import com.aura.dating.domain.notifications.repository.NotificationRepository
@@ -123,6 +127,15 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindDiscoveryRepository(impl: DiscoveryRepositoryImpl): DiscoveryRepository
+
+    // Location
+    @Binds
+    @Singleton
+    abstract fun bindLocationRemote(impl: SupabaseLocationRemoteDataSource): LocationRemoteDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindLocationRepository(impl: LocationRepositoryImpl): LocationRepository
 
     // Matching
     @Binds

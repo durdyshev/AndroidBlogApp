@@ -45,4 +45,26 @@ class DiscoveryRepositoryImpl @Inject constructor(
     override suspend fun removeCandidateLocally(candidateId: String) {
         localDataSource.removeCandidate(candidateId)
     }
+
+    override suspend fun searchCandidatesByLocation(
+        countryId: String?,
+        regionId: String?,
+        cityId: String?,
+        minAge: Int,
+        maxAge: Int,
+        gender: String,
+        limit: Int,
+        offset: Int
+    ): Result<List<DiscoveryCandidate>> {
+        return remoteDataSource.searchCandidatesByLocation(
+            countryId = countryId,
+            regionId = regionId,
+            cityId = cityId,
+            minAge = minAge,
+            maxAge = maxAge,
+            gender = gender,
+            limit = limit,
+            offset = offset
+        )
+    }
 }

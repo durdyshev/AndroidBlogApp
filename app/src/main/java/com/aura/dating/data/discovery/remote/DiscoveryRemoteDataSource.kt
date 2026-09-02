@@ -32,6 +32,9 @@ data class DiscoveryCandidateDto(
     @SerialName("distance_km") val distanceKm: Double? = null,
     @SerialName("is_online") val isOnline: Boolean = false,
     @SerialName("last_seen_at") val lastSeenAt: String? = null,
+    @SerialName("country_name") val countryName: String? = null,
+    @SerialName("region_name") val regionName: String? = null,
+    @SerialName("city_name") val cityName: String? = null,
     val photos: List<PhotoDto> = emptyList(),
     val interests: List<InterestDto> = emptyList()
 )
@@ -41,8 +44,30 @@ data class DiscoveryCandidatesRequest(
     val p_limit: Int
 )
 
+@Serializable
+data class SearchCandidatesByLocationRequest(
+    val p_country_id: String? = null,
+    val p_region_id: String? = null,
+    val p_city_id: String? = null,
+    val p_min_age: Int = 18,
+    val p_max_age: Int = 100,
+    val p_gender: String = "ALL",
+    val p_limit: Int = 20,
+    val p_offset: Int = 0
+)
+
 interface DiscoveryRemoteDataSource {
     suspend fun getCandidates(limit: Int = 20): Result<List<DiscoveryCandidate>>
+    suspend fun searchCandidatesByLocation(
+        countryId: String?,
+        regionId: String?,
+        cityId: String?,
+        minAge: Int,
+        maxAge: Int,
+        gender: String,
+        limit: Int,
+        offset: Int
+    ): Result<List<DiscoveryCandidate>>
 }
 
 @Singleton
@@ -64,40 +89,84 @@ class SupabaseDiscoveryRemoteDataSource @Inject constructor(
             },
             parser = { response ->
                 val list = response.body<List<DiscoveryCandidateDto>>()
-                list.map { dto ->
-                    val birthMillis = try {
-                        dateFormat.parse(dto.birthDate)?.time ?: (System.currentTimeMillis() - 25L * 365 * 24 * 3600 * 1000)
-                    } catch (e: Exception) {
-                        System.currentTimeMillis() - 25L * 365 * 24 * 3600 * 1000
-                    }
-                    val age = DateTimeUtils.calculateAge(birthMillis)
-
-                    DiscoveryCandidate(
-                        id = dto.id,
-                        displayName = dto.displayName,
-                        birthDateMillis = birthMillis,
-                        age = age,
-                        gender = try { Gender.valueOf(dto.gender) } catch (e: Exception) { Gender.OTHER },
-                        bio = dto.bio,
-                        distanceKm = dto.distanceKm,
-                        isOnline = dto.isOnline,
-                        lastSeenAtMillis = dto.lastSeenAt?.let { DateTimeUtils.parseIsoDate(it) } ?: System.currentTimeMillis(),
-                        photos = dto.photos.map {
-                            ProfilePhoto(
-                                id = it.id,
-                                userId = it.userId,
-                                photoUrl = it.photoUrl,
-                                storagePath = it.storagePath,
-                                displayOrder = it.displayOrder,
-                                isPrimary = it.isPrimary
-                            )
-                        },
-                        interests = dto.interests.map {
-                            Interest(it.id, it.name, it.category, it.icon)
-                        }
-                    )
-                }
+                mapDtosToDomain(list)
             }
         )
+    }
+
+    override suspend fun searchCandidatesByLocation(
+        countryId: String?,
+        regionId: String?,
+        cityId: String?,
+        minAge: Int,
+        maxAge: Int,
+        gender: String,
+        limit: Int,
+        offset: Int
+    ): Result<List<DiscoveryCandidate>> {
+        return clientProvider.safeApiCall(
+            block = { client, headers ->
+                client.post {
+                    url("${clientProvider.baseUrl}/rest/v1/rpc/search_candidates_by_location")
+                    contentType(ContentType.Application.Json)
+                    headers(this)
+                    setBody(
+                        SearchCandidatesByLocationRequest(
+                            p_country_id = countryId,
+                            p_region_id = regionId,
+                            p_city_id = cityId,
+                            p_min_age = minAge,
+                            p_max_age = maxAge,
+                            p_gender = gender,
+                            p_limit = limit,
+                            p_offset = offset
+                        )
+                    )
+                }
+            },
+            parser = { response ->
+                val list = response.body<List<DiscoveryCandidateDto>>()
+                mapDtosToDomain(list)
+            }
+        )
+    }
+
+    private fun mapDtosToDomain(list: List<DiscoveryCandidateDto>): List<DiscoveryCandidate> {
+        return list.map { dto ->
+            val birthMillis = try {
+                dateFormat.parse(dto.birthDate)?.time ?: (System.currentTimeMillis() - 25L * 365 * 24 * 3600 * 1000)
+            } catch (e: Exception) {
+                System.currentTimeMillis() - 25L * 365 * 24 * 3600 * 1000
+            }
+            val age = DateTimeUtils.calculateAge(birthMillis)
+
+            DiscoveryCandidate(
+                id = dto.id,
+                displayName = dto.displayName,
+                birthDateMillis = birthMillis,
+                age = age,
+                gender = try { Gender.valueOf(dto.gender) } catch (e: Exception) { Gender.OTHER },
+                bio = dto.bio,
+                distanceKm = dto.distanceKm,
+                isOnline = dto.isOnline,
+                lastSeenAtMillis = dto.lastSeenAt?.let { DateTimeUtils.parseIsoDate(it) } ?: System.currentTimeMillis(),
+                countryName = dto.countryName,
+                regionName = dto.regionName,
+                cityName = dto.cityName,
+                photos = dto.photos.map {
+                    ProfilePhoto(
+                        id = it.id,
+                        userId = it.userId,
+                        photoUrl = it.photoUrl,
+                        storagePath = it.storagePath,
+                        displayOrder = it.displayOrder,
+                        isPrimary = it.isPrimary
+                    )
+                },
+                interests = dto.interests.map {
+                    Interest(it.id, it.name, it.category, it.icon)
+                }
+            )
+        }
     }
 }

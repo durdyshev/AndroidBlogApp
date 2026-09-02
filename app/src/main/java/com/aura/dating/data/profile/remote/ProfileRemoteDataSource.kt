@@ -38,11 +38,36 @@ data class ProfileDto(
     val bio: String? = null,
     val latitude: Double? = null,
     val longitude: Double? = null,
+    @SerialName("country_id") val countryId: String? = null,
+    @SerialName("region_id") val regionId: String? = null,
+    @SerialName("city_id") val cityId: String? = null,
+    val countries: CountryShortDto? = null,
+    val regions: RegionShortDto? = null,
+    val cities: CityShortDto? = null,
     @SerialName("is_online") val isOnline: Boolean = false,
     @SerialName("last_seen_at") val lastSeenAt: String? = null,
     @SerialName("profile_photos") val photos: List<PhotoDto> = emptyList(),
     @SerialName("user_interests") val userInterests: List<UserInterestDto> = emptyList(),
     @SerialName("user_preferences") val preferences: List<PreferencesDto> = emptyList()
+)
+
+@Serializable
+data class CountryShortDto(
+    val id: String = "",
+    val name: String = "",
+    val code: String? = null
+)
+
+@Serializable
+data class RegionShortDto(
+    val id: String = "",
+    val name: String = ""
+)
+
+@Serializable
+data class CityShortDto(
+    val id: String = "",
+    val name: String = ""
 )
 
 @Serializable
@@ -85,6 +110,9 @@ data class UpdateProfileRequest(
     @SerialName("birth_date") val birthDate: String,
     val gender: String,
     val bio: String? = null,
+    @SerialName("country_id") val countryId: String? = null,
+    @SerialName("region_id") val regionId: String? = null,
+    @SerialName("city_id") val cityId: String? = null,
     @SerialName("updated_at") val updatedAt: String
 )
 
@@ -143,7 +171,10 @@ interface ProfileRemoteDataSource {
         birthDateMillis: Long,
         gender: Gender,
         bio: String?,
-        interestIds: List<String>
+        countryId: String? = null,
+        regionId: String? = null,
+        cityId: String? = null,
+        interestIds: List<String> = emptyList()
     ): Result<UserProfile>
     suspend fun uploadPhoto(userId: String, imageBytes: ByteArray, isPrimary: Boolean): Result<ProfilePhoto>
     suspend fun deletePhoto(photoId: String, storagePath: String): Result<Unit>
@@ -166,7 +197,7 @@ class SupabaseProfileRemoteDataSource @Inject constructor(
         return clientProvider.safeApiCall(
             block = { client, headers ->
                 client.get {
-                    url("${clientProvider.baseUrl}/rest/v1/profiles?id=eq.$userId&select=*,profile_photos(*),user_interests(interests(*))")
+                    url("${clientProvider.baseUrl}/rest/v1/profiles?id=eq.$userId&select=*,countries(*),regions(*),cities(*),profile_photos(*),user_interests(interests(*))")
                     headers(this)
                 }
             },
@@ -184,6 +215,9 @@ class SupabaseProfileRemoteDataSource @Inject constructor(
         birthDateMillis: Long,
         gender: Gender,
         bio: String?,
+        countryId: String?,
+        regionId: String?,
+        cityId: String?,
         interestIds: List<String>
     ): Result<UserProfile> {
         val birthDateStr = dateFormat.format(Date(birthDateMillis))
@@ -193,6 +227,9 @@ class SupabaseProfileRemoteDataSource @Inject constructor(
             birthDate = birthDateStr,
             gender = gender.name,
             bio = bio,
+            countryId = countryId,
+            regionId = regionId,
+            cityId = cityId,
             updatedAt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).format(Date())
         )
 
@@ -476,6 +513,12 @@ class SupabaseProfileRemoteDataSource @Inject constructor(
                     showOnlyOnline = it.showOnlyOnline
                 )
             },
+            countryId = dto.countryId,
+            regionId = dto.regionId,
+            cityId = dto.cityId,
+            countryName = dto.countries?.name,
+            regionName = dto.regions?.name,
+            cityName = dto.cities?.name,
             isOnline = dto.isOnline,
             lastSeenAtMillis = dto.lastSeenAt?.let { DateTimeUtils.parseIsoDate(it) } ?: System.currentTimeMillis()
         )

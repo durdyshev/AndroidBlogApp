@@ -25,6 +25,7 @@ fun MainScreen(
     onNavigateToUserProfile: (String) -> Unit,
     onNavigateToNearbyMap: () -> Unit,
     onNavigateToNotifications: () -> Unit,
+    onNavigateToLocationSearch: () -> Unit,
     onNavigateToConversation: (String, String, String?) -> Unit,
     onNavigateToEditProfile: () -> Unit,
     onNavigateToEditPhotos: () -> Unit,
@@ -47,6 +48,7 @@ fun MainScreen(
                     onNavigateToUserProfile = onNavigateToUserProfile,
                     onNavigateToNearbyMap = onNavigateToNearbyMap,
                     onNavigateToNotifications = onNavigateToNotifications,
+                    onNavigateToLocationSearch = onNavigateToLocationSearch,
                     onNavigateToConversation = onNavigateToConversation,
                     myProfile = profileUiState.myProfile
                 )

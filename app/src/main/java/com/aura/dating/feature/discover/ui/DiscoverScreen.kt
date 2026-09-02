@@ -13,16 +13,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aura.dating.core.common.utils.DistanceUtils
@@ -46,6 +50,7 @@ import com.aura.dating.core.designsystem.components.ProfileCard
 import com.aura.dating.core.designsystem.components.SwipeCard
 import com.aura.dating.core.designsystem.components.SwipeDirection
 import com.aura.dating.core.designsystem.theme.AuraBlue
+import com.aura.dating.core.designsystem.theme.AuraPrimaryGradient
 import com.aura.dating.core.designsystem.theme.AuraSuperLikeGradient
 import com.aura.dating.core.designsystem.theme.DarkBackground
 import com.aura.dating.core.designsystem.theme.Dimens
@@ -62,6 +67,7 @@ fun DiscoverScreen(
     onNavigateToUserProfile: (String) -> Unit,
     onNavigateToNearbyMap: () -> Unit,
     onNavigateToNotifications: () -> Unit,
+    onNavigateToLocationSearch: () -> Unit,
     onNavigateToConversation: (String, String, String?) -> Unit,
     myProfile: UserProfile?,
     viewModel: DiscoverViewModel = hiltViewModel()
@@ -127,6 +133,51 @@ fun DiscoverScreen(
                     }
                 }
             )
+
+            // Discovery Mode Segment Switch (📍 Near Me / 🌍 Search)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimens.Spacing20, vertical = Dimens.Spacing4)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f))
+                    .padding(3.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                // 📍 Near Me (Active)
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(11.dp))
+                        .background(AuraPrimaryGradient)
+                        .padding(vertical = Dimens.Spacing8),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "📍 Near Me",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+
+                // 🌍 Search (Clickable)
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(11.dp))
+                        .clickable(onClick = onNavigateToLocationSearch)
+                        .padding(vertical = Dimens.Spacing8),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "🌍 Search",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White.copy(alpha = 0.7f)
+                    )
+                }
+            }
 
             // Main Discovery Card Area
             Box(

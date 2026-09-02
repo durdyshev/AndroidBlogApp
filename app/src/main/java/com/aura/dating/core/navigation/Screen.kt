@@ -29,6 +29,11 @@ sealed class Screen(val route: String) {
     }
     data object NearbyMap : Screen("nearby_map")
     data object Notifications : Screen("notifications")
+    data object LocationSearch : Screen("location_search")
+    data object SearchResults : Screen("search_results/{title}/{subtitle}") {
+        fun createRoute(title: String, subtitle: String) =
+            "search_results/${android.net.Uri.encode(title)}/${android.net.Uri.encode(subtitle)}"
+    }
 
     // Profile Edit & Settings
     data object EditProfile : Screen("edit_profile")
