@@ -100,4 +100,11 @@ object DateTimeUtils {
             }
         }
     }
+
+    fun formatToIsoUtc(timeMillis: Long): String {
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+        return format.format(Date(timeMillis))
+    }
 }

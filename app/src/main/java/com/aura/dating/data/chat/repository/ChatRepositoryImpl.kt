@@ -63,9 +63,10 @@ class ChatRepositoryImpl @Inject constructor(
     override suspend fun getMessages(
         conversationId: String,
         limit: Int,
+        beforeTimestampIso: String?,
         forceRefresh: Boolean
     ): Result<List<Message>> {
-        val remoteResult = remoteDataSource.getMessages(conversationId, limit)
+        val remoteResult = remoteDataSource.getMessages(conversationId, limit, beforeTimestampIso)
         if (remoteResult is Result.Success) {
             localDataSource.saveMessages(remoteResult.data)
             return remoteResult

@@ -24,8 +24,18 @@ class GetMessagesUseCase @Inject constructor(
         return chatRepository.getMessagesFlow(conversationId)
     }
 
-    suspend fun fetchMessages(conversationId: String, forceRefresh: Boolean = false): Result<List<Message>> {
-        return chatRepository.getMessages(conversationId, limit = 50, forceRefresh = forceRefresh)
+    suspend fun fetchMessages(
+        conversationId: String,
+        limit: Int = 30,
+        beforeTimestampIso: String? = null,
+        forceRefresh: Boolean = false
+    ): Result<List<Message>> {
+        return chatRepository.getMessages(
+            conversationId = conversationId,
+            limit = limit,
+            beforeTimestampIso = beforeTimestampIso,
+            forceRefresh = forceRefresh
+        )
     }
 }
 

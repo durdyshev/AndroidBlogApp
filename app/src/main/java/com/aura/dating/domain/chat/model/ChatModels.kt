@@ -25,7 +25,7 @@ data class Message(
 @Serializable
 data class Conversation(
     val id: String,
-    val matchId: String,
+    val matchId: String? = null,
     val participantUserId: String,
     val participantName: String,
     val participantPhotoUrl: String?,

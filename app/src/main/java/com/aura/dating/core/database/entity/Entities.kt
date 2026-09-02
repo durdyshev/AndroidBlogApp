@@ -47,7 +47,7 @@ data class MatchEntity(
 @Entity(tableName = "conversations")
 data class ConversationEntity(
     @PrimaryKey val id: String,
-    val matchId: String,
+    val matchId: String? = null,
     val participantUserId: String,
     val participantName: String,
     val participantPhotoUrl: String?,

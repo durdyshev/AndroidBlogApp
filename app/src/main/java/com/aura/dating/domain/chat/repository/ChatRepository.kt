@@ -10,7 +10,12 @@ interface ChatRepository {
     suspend fun resolveConversationId(rawId: String): Result<String>
     fun getMessagesFlow(conversationId: String): Flow<List<Message>>
     suspend fun getConversations(forceRefresh: Boolean = false): Result<List<Conversation>>
-    suspend fun getMessages(conversationId: String, limit: Int = 50, forceRefresh: Boolean = false): Result<List<Message>>
+    suspend fun getMessages(
+        conversationId: String,
+        limit: Int = 30,
+        beforeTimestampIso: String? = null,
+        forceRefresh: Boolean = false
+    ): Result<List<Message>>
     suspend fun sendMessage(conversationId: String, content: String): Result<Message>
     suspend fun sendImageMessage(conversationId: String, imageBytes: ByteArray): Result<Message>
     suspend fun markMessagesAsRead(conversationId: String): Result<Unit>

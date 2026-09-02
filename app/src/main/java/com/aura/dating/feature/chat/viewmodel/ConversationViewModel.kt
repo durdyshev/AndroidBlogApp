@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aura.dating.core.common.result.Result
+import com.aura.dating.core.common.utils.DateTimeUtils
 import com.aura.dating.core.common.utils.ImageCompressor
 import com.aura.dating.core.security.TokenStorage
 import com.aura.dating.domain.chat.model.Message
@@ -51,6 +52,8 @@ data class ConversationUiState(
     val inputText: String = "",
     val isSending: Boolean = false,
     val isUploadingImage: Boolean = false,
+    val isLoadingOlderMessages: Boolean = false,
+    val hasMoreOlderMessages: Boolean = true,
     val errorMessage: String? = null
 )
 
@@ -160,12 +163,21 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
+    companion object {
+        private const val PAGE_SIZE = 30
+    }
+
     private fun startLiveSync(convId: String) {
         liveSyncJob?.cancel()
         liveSyncJob = viewModelScope.launch {
             while (isActive) {
                 delay(3000)
-                getMessagesUseCase.fetchMessages(convId, forceRefresh = true)
+                getMessagesUseCase.fetchMessages(
+                    conversationId = convId,
+                    limit = PAGE_SIZE,
+                    beforeTimestampIso = null,
+                    forceRefresh = true
+                )
                 refreshPartnerPresence()
             }
         }
@@ -189,7 +201,45 @@ class ConversationViewModel @Inject constructor(
 
     fun fetchInitialMessages(convId: String = resolvedConversationId) {
         viewModelScope.launch {
-            getMessagesUseCase.fetchMessages(convId, forceRefresh = true)
+            val res = getMessagesUseCase.fetchMessages(
+                conversationId = convId,
+                limit = PAGE_SIZE,
+                beforeTimestampIso = null,
+                forceRefresh = true
+            )
+            if (res is Result.Success) {
+                _uiState.value = _uiState.value.copy(
+                    hasMoreOlderMessages = res.data.size >= PAGE_SIZE
+                )
+            }
+        }
+    }
+
+    fun loadOlderMessages() {
+        val currentState = _uiState.value
+        if (currentState.isLoadingOlderMessages || !currentState.hasMoreOlderMessages) return
+
+        val oldestMessage = currentState.messages.firstOrNull() ?: return
+        val oldestIso = DateTimeUtils.formatToIsoUtc(oldestMessage.createdAtMillis)
+        val convId = resolvedConversationId
+
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoadingOlderMessages = true)
+            val res = getMessagesUseCase.fetchMessages(
+                conversationId = convId,
+                limit = PAGE_SIZE,
+                beforeTimestampIso = oldestIso,
+                forceRefresh = true
+            )
+            val hasMore = if (res is Result.Success) {
+                res.data.size >= PAGE_SIZE
+            } else {
+                currentState.hasMoreOlderMessages
+            }
+            _uiState.value = _uiState.value.copy(
+                isLoadingOlderMessages = false,
+                hasMoreOlderMessages = hasMore
+            )
         }
     }
 

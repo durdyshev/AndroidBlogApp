@@ -27,7 +27,7 @@ import javax.inject.Singleton
 @Serializable
 data class ConversationSupabaseDto(
     val id: String,
-    @SerialName("match_id") val matchId: String,
+    @SerialName("match_id") val matchId: String? = null,
     @SerialName("last_message_text") val lastMessageText: String? = null,
     @SerialName("last_message_at") val lastMessageAt: String? = null,
     @SerialName("last_message_sender_id") val lastMessageSenderId: String? = null,
@@ -91,7 +91,11 @@ data class SoftDeleteMessageRequest(
 interface ChatRemoteDataSource {
     suspend fun resolveConversationId(rawId: String): Result<String>
     suspend fun getConversations(currentUserId: String): Result<List<Conversation>>
-    suspend fun getMessages(conversationId: String, limit: Int = 50): Result<List<Message>>
+    suspend fun getMessages(
+        conversationId: String,
+        limit: Int = 30,
+        beforeTimestampIso: String? = null
+    ): Result<List<Message>>
     suspend fun sendMessage(
         conversationId: String,
         senderId: String,
@@ -112,11 +116,11 @@ class SupabaseChatRemoteDataSource @Inject constructor(
     override suspend fun resolveConversationId(rawId: String): Result<String> {
         if (rawId.isBlank()) return Result.Success(rawId)
 
-        // 1. Direct query: check if rawId is a valid conversation ID or match ID
+        // 1. Direct query: check if rawId is already a valid conversation ID
         val directLookup = clientProvider.safeApiCall(
             block = { client, headers ->
                 client.get {
-                    url("${clientProvider.baseUrl}/rest/v1/conversations?or=(id.eq.$rawId,match_id.eq.$rawId)&select=id&limit=1")
+                    url("${clientProvider.baseUrl}/rest/v1/conversations?id=eq.$rawId&select=id&limit=1")
                     headers(this)
                 }
             },
@@ -130,22 +134,22 @@ class SupabaseChatRemoteDataSource @Inject constructor(
             return Result.Success(directLookup.data)
         }
 
-        // 2. Participant query: check if rawId is a participant user ID sharing a conversation
-        val participantLookup = clientProvider.safeApiCall(
+        // 2. Direct query: check if rawId is a match ID
+        val matchLookup = clientProvider.safeApiCall(
             block = { client, headers ->
                 client.get {
-                    url("${clientProvider.baseUrl}/rest/v1/conversation_participants?user_id=eq.$rawId&select=conversation_id&limit=1")
+                    url("${clientProvider.baseUrl}/rest/v1/conversations?match_id=eq.$rawId&select=id&limit=1")
                     headers(this)
                 }
             },
             parser = { response ->
-                val list = response.body<List<ConversationParticipantLookupDto>>()
-                list.firstOrNull()?.conversationId
+                val list = response.body<List<ConversationIdLookupDto>>()
+                list.firstOrNull()?.id
             }
         )
 
-        if (participantLookup is Result.Success && !participantLookup.data.isNullOrBlank()) {
-            return Result.Success(participantLookup.data)
+        if (matchLookup is Result.Success && !matchLookup.data.isNullOrBlank()) {
+            return Result.Success(matchLookup.data)
         }
 
         // 3. RPC call: rawId is a target partner user ID, get or create conversation
@@ -163,7 +167,7 @@ class SupabaseChatRemoteDataSource @Inject constructor(
             }
         )
 
-        if (rpcLookup is Result.Success && rpcLookup.data.isNotBlank()) {
+        if (rpcLookup is Result.Success && rpcLookup.data.isNotBlank() && !rpcLookup.data.contains("error", ignoreCase = true)) {
             return Result.Success(rpcLookup.data)
         }
 
@@ -218,13 +222,19 @@ class SupabaseChatRemoteDataSource @Inject constructor(
 
     override suspend fun getMessages(
         conversationId: String,
-        limit: Int
+        limit: Int,
+        beforeTimestampIso: String?
     ): Result<List<Message>> {
         val targetConvId = resolveActualConversationId(conversationId)
         return clientProvider.safeApiCall(
             block = { client, headers ->
                 client.get {
-                    url("${clientProvider.baseUrl}/rest/v1/messages?conversation_id=eq.$targetConvId&deleted_at=is.null&order=created_at.asc&limit=$limit")
+                    val urlBuilder = StringBuilder("${clientProvider.baseUrl}/rest/v1/messages?conversation_id=eq.$targetConvId&deleted_at=is.null")
+                    if (!beforeTimestampIso.isNullOrBlank()) {
+                        urlBuilder.append("&created_at=lt.$beforeTimestampIso")
+                    }
+                    urlBuilder.append("&order=created_at.desc&limit=$limit")
+                    url(urlBuilder.toString())
                     headers(this)
                 }
             },
@@ -241,7 +251,7 @@ class SupabaseChatRemoteDataSource @Inject constructor(
                         status = try { MessageStatus.valueOf(dto.status) } catch (e: Exception) { MessageStatus.SENT },
                         createdAtMillis = DateTimeUtils.parseIsoDate(dto.createdAt)
                     )
-                }
+                }.reversed()
             }
         )
     }

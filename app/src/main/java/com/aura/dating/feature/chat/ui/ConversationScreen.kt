@@ -44,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -87,6 +88,20 @@ fun ConversationScreen(
     var showUnmatchDialog by remember { mutableStateOf(false) }
     var showBlockDialog by remember { mutableStateOf(false) }
     var showReportSheet by remember { mutableStateOf(false) }
+    var prevMessageCount by remember { mutableStateOf(0) }
+
+    val shouldLoadOlder by remember {
+        derivedStateOf {
+            val firstVisibleIndex = listState.firstVisibleItemIndex
+            firstVisibleIndex <= 1 && uiState.hasMoreOlderMessages && !uiState.isLoadingOlderMessages && uiState.messages.isNotEmpty()
+        }
+    }
+
+    LaunchedEffect(shouldLoadOlder) {
+        if (shouldLoadOlder) {
+            viewModel.loadOlderMessages()
+        }
+    }
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -107,8 +122,18 @@ fun ConversationScreen(
     }
 
     LaunchedEffect(uiState.messages.size) {
-        if (uiState.messages.isNotEmpty()) {
-            listState.animateScrollToItem(uiState.messages.lastIndex)
+        val currentSize = uiState.messages.size
+        if (currentSize > 0) {
+            if (prevMessageCount == 0) {
+                listState.scrollToItem(uiState.messages.lastIndex)
+            } else if (currentSize > prevMessageCount) {
+                val isNearBottom = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 >= prevMessageCount - 2
+                val isMyMessage = uiState.messages.lastOrNull()?.senderId == uiState.currentUserId
+                if (isNearBottom || isMyMessage) {
+                    listState.animateScrollToItem(uiState.messages.lastIndex)
+                }
+            }
+            prevMessageCount = currentSize
         }
     }
 
@@ -240,6 +265,23 @@ fun ConversationScreen(
                     .fillMaxWidth()
                     .padding(horizontal = Dimens.Spacing12, vertical = Dimens.Spacing8)
             ) {
+                if (uiState.isLoadingOlderMessages) {
+                    item(key = "loading_older_messages_header") {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(Dimens.Spacing8),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(22.dp),
+                                color = AuraRose,
+                                strokeWidth = 2.dp
+                            )
+                        }
+                    }
+                }
+
                 items(uiState.messages, key = { it.id }) { message ->
                     val isFromMe = message.senderId == uiState.currentUserId
                     val bubbleType = when (message.messageType) {
