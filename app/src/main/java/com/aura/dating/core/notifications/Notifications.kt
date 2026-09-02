@@ -22,6 +22,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
+import android.content.BroadcastReceiver
+import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
+
 enum class NotificationType {
     NEW_LIKE,
     NEW_MATCH,
@@ -30,12 +34,34 @@ enum class NotificationType {
     SYSTEM
 }
 
+class NotificationDismissReceiver : BroadcastReceiver() {
+    companion object {
+        const val ACTION_DISMISS_CONVERSATION = "com.aura.dating.ACTION_DISMISS_CONVERSATION"
+        const val EXTRA_CONVERSATION_KEY = "extra_conversation_key"
+    }
+
+    override fun onReceive(context: Context?, intent: Intent?) {
+        if (intent?.action == ACTION_DISMISS_CONVERSATION) {
+            val key = intent.getStringExtra(EXTRA_CONVERSATION_KEY)
+            if (!key.isNullOrBlank()) {
+                NotificationHandler.clearBufferForKey(key)
+            }
+        }
+    }
+}
+
 @Singleton
 class NotificationHandler @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     companion object {
         const val ALERT_CHANNEL_ID = "aura_notifications"
+        private const val MESSAGES_GROUP_KEY = "aura_messages_group"
+        private val unreadMessageBuffer = ConcurrentHashMap<String, MutableList<String>>()
+
+        fun clearBufferForKey(key: String) {
+            unreadMessageBuffer.remove(key)
+        }
     }
 
     init {
@@ -63,6 +89,15 @@ class NotificationHandler @Inject constructor(
         }
     }
 
+    fun clearNotificationsForConversation(conversationId: String) {
+        try {
+            clearBufferForKey(conversationId)
+            val notifId = Math.abs(conversationId.hashCode())
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+            notificationManager?.cancel(notifId)
+        } catch (_: Exception) {}
+    }
+
     fun showNotification(
         title: String,
         body: String,
@@ -72,17 +107,39 @@ class NotificationHandler @Inject constructor(
         try {
             ensureChannelExists()
 
+            val conversationId = extraData["conversation_id"]?.takeIf { it.isNotBlank() }
+            val senderId = extraData["sender_id"]?.takeIf { it.isNotBlank() }
+            val groupKey = conversationId ?: senderId ?: "general_chat"
+
+            val notifId = if (type == NotificationType.NEW_MESSAGE) {
+                Math.abs(groupKey.hashCode())
+            } else {
+                val actorId = extraData["actor_id"]?.takeIf { it.isNotBlank() } ?: extraData["notification_id"]
+                if (!actorId.isNullOrBlank()) Math.abs(actorId.hashCode()) else (System.currentTimeMillis() % 100000).toInt()
+            }
+
             val intent = Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 extraData.forEach { (k, v) -> putExtra(k, v) }
                 putExtra("notification_type", type.name)
             }
 
-            val reqCode = (System.currentTimeMillis() % 100000).toInt()
             val pendingIntent = PendingIntent.getActivity(
                 context,
-                reqCode,
+                notifId,
                 intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            // Delete Intent to clear buffer if user dismisses/swipes away the notification
+            val deleteIntent = Intent(context, NotificationDismissReceiver::class.java).apply {
+                action = NotificationDismissReceiver.ACTION_DISMISS_CONVERSATION
+                putExtra(NotificationDismissReceiver.EXTRA_CONVERSATION_KEY, groupKey)
+            }
+            val deletePendingIntent = PendingIntent.getBroadcast(
+                context,
+                notifId,
+                deleteIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
@@ -90,8 +147,6 @@ class NotificationHandler @Inject constructor(
 
             val notificationBuilder = NotificationCompat.Builder(context, ALERT_CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(title)
-                .setContentText(body)
                 .setAutoCancel(true)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -100,11 +155,49 @@ class NotificationHandler @Inject constructor(
                 .setSound(soundUri)
                 .setVibrate(longArrayOf(0, 300, 200, 300))
                 .setContentIntent(pendingIntent)
+                .setDeleteIntent(deletePendingIntent)
+
+            if (type == NotificationType.NEW_MESSAGE) {
+                notificationBuilder.setGroup(MESSAGES_GROUP_KEY)
+
+                // Track and stack unread messages from this sender
+                val messageList = unreadMessageBuffer.compute(groupKey) { _, existingList ->
+                    (existingList ?: Collections.synchronizedList(mutableListOf())).apply { add(body) }
+                } ?: mutableListOf(body)
+
+                val count = messageList.size
+                if (count > 1) {
+                    val displayTitle = "$title ($count yeni mesaj)"
+                    notificationBuilder.setContentTitle(displayTitle)
+                    notificationBuilder.setContentText(body)
+                    notificationBuilder.setNumber(count)
+
+                    val inboxStyle = NotificationCompat.InboxStyle()
+                        .setBigContentTitle(displayTitle)
+                        .setSummaryText("$count mesaj")
+
+                    // Show up to the last 6 messages in the stacked card
+                    val recentMessages = messageList.takeLast(6)
+                    for (msg in recentMessages) {
+                        inboxStyle.addLine(msg)
+                    }
+                    notificationBuilder.setStyle(inboxStyle)
+                } else {
+                    notificationBuilder.setContentTitle(title)
+                    notificationBuilder.setContentText(body)
+                    notificationBuilder.setNumber(1)
+                    notificationBuilder.setStyle(NotificationCompat.BigTextStyle().bigText(body))
+                }
+            } else {
+                notificationBuilder.setContentTitle(title)
+                notificationBuilder.setContentText(body)
+                notificationBuilder.setStyle(NotificationCompat.BigTextStyle().bigText(body))
+            }
 
             val notificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-            notificationManager?.notify(reqCode, notificationBuilder.build())
-            Log.d("AuraNotification", "Notification shown successfully: $title - $body")
+            notificationManager?.notify(notifId, notificationBuilder.build())
+            Log.d("AuraNotification", "Notification shown (id: $notifId, type: $type): $title - $body")
         } catch (e: Exception) {
             Log.e("AuraNotification", "Failed to show notification: ${e.message}", e)
         }

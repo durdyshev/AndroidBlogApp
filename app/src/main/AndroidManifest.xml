@@ -48,6 +48,10 @@
             </intent-filter>
         </service>
 
+        <receiver
+            android:name=".core.notifications.NotificationDismissReceiver"
+            android:exported="false" />
+
     </application>
 
 </manifest>

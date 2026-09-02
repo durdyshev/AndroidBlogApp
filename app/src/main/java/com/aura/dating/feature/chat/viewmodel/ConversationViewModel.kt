@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.aura.dating.core.common.result.Result
 import com.aura.dating.core.common.utils.DateTimeUtils
 import com.aura.dating.core.common.utils.ImageCompressor
+import com.aura.dating.core.notifications.NotificationHandler
 import com.aura.dating.core.security.TokenStorage
 import com.aura.dating.domain.chat.model.Message
 import com.aura.dating.domain.chat.usecase.DeleteMessageUseCase
@@ -78,7 +79,8 @@ class ConversationViewModel @Inject constructor(
     private val reportUserUseCase: ReportUserUseCase,
     private val tokenStorage: TokenStorage,
     private val chatRepository: ChatRepository,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val notificationHandler: NotificationHandler
 ) : ViewModel() {
 
     private val initialConversationId: String = checkNotNull(savedStateHandle["conversationId"])
@@ -246,6 +248,10 @@ class ConversationViewModel @Inject constructor(
     fun markAsRead(convId: String = resolvedConversationId) {
         viewModelScope.launch {
             markMessagesAsReadUseCase(convId)
+            notificationHandler.clearNotificationsForConversation(convId)
+            if (convId != initialConversationId) {
+                notificationHandler.clearNotificationsForConversation(initialConversationId)
+            }
         }
     }
 
