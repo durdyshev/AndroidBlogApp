@@ -183,9 +183,9 @@ class ProfileViewModel @Inject constructor(
                 birthDateMillis = current.birthDateMillis,
                 gender = current.gender,
                 bio = bio,
-                countryId = countryId ?: current.countryId,
-                regionId = regionId ?: current.regionId,
-                cityId = cityId ?: current.cityId,
+                countryId = countryId,
+                regionId = regionId,
+                cityId = cityId,
                 interestIds = current.interests.map { it.id }
             )
             _uiState.value = _uiState.value.copy(isLoading = false)

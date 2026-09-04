@@ -91,8 +91,9 @@ fun <T : LocationItem> LocationPickerBottomSheet(
     var searchQuery by remember { mutableStateOf("") }
 
     val filteredItems = remember(items, searchQuery) {
-        if (searchQuery.isBlank()) items
-        else items.filter { it.displayName.contains(searchQuery, ignoreCase = true) }
+        val uniqueItems = items.distinctBy { it.displayName.trim().lowercase() }
+        if (searchQuery.isBlank()) uniqueItems
+        else uniqueItems.filter { it.displayName.contains(searchQuery, ignoreCase = true) }
     }
 
     ModalBottomSheet(

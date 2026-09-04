@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Interests
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.Icon
@@ -146,6 +147,37 @@ fun ProfileScreen(
                     )
                 }
 
+                // Location info
+                val locationText = when {
+                    !profile?.cityName.isNullOrBlank() && !profile.countryName.isNullOrBlank() -> {
+                        val city = profile.cityName.trim()
+                        val country = profile.countryName.trim()
+                        "$city, $country"
+                    }
+                    !profile?.cityName.isNullOrBlank() -> profile.cityName.trim()
+                    !profile?.regionName.isNullOrBlank() -> profile.regionName.trim()
+                    !profile?.countryName.isNullOrBlank() -> profile.countryName.trim()
+                    else -> null
+                }
+
+                if (!locationText.isNullOrBlank()) {
+                    Spacer(modifier = Modifier.height(Dimens.Spacing6))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.LocationOn,
+                            contentDescription = null,
+                            tint = Color.White.copy(alpha = 0.7f),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(Dimens.Spacing4))
+                        Text(
+                            text = locationText,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.White.copy(alpha = 0.75f)
+                        )
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(Dimens.Spacing24))
 
                 // Quick Action Cards (Edit Profile, Photos, Interests)
@@ -190,7 +222,7 @@ fun ProfileScreen(
                         )
                         Spacer(modifier = Modifier.height(Dimens.Spacing8))
                         Text(
-                            text = if (profile?.bio.isNullOrBlank()) "No bio written yet. Tap 'Edit Info' to introduce yourself." else profile!!.bio!!,
+                            text = if (profile?.bio.isNullOrBlank()) "No bio written yet. Tap 'Edit Info' to introduce yourself." else profile.bio,
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.White.copy(alpha = 0.8f)
                         )
@@ -218,7 +250,7 @@ fun ProfileScreen(
                                 horizontalArrangement = Arrangement.spacedBy(Dimens.Spacing8),
                                 verticalArrangement = Arrangement.spacedBy(Dimens.Spacing8)
                             ) {
-                                profile?.interests?.forEach { interest ->
+                                profile.interests.forEach { interest ->
                                     InterestChip(
                                         name = interest.name,
                                         icon = interest.icon,

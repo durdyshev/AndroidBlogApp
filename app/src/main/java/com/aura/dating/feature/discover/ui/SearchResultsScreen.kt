@@ -249,10 +249,14 @@ private fun SearchResultCandidateCard(
     onSuperLikeClick: () -> Unit
 ) {
     val locationLabel = when {
-        !candidate.cityName.isNullOrBlank() && !candidate.regionName.isNullOrBlank() -> "${candidate.cityName}, ${candidate.regionName}"
-        !candidate.cityName.isNullOrBlank() -> candidate.cityName
-        !candidate.regionName.isNullOrBlank() -> candidate.regionName
-        !candidate.countryName.isNullOrBlank() -> candidate.countryName
+        !candidate.cityName.isNullOrBlank() && !candidate.regionName.isNullOrBlank() -> {
+            val city = candidate.cityName.trim()
+            val region = candidate.regionName.trim()
+            if (city.equals(region, ignoreCase = true)) city else "$city, $region"
+        }
+        !candidate.cityName.isNullOrBlank() -> candidate.cityName.trim()
+        !candidate.regionName.isNullOrBlank() -> candidate.regionName.trim()
+        !candidate.countryName.isNullOrBlank() -> candidate.countryName.trim()
         else -> DistanceUtils.formatDistance(candidate.distanceKm)
     }
 

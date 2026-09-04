@@ -57,7 +57,8 @@ class SupabaseLocationRemoteDataSource @Inject constructor(
             parser = { response ->
                 val list = response.body<List<CountryDto>>()
                 android.util.Log.d("LocationDataSource", "Fetched ${list.size} countries from Supabase")
-                list.map { Country(id = it.id, name = it.name, code = it.code) }
+                list.map { Country(id = it.id, name = it.name.trim(), code = it.code) }
+                    .distinctBy { it.name.lowercase() }
             }
         )
         if (result is Result.Error) {
@@ -78,7 +79,8 @@ class SupabaseLocationRemoteDataSource @Inject constructor(
             parser = { response ->
                 val list = response.body<List<RegionDto>>()
                 android.util.Log.d("LocationDataSource", "Fetched ${list.size} regions from Supabase")
-                list.map { Region(id = it.id, countryId = it.countryId, name = it.name) }
+                list.map { Region(id = it.id, countryId = it.countryId, name = it.name.trim()) }
+                    .distinctBy { it.name.lowercase() }
             }
         )
         if (result is Result.Error) {
@@ -99,7 +101,8 @@ class SupabaseLocationRemoteDataSource @Inject constructor(
             parser = { response ->
                 val list = response.body<List<CityDto>>()
                 android.util.Log.d("LocationDataSource", "Fetched ${list.size} cities from Supabase")
-                list.map { City(id = it.id, regionId = it.regionId, name = it.name) }
+                list.map { City(id = it.id, regionId = it.regionId, name = it.name.trim()) }
+                    .distinctBy { it.name.lowercase() }
             }
         )
         if (result is Result.Error) {

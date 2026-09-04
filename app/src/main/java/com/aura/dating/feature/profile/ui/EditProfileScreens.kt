@@ -60,6 +60,10 @@ import com.aura.dating.core.designsystem.theme.AuraAmber
 import com.aura.dating.core.designsystem.theme.AuraRose
 import com.aura.dating.core.designsystem.theme.DarkBackground
 import com.aura.dating.core.designsystem.theme.Dimens
+import com.aura.dating.domain.location.model.City
+import com.aura.dating.domain.location.model.Country
+import com.aura.dating.domain.location.model.Region
+import com.aura.dating.feature.discover.ui.LocationPickerBottomSheet
 import com.aura.dating.feature.profile.viewmodel.ProfileEvent
 import com.aura.dating.feature.profile.viewmodel.ProfileViewModel
 
@@ -75,19 +79,17 @@ fun EditProfileScreen(
     var bio by remember(profile?.bio) { mutableStateOf(profile?.bio ?: "") }
     var selectedCountry by remember(profile?.countryId) {
         mutableStateOf(
-            if (profile?.countryId != null) com.aura.dating.domain.location.model.Country(profile.countryId, profile.countryName ?: "Selected Country")
-            else null
+            if (profile?.countryId != null) Country(profile.countryId, profile.countryName ?: "Selected Country") else null
         )
     }
     var selectedRegion by remember(profile?.regionId) {
         mutableStateOf(
-            if (profile?.regionId != null && profile.countryId != null) com.aura.dating.domain.location.model.Region(profile.regionId, profile.countryId, profile.regionName ?: "Selected Region")
-            else null
+            if (profile?.regionId != null && profile.countryId != null) Region(profile.regionId, profile.countryId, profile.regionName ?: "Selected Region") else null
         )
     }
     var selectedCity by remember(profile?.cityId) {
         mutableStateOf(
-            if (profile?.cityId != null && profile.regionId != null) com.aura.dating.domain.location.model.City(profile.cityId, profile.regionId, profile.cityName ?: "Selected City")
+            if (profile?.cityId != null && profile.regionId != null) City(profile.cityId, profile.regionId, profile.cityName ?: "Selected City")
             else null
         )
     }
@@ -227,7 +229,7 @@ fun EditProfileScreen(
     }
 
     if (showCountryPicker) {
-        com.aura.dating.feature.discover.ui.LocationPickerBottomSheet(
+        LocationPickerBottomSheet(
             title = "Select Country",
             items = uiState.countries.map { com.aura.dating.feature.discover.ui.CountryLocationItem(it) },
             selectedItem = selectedCountry?.let { com.aura.dating.feature.discover.ui.CountryLocationItem(it) },
@@ -242,7 +244,7 @@ fun EditProfileScreen(
     }
 
     if (showRegionPicker) {
-        com.aura.dating.feature.discover.ui.LocationPickerBottomSheet(
+        LocationPickerBottomSheet(
             title = "Select Region",
             items = uiState.regions.map { com.aura.dating.feature.discover.ui.RegionLocationItem(it) },
             selectedItem = selectedRegion?.let { com.aura.dating.feature.discover.ui.RegionLocationItem(it) },
@@ -256,7 +258,7 @@ fun EditProfileScreen(
     }
 
     if (showCityPicker) {
-        com.aura.dating.feature.discover.ui.LocationPickerBottomSheet(
+        LocationPickerBottomSheet(
             title = "Select City",
             items = uiState.cities.map { com.aura.dating.feature.discover.ui.CityLocationItem(it) },
             selectedItem = selectedCity?.let { com.aura.dating.feature.discover.ui.CityLocationItem(it) },

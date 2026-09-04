@@ -44,7 +44,13 @@ class RoomProfileLocalDataSource @Inject constructor(
             interests = profile.interests.map { it.name },
             isOnline = profile.isOnline,
             lastSeenAtMillis = profile.lastSeenAtMillis,
-            updatedAtMillis = System.currentTimeMillis()
+            updatedAtMillis = System.currentTimeMillis(),
+            countryId = profile.countryId,
+            regionId = profile.regionId,
+            cityId = profile.cityId,
+            countryName = profile.countryName,
+            regionName = profile.regionName,
+            cityName = profile.cityName
         )
         profileDao.insertProfile(entity)
     }
@@ -71,6 +77,12 @@ class RoomProfileLocalDataSource @Inject constructor(
                 )
             },
             interests = entity.interests.map { Interest(it, it, "General", null) },
+            countryId = entity.countryId,
+            regionId = entity.regionId,
+            cityId = entity.cityId,
+            countryName = entity.countryName,
+            regionName = entity.regionName,
+            cityName = entity.cityName,
             isOnline = entity.isOnline,
             lastSeenAtMillis = entity.lastSeenAtMillis
         )

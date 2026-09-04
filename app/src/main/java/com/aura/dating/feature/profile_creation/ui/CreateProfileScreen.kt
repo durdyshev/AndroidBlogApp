@@ -1,6 +1,5 @@
 package com.aura.dating.feature.profile_creation.ui
 
-import android.app.DatePickerDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
@@ -34,10 +34,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.aura.dating.core.common.utils.DateTimeUtils
+import com.aura.dating.core.designsystem.components.AuraDatePickerDialog
 import com.aura.dating.core.designsystem.components.AuraTopBar
 import com.aura.dating.core.designsystem.components.InterestChip
 import com.aura.dating.core.designsystem.components.PrimaryButton
@@ -49,7 +49,6 @@ import com.aura.dating.domain.profile.model.Gender
 import com.aura.dating.feature.profile_creation.viewmodel.CreateProfileViewModel
 import com.aura.dating.feature.profile_creation.viewmodel.ProfileCreationEvent
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -60,7 +59,7 @@ fun CreateProfileScreen(
     viewModel: CreateProfileViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
+    var showDatePickerDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.eventFlow.collect { event ->
@@ -69,18 +68,6 @@ fun CreateProfileScreen(
             }
         }
     }
-
-    val birthCalendar = Calendar.getInstance().apply { timeInMillis = uiState.birthDateMillis }
-    val datePickerDialog = DatePickerDialog(
-        context,
-        { _, year, month, day ->
-            val cal = Calendar.getInstance().apply { set(year, month, day) }
-            viewModel.onBirthDateChange(cal.timeInMillis)
-        },
-        birthCalendar.get(Calendar.YEAR),
-        birthCalendar.get(Calendar.MONTH),
-        birthCalendar.get(Calendar.DAY_OF_MONTH)
-    )
 
     Box(
         modifier = Modifier
@@ -146,25 +133,35 @@ fun CreateProfileScreen(
                 val formattedBirthDate = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(Date(uiState.birthDateMillis))
                 val age = DateTimeUtils.calculateAge(uiState.birthDateMillis)
 
-                OutlinedTextField(
-                    value = "$formattedBirthDate ($age years old)",
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Birthday") },
-                    leadingIcon = {
-                        Icon(Icons.Default.CalendarToday, contentDescription = null, tint = Color.White.copy(alpha = 0.7f))
-                    },
-                    shape = RoundedCornerShape(Dimens.RadiusMedium),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = AuraRose,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White
-                    ),
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { datePickerDialog.show() }
-                )
+                        .clip(RoundedCornerShape(Dimens.RadiusMedium))
+                        .clickable { showDatePickerDialog = true }
+                ) {
+                    OutlinedTextField(
+                        value = "$formattedBirthDate ($age years old)",
+                        onValueChange = {},
+                        readOnly = true,
+                        enabled = false,
+                        label = { Text("Birthday") },
+                        leadingIcon = {
+                            Icon(Icons.Default.CalendarToday, contentDescription = null, tint = Color.White.copy(alpha = 0.7f))
+                        },
+                        trailingIcon = {
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = Color.White.copy(alpha = 0.7f))
+                        },
+                        shape = RoundedCornerShape(Dimens.RadiusMedium),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            disabledTextColor = Color.White,
+                            disabledBorderColor = MaterialTheme.colorScheme.outline,
+                            disabledLabelColor = Color.White.copy(alpha = 0.7f),
+                            disabledLeadingIconColor = Color.White.copy(alpha = 0.7f),
+                            disabledTrailingIconColor = Color.White.copy(alpha = 0.7f)
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(Dimens.Spacing20))
 
@@ -300,6 +297,18 @@ fun CreateProfileScreen(
                         isLoading = uiState.isLoadingLocations && uiState.cities.isEmpty(),
                         onItemSelected = { item -> viewModel.selectCity(item.city) },
                         onDismissRequest = { showCityPicker = false }
+                    )
+                }
+
+                if (showDatePickerDialog) {
+                    AuraDatePickerDialog(
+                        initialDateMillis = uiState.birthDateMillis,
+                        onDateSelected = { selectedMillis ->
+                            viewModel.onBirthDateChange(selectedMillis)
+                        },
+                        onDismissRequest = {
+                            showDatePickerDialog = false
+                        }
                     )
                 }
             }

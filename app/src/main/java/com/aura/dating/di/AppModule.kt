@@ -83,6 +83,10 @@ abstract class AppModule {
 
     @Binds
     @Singleton
+    abstract fun bindAppSettingsStorage(impl: com.aura.dating.core.preferences.DataStoreAppSettingsStorage): com.aura.dating.core.preferences.AppSettingsStorage
+
+    @Binds
+    @Singleton
     abstract fun bindNetworkMonitor(impl: AndroidNetworkMonitor): NetworkMonitor
 
     @Binds

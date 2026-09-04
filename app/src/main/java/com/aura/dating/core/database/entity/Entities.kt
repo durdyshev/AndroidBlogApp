@@ -14,7 +14,13 @@ data class ProfileEntity(
     val interests: List<String>,
     val isOnline: Boolean,
     val lastSeenAtMillis: Long,
-    val updatedAtMillis: Long
+    val updatedAtMillis: Long,
+    val countryId: String? = null,
+    val regionId: String? = null,
+    val cityId: String? = null,
+    val countryName: String? = null,
+    val regionName: String? = null,
+    val cityName: String? = null
 )
 
 @Entity(tableName = "discovery_candidates")

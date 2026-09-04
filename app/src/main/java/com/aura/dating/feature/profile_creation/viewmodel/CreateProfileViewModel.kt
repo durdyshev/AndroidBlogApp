@@ -98,14 +98,28 @@ class CreateProfileViewModel @Inject constructor(
             val profileResult = getMyProfileUseCase()
             if (profileResult is Result.Success) {
                 val profile = profileResult.data
+                val country = if (profile.countryId != null) Country(profile.countryId, profile.countryName ?: "") else null
+                val region = if (profile.regionId != null && profile.countryId != null) Region(profile.regionId, profile.countryId, profile.regionName ?: "") else null
+                val city = if (profile.cityId != null && profile.regionId != null) City(profile.cityId, profile.regionId, profile.cityName ?: "") else null
+
                 _uiState.value = _uiState.value.copy(
                     displayName = profile.displayName,
                     birthDateMillis = profile.birthDateMillis,
                     gender = profile.gender,
                     bio = profile.bio ?: "",
                     photos = profile.photos,
-                    selectedInterestIds = profile.interests.map { it.id }.toSet()
+                    selectedInterestIds = profile.interests.map { it.id }.toSet(),
+                    selectedCountry = country,
+                    selectedRegion = region,
+                    selectedCity = city
                 )
+
+                if (profile.countryId != null) {
+                    loadRegions(profile.countryId)
+                }
+                if (profile.regionId != null) {
+                    loadCities(profile.regionId)
+                }
             }
 
             _uiState.value = _uiState.value.copy(isLoading = false)

@@ -23,6 +23,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 import android.content.BroadcastReceiver
+import com.aura.dating.core.preferences.AppSettingsStorage
+import kotlinx.coroutines.runBlocking
 import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 
@@ -52,7 +54,8 @@ class NotificationDismissReceiver : BroadcastReceiver() {
 
 @Singleton
 class NotificationHandler @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val appSettingsStorage: AppSettingsStorage
 ) {
     companion object {
         const val ALERT_CHANNEL_ID = "aura_notifications"
@@ -105,6 +108,15 @@ class NotificationHandler @Inject constructor(
         extraData: Map<String, String> = emptyMap()
     ) {
         try {
+            // Check user preferences from Settings (Messages, Matches, Likes, etc.)
+            val isAllowed = runBlocking {
+                appSettingsStorage.isNotificationAllowed(type)
+            }
+            if (!isAllowed) {
+                Log.d("AuraNotification", "Notification for type $type is disabled in user Settings. Skipping.")
+                return
+            }
+
             val conversationId = extraData["conversation_id"]?.takeIf { it.isNotBlank() }
             val senderId = extraData["sender_id"]?.takeIf { it.isNotBlank() }
             val groupKey = conversationId ?: senderId ?: "general_chat"

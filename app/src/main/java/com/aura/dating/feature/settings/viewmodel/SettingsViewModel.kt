@@ -2,6 +2,7 @@ package com.aura.dating.feature.settings.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aura.dating.core.preferences.AppSettingsStorage
 import com.aura.dating.domain.auth.usecase.LogoutUseCase
 import com.aura.dating.domain.moderation.model.BlockedUser
 import com.aura.dating.domain.moderation.usecase.DeleteAccountUseCase
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,7 +41,8 @@ class SettingsViewModel @Inject constructor(
     private val getBlockedUsersUseCase: GetBlockedUsersUseCase,
     private val unblockUserUseCase: UnblockUserUseCase,
     private val deleteAccountUseCase: DeleteAccountUseCase,
-    private val logoutUseCase: LogoutUseCase
+    private val logoutUseCase: LogoutUseCase,
+    private val appSettingsStorage: AppSettingsStorage
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -50,6 +53,7 @@ class SettingsViewModel @Inject constructor(
 
     init {
         observeBlockedUsers()
+        observePreferences()
         loadBlockedUsers()
     }
 
@@ -57,6 +61,32 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             getBlockedUsersUseCase.blockedUsersFlow.collect { list ->
                 _uiState.value = _uiState.value.copy(blockedUsers = list)
+            }
+        }
+    }
+
+    private fun observePreferences() {
+        viewModelScope.launch {
+            combine(
+                listOf(
+                    appSettingsStorage.pushNotificationsEnabledFlow,
+                    appSettingsStorage.newMatchesPushFlow,
+                    appSettingsStorage.messagesPushFlow,
+                    appSettingsStorage.likesPushFlow,
+                    appSettingsStorage.showOnlineStatusFlow,
+                    appSettingsStorage.showDistanceFlow
+                )
+            ) { values ->
+                _uiState.value.copy(
+                    pushNotificationsEnabled = values[0],
+                    newMatchesPush = values[1],
+                    messagesPush = values[2],
+                    likesPush = values[3],
+                    showOnlineStatus = values[4],
+                    showDistance = values[5]
+                )
+            }.collect { updatedState ->
+                _uiState.value = updatedState
             }
         }
     }
@@ -74,27 +104,39 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun togglePushNotifications(enabled: Boolean) {
-        _uiState.value = _uiState.value.copy(pushNotificationsEnabled = enabled)
+        viewModelScope.launch {
+            appSettingsStorage.setPushNotificationsEnabled(enabled)
+        }
     }
 
     fun toggleNewMatchesPush(enabled: Boolean) {
-        _uiState.value = _uiState.value.copy(newMatchesPush = enabled)
+        viewModelScope.launch {
+            appSettingsStorage.setNewMatchesPushEnabled(enabled)
+        }
     }
 
     fun toggleMessagesPush(enabled: Boolean) {
-        _uiState.value = _uiState.value.copy(messagesPush = enabled)
+        viewModelScope.launch {
+            appSettingsStorage.setMessagesPushEnabled(enabled)
+        }
     }
 
     fun toggleLikesPush(enabled: Boolean) {
-        _uiState.value = _uiState.value.copy(likesPush = enabled)
+        viewModelScope.launch {
+            appSettingsStorage.setLikesPushEnabled(enabled)
+        }
     }
 
     fun toggleShowOnline(show: Boolean) {
-        _uiState.value = _uiState.value.copy(showOnlineStatus = show)
+        viewModelScope.launch {
+            appSettingsStorage.setShowOnlineStatus(show)
+        }
     }
 
     fun toggleShowDistance(show: Boolean) {
-        _uiState.value = _uiState.value.copy(showDistance = show)
+        viewModelScope.launch {
+            appSettingsStorage.setShowDistance(show)
+        }
     }
 
     fun logout() {
