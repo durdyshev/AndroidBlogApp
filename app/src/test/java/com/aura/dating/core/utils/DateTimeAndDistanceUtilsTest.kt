@@ -33,5 +33,6 @@ class DateTimeAndDistanceUtilsTest {
         assertEquals("2.4 km away", DistanceUtils.formatDistance(2.4))
         assertEquals("15 km away", DistanceUtils.formatDistance(15.2))
         assertEquals("Nearby", DistanceUtils.formatDistance(null))
+        assertEquals("Nearby", DistanceUtils.formatDistance(2.4, showDistance = false))
     }
 }

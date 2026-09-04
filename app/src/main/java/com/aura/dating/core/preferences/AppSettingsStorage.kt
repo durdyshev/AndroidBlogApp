@@ -30,6 +30,8 @@ interface AppSettingsStorage {
     suspend fun setLikesPushEnabled(enabled: Boolean)
     suspend fun setShowOnlineStatus(show: Boolean)
     suspend fun setShowDistance(show: Boolean)
+    suspend fun getShowOnlineStatus(): Boolean
+    suspend fun getShowDistance(): Boolean
 
     suspend fun isNotificationAllowed(type: NotificationType): Boolean
 }
@@ -94,6 +96,16 @@ class DataStoreAppSettingsStorage @Inject constructor(
 
     override suspend fun setShowDistance(show: Boolean) {
         context.settingsDataStore.edit { it[KEY_SHOW_DISTANCE] = show }
+    }
+
+    override suspend fun getShowOnlineStatus(): Boolean {
+        val prefs = context.settingsDataStore.data.first()
+        return prefs[KEY_SHOW_ONLINE] ?: true
+    }
+
+    override suspend fun getShowDistance(): Boolean {
+        val prefs = context.settingsDataStore.data.first()
+        return prefs[KEY_SHOW_DISTANCE] ?: true
     }
 
     override suspend fun isNotificationAllowed(type: NotificationType): Boolean {

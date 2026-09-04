@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+import com.aura.dating.core.preferences.AppSettingsStorage
 import com.aura.dating.domain.location.model.City
 import com.aura.dating.domain.location.model.Country
 import com.aura.dating.domain.location.model.Region
@@ -43,6 +44,7 @@ data class ProfileUiState(
     val countries: List<Country> = emptyList(),
     val regions: List<Region> = emptyList(),
     val cities: List<City> = emptyList(),
+    val showDistance: Boolean = true,
     val isLoadingLocations: Boolean = false,
     val isUploadingPhoto: Boolean = false,
     val isLoading: Boolean = false,
@@ -67,7 +69,8 @@ class ProfileViewModel @Inject constructor(
     private val getInterestsUseCase: GetInterestsUseCase,
     private val blockUserUseCase: BlockUserUseCase,
     private val reportUserUseCase: ReportUserUseCase,
-    private val locationRepository: LocationRepository
+    private val locationRepository: LocationRepository,
+    private val appSettingsStorage: AppSettingsStorage
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
@@ -79,7 +82,16 @@ class ProfileViewModel @Inject constructor(
     init {
         loadProfile()
         observeProfile()
+        observeSettings()
         loadInterests()
+    }
+
+    private fun observeSettings() {
+        viewModelScope.launch {
+            appSettingsStorage.showDistanceFlow.collect { showDistance ->
+                _uiState.value = _uiState.value.copy(showDistance = showDistance)
+            }
+        }
     }
 
     private fun observeProfile() {

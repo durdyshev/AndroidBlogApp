@@ -8,6 +8,7 @@ import com.aura.dating.domain.moderation.model.BlockedUser
 import com.aura.dating.domain.moderation.usecase.DeleteAccountUseCase
 import com.aura.dating.domain.moderation.usecase.GetBlockedUsersUseCase
 import com.aura.dating.domain.moderation.usecase.UnblockUserUseCase
+import com.aura.dating.core.presence.PresenceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,7 +43,8 @@ class SettingsViewModel @Inject constructor(
     private val unblockUserUseCase: UnblockUserUseCase,
     private val deleteAccountUseCase: DeleteAccountUseCase,
     private val logoutUseCase: LogoutUseCase,
-    private val appSettingsStorage: AppSettingsStorage
+    private val appSettingsStorage: AppSettingsStorage,
+    private val presenceManager: PresenceManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -130,6 +132,7 @@ class SettingsViewModel @Inject constructor(
     fun toggleShowOnline(show: Boolean) {
         viewModelScope.launch {
             appSettingsStorage.setShowOnlineStatus(show)
+            presenceManager.setOnlineStatus(show)
         }
     }
 

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import android.util.Log
+import com.aura.dating.core.preferences.AppSettingsStorage
 import com.aura.dating.core.security.TokenStorage
 import com.aura.dating.domain.profile.repository.ProfileRepository
 import kotlinx.coroutines.CoroutineScope
@@ -18,7 +19,8 @@ import javax.inject.Singleton
 @Singleton
 class PresenceManager @Inject constructor(
     private val profileRepository: ProfileRepository,
-    private val tokenStorage: TokenStorage
+    private val tokenStorage: TokenStorage,
+    private val appSettingsStorage: AppSettingsStorage
 ) : Application.ActivityLifecycleCallbacks {
 
     private val scope = CoroutineScope(Dispatchers.IO + Job())
@@ -67,8 +69,11 @@ class PresenceManager @Inject constructor(
             try {
                 val userId = tokenStorage.getUserId()
                 if (!userId.isNullOrBlank()) {
-                    profileRepository.updateOnlineStatus(isOnline)
-                    Log.d("PresenceManager", "Presence updated: isOnline=$isOnline for user=$userId")
+                    val showOnlineAllowed = appSettingsStorage.getShowOnlineStatus()
+                    // If user disabled "Show Online Status" in Privacy settings, always report false to server
+                    val targetOnline = if (isOnline) showOnlineAllowed else false
+                    profileRepository.updateOnlineStatus(targetOnline)
+                    Log.d("PresenceManager", "Presence updated: targetOnline=$targetOnline (requested=$isOnline, showOnlineAllowed=$showOnlineAllowed) for user=$userId")
                 }
             } catch (e: Exception) {
                 Log.e("PresenceManager", "Failed to update presence: ${e.message}")

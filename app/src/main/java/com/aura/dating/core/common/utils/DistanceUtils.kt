@@ -28,8 +28,8 @@ object DistanceUtils {
         return EARTH_RADIUS_KM * c
     }
 
-    fun formatDistance(distanceKm: Double?): String {
-        if (distanceKm == null) return "Nearby"
+    fun formatDistance(distanceKm: Double?, showDistance: Boolean = true): String {
+        if (!showDistance || distanceKm == null) return "Nearby"
         return when {
             distanceKm < 1.0 -> "Less than 1 km away"
             distanceKm < 10.0 -> String.format(java.util.Locale.US, "%.1f km away", distanceKm)

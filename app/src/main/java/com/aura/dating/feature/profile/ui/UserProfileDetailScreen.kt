@@ -234,7 +234,7 @@ fun UserProfileDetailScreen(
                     )
                     Spacer(modifier = Modifier.width(Dimens.Spacing4))
                     Text(
-                        text = DistanceUtils.formatDistance(candidate?.distanceKm),
+                        text = DistanceUtils.formatDistance(candidate?.distanceKm, uiState.showDistance),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White.copy(alpha = 0.75f)
                     )

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aura.dating.core.common.result.Result
 import com.aura.dating.core.location.LocationProvider
+import com.aura.dating.core.preferences.AppSettingsStorage
 import com.aura.dating.domain.discovery.model.DiscoveryCandidate
 import com.aura.dating.domain.discovery.model.DiscoveryFilter
 import com.aura.dating.domain.discovery.usecase.GetDiscoveryCandidatesUseCase
@@ -30,6 +31,7 @@ data class DiscoverUiState(
     val candidates: List<DiscoveryCandidate> = emptyList(),
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
+    val showDistance: Boolean = true,
     val filter: DiscoveryFilter = DiscoveryFilter(),
     val currentMatchCelebration: SwipeResult? = null,
     val errorMessage: String? = null
@@ -46,7 +48,8 @@ class DiscoverViewModel @Inject constructor(
     private val swipeUserUseCase: SwipeUserUseCase,
     private val updateLocationUseCase: UpdateLocationUseCase,
     private val updatePreferencesUseCase: UpdatePreferencesUseCase,
-    private val locationProvider: LocationProvider
+    private val locationProvider: LocationProvider,
+    private val appSettingsStorage: AppSettingsStorage
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DiscoverUiState())
@@ -57,7 +60,16 @@ class DiscoverViewModel @Inject constructor(
 
     init {
         observeCandidates()
+        observeSettings()
         updateLocationAndFetchCandidates()
+    }
+
+    private fun observeSettings() {
+        viewModelScope.launch {
+            appSettingsStorage.showDistanceFlow.collect { showDistance ->
+                _uiState.value = _uiState.value.copy(showDistance = showDistance)
+            }
+        }
     }
 
     private fun observeCandidates() {
