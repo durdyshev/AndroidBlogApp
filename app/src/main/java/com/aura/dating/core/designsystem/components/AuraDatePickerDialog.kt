@@ -34,12 +34,15 @@ fun AuraDatePickerDialog(
                 val maxDate = Calendar.getInstance().apply {
                     add(Calendar.YEAR, -18)
                 }.timeInMillis
-                return utcTimeMillis <= maxDate
+                val minDate = Calendar.getInstance().apply {
+                    add(Calendar.YEAR, -75)
+                }.timeInMillis
+                return utcTimeMillis in minDate..maxDate
             }
 
             override fun isSelectableYear(year: Int): Boolean {
                 val currentYear = Calendar.getInstance().get(Calendar.YEAR)
-                return year <= (currentYear - 18) && year >= (currentYear - 100)
+                return year <= (currentYear - 18) && year >= (currentYear - 75)
             }
         }
     )

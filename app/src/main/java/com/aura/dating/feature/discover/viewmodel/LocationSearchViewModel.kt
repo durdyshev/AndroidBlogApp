@@ -30,7 +30,7 @@ data class LocationSearchUiState(
     val selectedRegion: Region? = null,
     val selectedCity: City? = null,
     val minAge: Int = 18,
-    val maxAge: Int = 100,
+    val maxAge: Int = 75,
     val gender: String = "ALL", // "ALL", "WOMEN", "MEN", "NON_BINARY"
     val isLoadingLocations: Boolean = false,
     val isSearching: Boolean = false,
@@ -158,8 +158,8 @@ class LocationSearchViewModel @Inject constructor(
 
     fun onAgeRangeChange(min: Int, max: Int) {
         _uiState.value = _uiState.value.copy(
-            minAge = min.coerceAtLeast(18),
-            maxAge = max.coerceAtLeast(min)
+            minAge = min.coerceIn(18, 75),
+            maxAge = max.coerceIn(min.coerceAtLeast(18), 75)
         )
     }
 
@@ -187,7 +187,7 @@ class LocationSearchViewModel @Inject constructor(
             regions = emptyList(),
             cities = emptyList(),
             minAge = 18,
-            maxAge = 100,
+            maxAge = 75,
             gender = "ALL"
         )
     }

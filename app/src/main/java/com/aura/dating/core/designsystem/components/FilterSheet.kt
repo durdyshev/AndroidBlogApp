@@ -146,7 +146,7 @@ fun FilterSheet(
             RangeSlider(
                 value = currentAgeRange,
                 onValueChange = { currentAgeRange = it },
-                valueRange = 18f..70f,
+                valueRange = 18f..75f,
                 colors = SliderDefaults.colors(
                     thumbColor = AuraRose,
                     activeTrackColor = AuraRose

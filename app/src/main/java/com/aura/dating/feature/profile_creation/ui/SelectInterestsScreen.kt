@@ -288,7 +288,7 @@ fun DatingPreferencesScreen(
                         ageRange = it
                         viewModel.onAgeRangeChange(it.start.roundToInt(), it.endInclusive.roundToInt())
                     },
-                    valueRange = 18f..70f,
+                    valueRange = 18f..75f,
                     colors = SliderDefaults.colors(
                         thumbColor = AuraRose,
                         activeTrackColor = AuraRose

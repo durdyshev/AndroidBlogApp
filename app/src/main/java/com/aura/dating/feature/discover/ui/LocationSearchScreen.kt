@@ -164,10 +164,10 @@ fun LocationSearchScreen(
                                 onRemove = { viewModel.removeCityFilter() }
                             )
                         }
-                        if (uiState.minAge > 18 || uiState.maxAge < 100) {
+                        if (uiState.minAge > 18 || uiState.maxAge < 75) {
                             ActiveFilterChip(
                                 label = "${uiState.minAge}–${uiState.maxAge}",
-                                onRemove = { viewModel.onAgeRangeChange(18, 100) }
+                                onRemove = { viewModel.onAgeRangeChange(18, 75) }
                             )
                         }
                         if (uiState.gender != "ALL") {
@@ -314,8 +314,8 @@ fun LocationSearchScreen(
                     onValueChange = { range ->
                         viewModel.onAgeRangeChange(range.start.toInt(), range.endInclusive.toInt())
                     },
-                    valueRange = 18f..100f,
-                    steps = 81,
+                    valueRange = 18f..75f,
+                    steps = 56,
                     colors = SliderDefaults.colors(
                         thumbColor = AuraRose,
                         activeTrackColor = AuraRose,
