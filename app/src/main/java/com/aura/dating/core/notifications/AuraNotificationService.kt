@@ -34,7 +34,9 @@ class AuraNotificationService : Service() {
                 } else {
                     context.startService(intent)
                 }
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                android.util.Log.e("AuraNotificationService", "Failed to start foreground service", e)
+            }
         }
     }
 

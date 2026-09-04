@@ -9,6 +9,8 @@ import com.aura.dating.data.chat.local.ChatLocalDataSource
 import com.aura.dating.domain.chat.model.Message
 import com.aura.dating.domain.chat.model.MessageStatus
 import com.aura.dating.domain.chat.model.MessageType
+import com.aura.dating.domain.chat.repository.ChatRepository
+import com.aura.dating.domain.matching.repository.MatchingRepository
 import com.aura.dating.domain.notifications.repository.NotificationRepository
 import io.ktor.client.call.body
 import io.ktor.client.plugins.websocket.webSocket
@@ -30,6 +32,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Serializable
@@ -56,7 +59,9 @@ class GlobalNotificationManager @Inject constructor(
     private val tokenStorage: TokenStorage,
     private val notificationHandler: NotificationHandler,
     private val notificationRepository: NotificationRepository,
-    private val chatLocalDataSource: ChatLocalDataSource
+    private val chatLocalDataSource: ChatLocalDataSource,
+    private val chatRepositoryProvider: Provider<ChatRepository>,
+    private val matchingRepositoryProvider: Provider<MatchingRepository>
 ) {
     private val scope = CoroutineScope(Dispatchers.IO + Job())
     private val seenMessageIds = ConcurrentHashMap.newKeySet<String>()
@@ -72,53 +77,48 @@ class GlobalNotificationManager @Inject constructor(
             tokenStorage.userIdFlow.collectLatest { userId ->
                 if (!userId.isNullOrBlank()) {
                     Log.d("AuraNotif", "GlobalNotificationManager listening for userId: $userId")
-                    prefillExistingHistory(userId)
+                    // 1. Initial sync to prefill existing messages and notifications
+                    syncLatestHistory(userId, isInitialSync = true)
 
-                    val realtimeJob = launch { listenRealtimeGlobal(userId) }
-                    val syncJob = launch { backgroundSyncLoop(userId) }
-
-                    try {
-                        kotlinx.coroutines.awaitCancellation()
-                    } finally {
-                        realtimeJob.cancel()
-                        syncJob.cancel()
-                    }
+                    // 2. Realtime WebSocket listener with auto-reconnect & keep-alive
+                    listenRealtimeGlobal(userId)
                 }
             }
         }
     }
 
-    private suspend fun prefillExistingHistory(userId: String) {
+    private suspend fun syncLatestHistory(userId: String, isInitialSync: Boolean = false) {
         try {
             val notifs = notificationRepository.getNotifications()
             if (notifs is Result.Success) {
-                notifs.data.forEach { seenNotificationIds.add(it.id) }
+                notifs.data.forEach { notif ->
+                    if (isInitialSync) {
+                        seenNotificationIds.add(notif.id)
+                    } else if (notif.type != NotificationType.NEW_MESSAGE && !notif.isRead && seenNotificationIds.add(notif.id)) {
+                        if (notif.type == NotificationType.NEW_MATCH) {
+                            matchingRepositoryProvider.get().getMatches(forceRefresh = true)
+                            chatRepositoryProvider.get().getConversations(forceRefresh = true)
+                        }
+                        notificationHandler.showNotification(
+                            title = notif.title,
+                            body = notif.body,
+                            type = notif.type,
+                            extraData = mapOf(
+                                "actor_id" to (notif.actorId ?: ""),
+                                "notification_id" to notif.id
+                            )
+                        )
+                    }
+                }
             }
 
             val messagesRes = fetchLatestMessagesRemote()
             if (messagesRes is Result.Success) {
-                messagesRes.data.forEach { msg ->
-                    seenMessageIds.add(msg.id)
-                }
-                chatLocalDataSource.saveMessages(messagesRes.data)
-            }
-        } catch (e: Exception) {
-            Log.e("AuraNotif", "Prefill error: ${e.message}")
-        }
-    }
-
-    private suspend fun backgroundSyncLoop(userId: String) {
-        while (scope.isActive) {
-            delay(2500)
-            try {
-                // 1. Sync messages in the background and trigger notifications
-                val msgResult = fetchLatestMessagesRemote()
-                if (msgResult is Result.Success && msgResult.data.isNotEmpty()) {
-                    chatLocalDataSource.saveMessages(msgResult.data)
-
-                    msgResult.data.forEach { msg ->
+                if (isInitialSync) {
+                    messagesRes.data.forEach { msg -> seenMessageIds.add(msg.id) }
+                } else {
+                    messagesRes.data.forEach { msg ->
                         if (msg.senderId != userId && seenMessageIds.add(msg.id)) {
-                            Log.d("AuraNotif", "New message detected from ${msg.senderId}: ${msg.content}")
                             val senderName = getSenderName(msg.senderId)
                             notificationHandler.showNotification(
                                 title = senderName,
@@ -134,28 +134,13 @@ class GlobalNotificationManager @Inject constructor(
                         }
                     }
                 }
-
-                // 2. Sync general notifications (Matches, Likes, etc. - excluding messages which are synced separately)
-                val notifResult = notificationRepository.getNotifications()
-                if (notifResult is Result.Success) {
-                    notifResult.data.forEach { notif ->
-                        if (notif.type != NotificationType.NEW_MESSAGE && !notif.isRead && seenNotificationIds.add(notif.id)) {
-                            Log.d("AuraNotif", "New general notification detected: ${notif.title} - ${notif.body}")
-                            notificationHandler.showNotification(
-                                title = notif.title,
-                                body = notif.body,
-                                type = notif.type,
-                                extraData = mapOf(
-                                    "actor_id" to (notif.actorId ?: ""),
-                                    "notification_id" to notif.id
-                                )
-                            )
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                Log.e("AuraNotif", "Background sync loop error: ${e.message}")
+                chatLocalDataSource.saveMessages(messagesRes.data)
             }
+
+            chatRepositoryProvider.get().getConversations(forceRefresh = true)
+            matchingRepositoryProvider.get().getMatches(forceRefresh = true)
+        } catch (e: Exception) {
+            Log.e("AuraNotif", "Sync history error", e)
         }
     }
 
@@ -175,9 +160,9 @@ class GlobalNotificationManager @Inject constructor(
                         conversationId = dto.conversationId,
                         senderId = dto.senderId,
                         content = dto.content,
-                        messageType = try { MessageType.valueOf(dto.messageType) } catch (_: Exception) { MessageType.TEXT },
+                        messageType = MessageType.entries.firstOrNull { it.name == dto.messageType } ?: MessageType.TEXT,
                         mediaUrl = dto.mediaUrl,
-                        status = try { MessageStatus.valueOf(dto.status) } catch (_: Exception) { MessageStatus.SENT },
+                        status = MessageStatus.entries.firstOrNull { it.name == dto.status } ?: MessageStatus.SENT,
                         createdAtMillis = DateTimeUtils.parseIsoDate(dto.createdAt)
                     )
                 }
@@ -207,8 +192,15 @@ class GlobalNotificationManager @Inject constructor(
     }
 
     private suspend fun listenRealtimeGlobal(userId: String) {
+        var isFirstConnection = true
         while (scope.isActive) {
             try {
+                // If reconnecting after a drop, catch up on any missed messages/notifications
+                if (!isFirstConnection) {
+                    syncLatestHistory(userId, isInitialSync = false)
+                }
+                isFirstConnection = false
+
                 val token = tokenStorage.getAccessToken() ?: clientProvider.anonKey
                 val wsUrl = clientProvider.baseUrl
                     .replace("https://", "wss://")
@@ -224,16 +216,29 @@ class GlobalNotificationManager @Inject constructor(
                     val joinMessages = """{"topic":"realtime:public:messages","event":"phx_join","payload":{"access_token":"$token"},"ref":"2"}"""
                     send(Frame.Text(joinMessages))
 
-                    while (isActive) {
-                        val incoming = incoming.receive()
-                        if (incoming is Frame.Text) {
-                            val frameText = incoming.readText()
-                            handleRealtimeIncoming(userId, frameText)
+                    // Phoenix channel 30-second heartbeat to keep websocket healthy
+                    val heartbeatJob = launch {
+                        while (isActive) {
+                            delay(30000)
+                            send(Frame.Text("""{"topic":"phoenix","event":"heartbeat","payload":{},"ref":""}"""))
                         }
                     }
+
+                    try {
+                        while (isActive) {
+                            val incoming = incoming.receive()
+                            if (incoming is Frame.Text) {
+                                val frameText = incoming.readText()
+                                handleRealtimeIncoming(userId, frameText)
+                            }
+                        }
+                    } finally {
+                        heartbeatJob.cancel()
+                    }
                 }
-            } catch (_: Exception) {
-                delay(4000)
+            } catch (e: Exception) {
+                Log.w("AuraNotif", "WebSocket connection lost, reconnecting in 5s", e)
+                delay(5000)
             }
         }
     }
@@ -261,7 +266,7 @@ class GlobalNotificationManager @Inject constructor(
                         conversationId = conversationId,
                         senderId = senderId,
                         content = content,
-                        messageType = try { MessageType.valueOf(msgTypeStr) } catch (_: Exception) { MessageType.TEXT },
+                        messageType = MessageType.entries.firstOrNull { it.name == msgTypeStr } ?: MessageType.TEXT,
                         mediaUrl = mediaUrl,
                         status = MessageStatus.DELIVERED,
                         createdAtMillis = DateTimeUtils.parseIsoDate(createdAtStr)
@@ -269,6 +274,9 @@ class GlobalNotificationManager @Inject constructor(
 
                     scope.launch {
                         chatLocalDataSource.saveMessage(msg)
+                        chatRepositoryProvider.get().getConversations(forceRefresh = true)
+                        matchingRepositoryProvider.get().getMatches(forceRefresh = true)
+
                         val senderName = getSenderName(senderId)
                         notificationHandler.showNotification(
                             title = senderName,
@@ -291,18 +299,24 @@ class GlobalNotificationManager @Inject constructor(
             val body = record["body"]?.jsonPrimitive?.content ?: ""
             val typeStr = record["type"]?.jsonPrimitive?.content ?: "SYSTEM"
             val actorId = record["actor_id"]?.jsonPrimitive?.content ?: ""
-            val type = try { NotificationType.valueOf(typeStr) } catch (_: Exception) { NotificationType.SYSTEM }
+            val type = NotificationType.entries.firstOrNull { it.name == typeStr } ?: NotificationType.SYSTEM
 
             if (type != NotificationType.NEW_MESSAGE && seenNotificationIds.add(id)) {
-                notificationHandler.showNotification(
-                    title = title,
-                    body = body,
-                    type = type,
-                    extraData = mapOf("actor_id" to actorId, "notification_id" to id)
-                )
+                scope.launch {
+                    if (type == NotificationType.NEW_MATCH) {
+                        matchingRepositoryProvider.get().getMatches(forceRefresh = true)
+                        chatRepositoryProvider.get().getConversations(forceRefresh = true)
+                    }
+                    notificationHandler.showNotification(
+                        title = title,
+                        body = body,
+                        type = type,
+                        extraData = mapOf("actor_id" to actorId, "notification_id" to id)
+                    )
+                }
             }
-        } catch (_: Exception) {
-            // Ignore parsing errors
+        } catch (e: Exception) {
+            Log.w("AuraNotif", "Failed to parse realtime payload", e)
         }
     }
 }

@@ -173,7 +173,7 @@ class ConversationViewModel @Inject constructor(
         liveSyncJob?.cancel()
         liveSyncJob = viewModelScope.launch {
             while (isActive) {
-                delay(3000)
+                delay(15000)
                 getMessagesUseCase.fetchMessages(
                     conversationId = convId,
                     limit = PAGE_SIZE,

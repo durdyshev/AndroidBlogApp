@@ -11,6 +11,7 @@ import com.aura.dating.core.database.dao.DiscoveryDao
 import com.aura.dating.core.database.dao.MatchDao
 import com.aura.dating.core.database.dao.MessageDao
 import com.aura.dating.core.database.dao.ProfileDao
+import com.aura.dating.core.database.migration.DatabaseMigrations
 import com.aura.dating.core.location.FusedLocationProvider
 import com.aura.dating.core.location.LocationProvider
 import com.aura.dating.core.network.AndroidNetworkMonitor
@@ -202,7 +203,7 @@ object DatabaseModule {
             AuraDatabase::class.java,
             "aura_database.db"
         )
-            .fallbackToDestructiveMigration()
+            .addMigrations(DatabaseMigrations.MIGRATION_3_4)
             .build()
     }
 

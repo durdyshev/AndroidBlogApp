@@ -3,11 +3,9 @@ package com.aura.dating
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Intent
 import android.os.Build
 import androidx.core.content.getSystemService
 import com.aura.dating.core.notifications.AuraNotificationService
-import com.aura.dating.core.notifications.GlobalNotificationManager
 import com.aura.dating.core.presence.PresenceManager
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -16,16 +14,12 @@ import javax.inject.Inject
 class AuraApplication : Application() {
 
     @Inject
-    lateinit var globalNotificationManager: GlobalNotificationManager
-
-    @Inject
     lateinit var presenceManager: PresenceManager
 
     override fun onCreate() {
         super.onCreate()
         createNotificationChannels()
         presenceManager.initialize(this)
-        globalNotificationManager.startListening()
         AuraNotificationService.start(this)
     }
 

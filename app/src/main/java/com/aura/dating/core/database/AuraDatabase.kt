@@ -26,7 +26,7 @@ import com.aura.dating.core.database.entity.ProfileEntity
         MessageEntity::class,
         BlockedUserEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

@@ -22,8 +22,6 @@ import com.aura.dating.core.designsystem.theme.AuraTheme
 import com.aura.dating.core.designsystem.theme.DarkBackground
 import com.aura.dating.core.navigation.AuraNavHost
 import com.aura.dating.core.navigation.Screen
-import com.aura.dating.core.notifications.AuraNotificationService
-import com.aura.dating.core.notifications.GlobalNotificationManager
 import com.aura.dating.core.notifications.NotificationType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,9 +29,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var globalNotificationManager: GlobalNotificationManager
 
     private val pendingRoute = MutableStateFlow<String?>(null)
 
@@ -48,8 +43,6 @@ class MainActivity : ComponentActivity() {
         parseNotificationIntent(intent)
 
         requestNotificationPermission()
-        globalNotificationManager.startListening()
-        AuraNotificationService.start(this)
 
         setContent {
             AuraTheme(darkTheme = true) {
@@ -70,7 +63,7 @@ class MainActivity : ComponentActivity() {
                                     pendingRoute.value = null
                                 }
                             } catch (e: Exception) {
-                                Log.e("MainActivity", "Navigation error: ${e.message}")
+                                Log.e("MainActivity", "Navigation error", e)
                                 pendingRoute.value = null
                             }
                         }
@@ -81,13 +74,13 @@ class MainActivity : ComponentActivity() {
                         onMainReady = {
                             pendingRoute.value?.let { route ->
                                 try {
-                                    Log.d("MainActivity", "Navigating to pending route from onMainReady: $route")
-                                    navController.navigate(route)
-                                } catch (e: Exception) {
-                                    Log.e("MainActivity", "onMainReady navigation error: ${e.message}")
-                                } finally {
-                                    pendingRoute.value = null
-                                }
+                                Log.d("MainActivity", "Navigating to pending route from onMainReady: $route")
+                                navController.navigate(route)
+                            } catch (e: Exception) {
+                                Log.e("MainActivity", "onMainReady navigation error", e)
+                            } finally {
+                                pendingRoute.value = null
+                            }
                             }
                         }
                     )

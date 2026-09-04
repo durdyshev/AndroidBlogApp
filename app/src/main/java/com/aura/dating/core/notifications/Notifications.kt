@@ -21,10 +21,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
-
 import android.content.BroadcastReceiver
 import com.aura.dating.core.preferences.AppSettingsStorage
-import kotlinx.coroutines.runBlocking
 import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 
@@ -98,20 +96,19 @@ class NotificationHandler @Inject constructor(
             val notifId = Math.abs(conversationId.hashCode())
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
             notificationManager?.cancel(notifId)
-        } catch (_: Exception) {}
+        } catch (e: Exception) {
+            Log.e("AuraNotification", "Failed to clear conversation notifications", e)
+        }
     }
 
-    fun showNotification(
+    suspend fun showNotification(
         title: String,
         body: String,
         type: NotificationType,
         extraData: Map<String, String> = emptyMap()
     ) {
         try {
-            // Check user preferences from Settings (Messages, Matches, Likes, etc.)
-            val isAllowed = runBlocking {
-                appSettingsStorage.isNotificationAllowed(type)
-            }
+            val isAllowed = appSettingsStorage.isNotificationAllowed(type)
             if (!isAllowed) {
                 Log.d("AuraNotification", "Notification for type $type is disabled in user Settings. Skipping.")
                 return
@@ -228,7 +225,7 @@ class NotificationHandler @Inject constructor(
             notificationManager?.notify(notifId, notificationBuilder.build())
             Log.d("AuraNotification", "Notification shown (id: $notifId, type: $type): $title - $body")
         } catch (e: Exception) {
-            Log.e("AuraNotification", "Failed to show notification: ${e.message}", e)
+            Log.e("AuraNotification", "Failed to show notification", e)
         }
     }
 }
@@ -258,18 +255,15 @@ class AuraFirebaseMessagingService : FirebaseMessagingService() {
         val title = remoteMessage.notification?.title ?: remoteMessage.data["title"] ?: "Aura"
         val body = remoteMessage.notification?.body ?: remoteMessage.data["body"] ?: ""
         val typeString = remoteMessage.data["type"] ?: "SYSTEM"
+        val type = NotificationType.entries.firstOrNull { it.name == typeString } ?: NotificationType.SYSTEM
 
-        val type = try {
-            NotificationType.valueOf(typeString)
-        } catch (e: Exception) {
-            NotificationType.SYSTEM
+        CoroutineScope(Dispatchers.IO).launch {
+            notificationHandler.showNotification(
+                title = title,
+                body = body,
+                type = type,
+                extraData = remoteMessage.data
+            )
         }
-
-        notificationHandler.showNotification(
-            title = title,
-            body = body,
-            type = type,
-            extraData = remoteMessage.data
-        )
     }
 }
