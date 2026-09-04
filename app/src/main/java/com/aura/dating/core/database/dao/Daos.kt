@@ -93,6 +93,15 @@ interface ConversationDao {
     @Query("UPDATE conversations SET lastMessageText = :text, lastMessageAtMillis = :time, lastMessageSenderId = :senderId WHERE id = :conversationId")
     suspend fun updateLastMessage(conversationId: String, text: String, time: Long, senderId: String)
 
+    @Query("UPDATE conversations SET unreadCount = 0 WHERE id = :conversationId")
+    suspend fun markAsRead(conversationId: String)
+
+    @Query("UPDATE conversations SET unreadCount = unreadCount + 1, lastMessageText = :text, lastMessageAtMillis = :time, lastMessageSenderId = :senderId WHERE id = :conversationId")
+    suspend fun incrementUnreadCount(conversationId: String, text: String, time: Long, senderId: String)
+
+    @Query("SELECT COALESCE(SUM(unreadCount), 0) FROM conversations WHERE participantUserId NOT IN (SELECT blockedUserId FROM blocked_users)")
+    fun getTotalUnreadCountFlow(): Flow<Int>
+
     @Query("DELETE FROM conversations WHERE id = :conversationId")
     suspend fun deleteConversation(conversationId: String)
 }

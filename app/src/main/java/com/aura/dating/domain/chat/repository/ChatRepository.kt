@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ChatRepository {
     val conversationsFlow: Flow<List<Conversation>>
+    val totalUnreadCountFlow: Flow<Int>
     suspend fun resolveConversationId(rawId: String): Result<String>
     fun getMessagesFlow(conversationId: String): Flow<List<Message>>
     suspend fun getConversations(forceRefresh: Boolean = false): Result<List<Conversation>>

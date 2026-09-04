@@ -101,3 +101,9 @@ class ResolveConversationIdUseCase @Inject constructor(
         return chatRepository.resolveConversationId(rawId)
     }
 }
+
+class GetTotalUnreadCountUseCase @Inject constructor(
+    private val chatRepository: ChatRepository
+) {
+    operator fun invoke(): Flow<Int> = chatRepository.totalUnreadCountFlow
+}

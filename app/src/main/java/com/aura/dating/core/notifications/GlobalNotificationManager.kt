@@ -274,6 +274,12 @@ class GlobalNotificationManager @Inject constructor(
 
                     scope.launch {
                         chatLocalDataSource.saveMessage(msg)
+                        chatLocalDataSource.incrementUnreadCount(
+                            conversationId = conversationId,
+                            text = if (msg.messageType == MessageType.IMAGE) "📷 Sent a photo" else content,
+                            time = msg.createdAtMillis,
+                            senderId = senderId
+                        )
                         chatRepositoryProvider.get().getConversations(forceRefresh = true)
                         matchingRepositoryProvider.get().getMatches(forceRefresh = true)
 

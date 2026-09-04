@@ -15,6 +15,7 @@ import javax.inject.Singleton
 
 interface ChatLocalDataSource {
     val conversationsFlow: Flow<List<Conversation>>
+    val totalUnreadCountFlow: Flow<Int>
     fun getMessagesFlow(conversationId: String): Flow<List<Message>>
     suspend fun saveConversations(conversations: List<Conversation>)
     suspend fun saveConversation(conversation: Conversation)
@@ -23,6 +24,8 @@ interface ChatLocalDataSource {
     suspend fun updateMessageStatus(messageId: String, status: MessageStatus)
     suspend fun deleteMessage(messageId: String)
     suspend fun updateLastMessage(conversationId: String, text: String, time: Long, senderId: String)
+    suspend fun markConversationAsRead(conversationId: String)
+    suspend fun incrementUnreadCount(conversationId: String, text: String, time: Long, senderId: String)
 }
 
 @Singleton
@@ -30,6 +33,8 @@ class RoomChatLocalDataSource @Inject constructor(
     private val conversationDao: ConversationDao,
     private val messageDao: MessageDao
 ) : ChatLocalDataSource {
+
+    override val totalUnreadCountFlow: Flow<Int> = conversationDao.getTotalUnreadCountFlow()
 
     override val conversationsFlow: Flow<List<Conversation>> = conversationDao.getConversationsFlow().map { list ->
         list.map { entity ->
@@ -146,5 +151,18 @@ class RoomChatLocalDataSource @Inject constructor(
         senderId: String
     ) {
         conversationDao.updateLastMessage(conversationId, text, time, senderId)
+    }
+
+    override suspend fun markConversationAsRead(conversationId: String) {
+        conversationDao.markAsRead(conversationId)
+    }
+
+    override suspend fun incrementUnreadCount(
+        conversationId: String,
+        text: String,
+        time: Long,
+        senderId: String
+    ) {
+        conversationDao.incrementUnreadCount(conversationId, text, time, senderId)
     }
 }

@@ -32,6 +32,7 @@ class ChatRepositoryImpl @Inject constructor(
     private val scope = CoroutineScope(Dispatchers.IO)
 
     override val conversationsFlow: Flow<List<Conversation>> = localDataSource.conversationsFlow
+    override val totalUnreadCountFlow: Flow<Int> = localDataSource.totalUnreadCountFlow
 
     override suspend fun resolveConversationId(rawId: String): Result<String> {
         return remoteDataSource.resolveConversationId(rawId)
@@ -148,6 +149,7 @@ class ChatRepositoryImpl @Inject constructor(
     }
 
     override suspend fun markMessagesAsRead(conversationId: String): Result<Unit> {
+        localDataSource.markConversationAsRead(conversationId)
         val userId = tokenStorage.getUserId() ?: return Result.Success(Unit)
         return remoteDataSource.markAsRead(conversationId, userId)
     }

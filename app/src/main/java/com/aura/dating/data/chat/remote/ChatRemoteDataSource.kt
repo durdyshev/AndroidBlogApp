@@ -25,13 +25,21 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Serializable
+data class MessageShortDto(
+    val id: String,
+    @SerialName("sender_id") val senderId: String,
+    @SerialName("created_at") val createdAt: String
+)
+
+@Serializable
 data class ConversationSupabaseDto(
     val id: String,
     @SerialName("match_id") val matchId: String? = null,
     @SerialName("last_message_text") val lastMessageText: String? = null,
     @SerialName("last_message_at") val lastMessageAt: String? = null,
     @SerialName("last_message_sender_id") val lastMessageSenderId: String? = null,
-    val participants: List<ParticipantProfileJoinDto> = emptyList()
+    val participants: List<ParticipantProfileJoinDto> = emptyList(),
+    val messages: List<MessageShortDto> = emptyList()
 )
 
 @Serializable
@@ -183,7 +191,7 @@ class SupabaseChatRemoteDataSource @Inject constructor(
         return clientProvider.safeApiCall(
             block = { client, headers ->
                 client.get {
-                    url("${clientProvider.baseUrl}/rest/v1/conversations?select=id,match_id,last_message_text,last_message_at,last_message_sender_id,participants:conversation_participants(user_id,last_read_at,profile:profiles(id,display_name,is_online,last_seen_at,photos:profile_photos(photo_url,is_primary)))&order=last_message_at.desc")
+                    url("${clientProvider.baseUrl}/rest/v1/conversations?select=id,match_id,last_message_text,last_message_at,last_message_sender_id,participants:conversation_participants(user_id,last_read_at,profile:profiles(id,display_name,is_online,last_seen_at,photos:profile_photos(photo_url,is_primary))),messages:messages(id,sender_id,created_at)&order=last_message_at.desc")
                     headers(this)
                 }
             },
@@ -191,6 +199,7 @@ class SupabaseChatRemoteDataSource @Inject constructor(
                 val list = response.body<List<ConversationSupabaseDto>>()
                 list.mapNotNull { convDto ->
                     val otherParticipant = convDto.participants.firstOrNull { it.userId != currentUserId }
+                    val myParticipant = convDto.participants.firstOrNull { it.userId == currentUserId }
                     val participantId = otherParticipant?.userId ?: ""
                     val profile = otherParticipant?.profile
                     val participantName = profile?.displayName ?: "User"
@@ -201,6 +210,23 @@ class SupabaseChatRemoteDataSource @Inject constructor(
                         ?: System.currentTimeMillis()
 
                     val lastSeenTime = profile?.lastSeenAt?.let { DateTimeUtils.parseIsoDate(it) }
+
+                    val lastReadTime = myParticipant?.lastReadAt?.let { DateTimeUtils.parseIsoDate(it) } ?: 0L
+
+                    val calculatedUnread = convDto.messages.count { msg ->
+                        msg.senderId != currentUserId && DateTimeUtils.parseIsoDate(msg.createdAt) > lastReadTime
+                    }
+                    val isUnreadByTimestamp = convDto.lastMessageSenderId != null &&
+                            convDto.lastMessageSenderId != currentUserId &&
+                            time > lastReadTime
+
+                    val unreadCount = if (calculatedUnread > 0) {
+                        calculatedUnread
+                    } else if (isUnreadByTimestamp) {
+                        1
+                    } else {
+                        0
+                    }
 
                     Conversation(
                         id = convDto.id,
@@ -213,7 +239,7 @@ class SupabaseChatRemoteDataSource @Inject constructor(
                         lastMessageText = convDto.lastMessageText,
                         lastMessageAtMillis = time,
                         lastMessageSenderId = convDto.lastMessageSenderId,
-                        unreadCount = 0
+                        unreadCount = unreadCount
                     )
                 }
             }

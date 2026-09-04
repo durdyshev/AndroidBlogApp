@@ -7,6 +7,7 @@ import com.aura.dating.domain.chat.usecase.GetConversationsUseCase
 import com.aura.dating.domain.matching.model.Match
 import com.aura.dating.domain.matching.usecase.GetMatchesUseCase
 import com.aura.dating.domain.matching.usecase.UnmatchUseCase
+import com.aura.dating.domain.chat.usecase.GetTotalUnreadCountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +18,7 @@ import javax.inject.Inject
 data class MatchesUiState(
     val matches: List<Match> = emptyList(),
     val conversations: List<Conversation> = emptyList(),
+    val totalUnreadCount: Int = 0,
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val errorMessage: String? = null
@@ -26,6 +28,7 @@ data class MatchesUiState(
 class MatchesViewModel @Inject constructor(
     private val getMatchesUseCase: GetMatchesUseCase,
     private val getConversationsUseCase: GetConversationsUseCase,
+    private val getTotalUnreadCountUseCase: GetTotalUnreadCountUseCase,
     private val unmatchUseCase: UnmatchUseCase
 ) : ViewModel() {
 
@@ -46,6 +49,11 @@ class MatchesViewModel @Inject constructor(
         viewModelScope.launch {
             getConversationsUseCase.conversationsFlow.collect { convsList ->
                 _uiState.value = _uiState.value.copy(conversations = convsList)
+            }
+        }
+        viewModelScope.launch {
+            getTotalUnreadCountUseCase().collect { unread ->
+                _uiState.value = _uiState.value.copy(totalUnreadCount = unread)
             }
         }
     }

@@ -17,6 +17,7 @@ import com.aura.dating.core.designsystem.components.AuraTab
 import com.aura.dating.core.designsystem.theme.DarkBackground
 import com.aura.dating.feature.discover.ui.DiscoverScreen
 import com.aura.dating.feature.matches.ui.MatchesScreen
+import com.aura.dating.feature.matches.viewmodel.MatchesViewModel
 import com.aura.dating.feature.profile.ui.ProfileScreen
 import com.aura.dating.feature.profile.viewmodel.ProfileViewModel
 
@@ -31,9 +32,11 @@ fun MainScreen(
     onNavigateToEditPhotos: () -> Unit,
     onNavigateToEditInterests: () -> Unit,
     onNavigateToSettings: () -> Unit,
-    profileViewModel: ProfileViewModel = hiltViewModel()
+    profileViewModel: ProfileViewModel = hiltViewModel(),
+    matchesViewModel: MatchesViewModel = hiltViewModel()
 ) {
     val profileUiState by profileViewModel.uiState.collectAsState()
+    val matchesUiState by matchesViewModel.uiState.collectAsState()
     var selectedTab by remember { mutableStateOf(AuraTab.DISCOVER) }
 
     Box(
@@ -56,7 +59,8 @@ fun MainScreen(
             AuraTab.MATCHES -> {
                 MatchesScreen(
                     onNavigateToConversation = onNavigateToConversation,
-                    onNavigateToUserProfile = onNavigateToUserProfile
+                    onNavigateToUserProfile = onNavigateToUserProfile,
+                    viewModel = matchesViewModel
                 )
             }
             AuraTab.PROFILE -> {
@@ -74,6 +78,7 @@ fun MainScreen(
         AuraBottomNavigation(
             selectedTab = selectedTab,
             onTabSelected = { selectedTab = it },
+            unreadMessagesCount = matchesUiState.totalUnreadCount,
             modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
