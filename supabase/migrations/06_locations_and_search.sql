@@ -58,6 +58,9 @@ DROP POLICY IF EXISTS "Public read cities" ON public.cities;
 CREATE POLICY "Public read cities" ON public.cities FOR SELECT TO anon, authenticated USING (true);
 
 -- 6. Server-Side Location-Based Search RPC Function
+DROP FUNCTION IF EXISTS public.search_candidates_by_location(UUID, UUID, UUID, INT, INT, TEXT, INT, INT);
+DROP FUNCTION IF EXISTS public.search_candidates_by_location(UUID, UUID, UUID, INT, INT, TEXT, BOOLEAN, INT, INT);
+
 CREATE OR REPLACE FUNCTION public.search_candidates_by_location(
     p_country_id UUID DEFAULT NULL,
     p_region_id UUID DEFAULT NULL,
@@ -117,7 +120,7 @@ BEGIN
         LEFT JOIN public.cities ct ON ct.id = p.city_id
         WHERE (v_user_id IS NULL OR p.id != v_user_id)
           AND p.is_banned = false
-          -- Location hierarchy matching
+          -- Location hierarchy matching (NULL means match all)
           AND (p_country_id IS NULL OR p.country_id = p_country_id)
           AND (p_region_id IS NULL OR p.region_id = p_region_id)
           AND (p_city_id IS NULL OR p.city_id = p_city_id)
@@ -130,7 +133,7 @@ BEGIN
                      OR (b.blocker_id = p.id AND b.blocked_id = v_user_id)
               )
           )
-          -- Filter Online Status
+          -- Filter Online Status (false/null matches everyone)
           AND (
               p_only_online IS NULL
               OR p_only_online = false
@@ -141,8 +144,8 @@ BEGIN
               p_gender IS NULL
               OR p_gender = 'ALL'
               OR p_gender = 'EVERYONE'
-              OR (p_gender IN ('WOMEN', 'WOMAN') AND p.gender = 'WOMAN')
-              OR (p_gender IN ('MEN', 'MAN') AND p.gender = 'MAN')
+              OR (p_gender IN ('WOMEN', 'WOMAN', 'FEMALE') AND p.gender IN ('WOMAN', 'FEMALE'))
+              OR (p_gender IN ('MEN', 'MAN', 'MALE') AND p.gender IN ('MAN', 'MALE'))
               OR (p_gender = 'NON_BINARY' AND p.gender = 'NON_BINARY')
           )
           -- Filter Age Preference (Adults 18+ only)
@@ -200,6 +203,8 @@ BEGIN
     LIMIT p_limit OFFSET p_offset;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+GRANT EXECUTE ON FUNCTION public.search_candidates_by_location TO anon, authenticated;
 
 -- 7. Seed Initial Location Data (Turkmenistan, Turkey, Germany, Kazakhstan, Uzbekistan)
 

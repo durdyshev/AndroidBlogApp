@@ -214,6 +214,10 @@ class LocationSearchViewModel @Inject constructor(
             }
 
             val offset = if (isNewSearch) 0 else _uiState.value.currentOffset
+            android.util.Log.d(
+                "LocationSearchVM",
+                "executeSearch (isNewSearch=$isNewSearch, offset=$offset): country=${_uiState.value.selectedCountry?.name}, onlineOnly=${_uiState.value.onlyOnline}, gender=${_uiState.value.gender}, age=${_uiState.value.minAge}-${_uiState.value.maxAge}"
+            )
 
             val result = discoveryRepository.searchCandidatesByLocation(
                 countryId = _uiState.value.selectedCountry?.id,
@@ -229,6 +233,7 @@ class LocationSearchViewModel @Inject constructor(
 
             if (result is Result.Success) {
                 val newItems = result.data
+                android.util.Log.d("LocationSearchVM", "Search succeeded: found ${newItems.size} candidates")
                 val updatedList = if (isNewSearch) newItems else _uiState.value.results + newItems
                 _uiState.value = _uiState.value.copy(
                     results = updatedList,
@@ -245,11 +250,17 @@ class LocationSearchViewModel @Inject constructor(
                     _eventFlow.emit(LocationSearchEvent.NavigateToResults(title, subtitle))
                 }
             } else if (result is Result.Error) {
+                android.util.Log.e("LocationSearchVM", "Search failed: ${result.error.message}")
                 _uiState.value = _uiState.value.copy(
                     isSearching = false,
                     isPaginating = false,
-                    errorMessage = result.error.message
+                    errorMessage = result.error.message ?: "Failed to find users. Please check your connection."
                 )
+                if (isNewSearch) {
+                    val title = buildSearchTitle()
+                    val subtitle = buildSearchSubtitle()
+                    _eventFlow.emit(LocationSearchEvent.NavigateToResults(title, subtitle))
+                }
             }
         }
     }

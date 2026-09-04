@@ -57,6 +57,18 @@ data class SearchCandidatesByLocationRequest(
     val p_offset: Int = 0
 )
 
+@Serializable
+data class SearchCandidatesByLocationLegacyRequest(
+    val p_country_id: String? = null,
+    val p_region_id: String? = null,
+    val p_city_id: String? = null,
+    val p_min_age: Int = 18,
+    val p_max_age: Int = 75,
+    val p_gender: String = "ALL",
+    val p_limit: Int = 20,
+    val p_offset: Int = 0
+)
+
 interface DiscoveryRemoteDataSource {
     suspend fun getCandidates(limit: Int = 20): Result<List<DiscoveryCandidate>>
     suspend fun searchCandidatesByLocation(
@@ -107,7 +119,13 @@ class SupabaseDiscoveryRemoteDataSource @Inject constructor(
         limit: Int,
         offset: Int
     ): Result<List<DiscoveryCandidate>> {
-        return clientProvider.safeApiCall(
+        android.util.Log.d(
+            "DiscoveryRemote",
+            "searchCandidatesByLocation called: country=$countryId, region=$regionId, city=$cityId, minAge=$minAge, maxAge=$maxAge, gender=$gender, onlyOnline=$onlyOnline, limit=$limit, offset=$offset"
+        )
+
+        // 1. Try modern 9-param signature (supports server-side p_only_online)
+        val modernResult = clientProvider.safeApiCall(
             block = { client, headers ->
                 client.post {
                     url("${clientProvider.baseUrl}/rest/v1/rpc/search_candidates_by_location")
@@ -130,6 +148,46 @@ class SupabaseDiscoveryRemoteDataSource @Inject constructor(
             },
             parser = { response ->
                 val list = response.body<List<DiscoveryCandidateDto>>()
+                android.util.Log.d("DiscoveryRemote", "Modern RPC success: received ${list.size} candidates")
+                val domainList = mapDtosToDomain(list)
+                if (onlyOnline) domainList.filter { it.isOnline } else domainList
+            }
+        )
+
+        if (modernResult is Result.Success) {
+            return modernResult
+        }
+
+        val modernError = (modernResult as? Result.Error)?.error?.message
+        android.util.Log.w(
+            "DiscoveryRemote",
+            "Modern RPC call failed ($modernError). Attempting legacy 8-param fallback..."
+        )
+
+        // 2. Fallback to legacy 8-param signature
+        val legacyResult = clientProvider.safeApiCall(
+            block = { client, headers ->
+                client.post {
+                    url("${clientProvider.baseUrl}/rest/v1/rpc/search_candidates_by_location")
+                    contentType(ContentType.Application.Json)
+                    headers(this)
+                    setBody(
+                        SearchCandidatesByLocationLegacyRequest(
+                            p_country_id = countryId,
+                            p_region_id = regionId,
+                            p_city_id = cityId,
+                            p_min_age = minAge,
+                            p_max_age = maxAge,
+                            p_gender = gender,
+                            p_limit = limit,
+                            p_offset = offset
+                        )
+                    )
+                }
+            },
+            parser = { response ->
+                val list = response.body<List<DiscoveryCandidateDto>>()
+                android.util.Log.d("DiscoveryRemote", "Legacy RPC success: received ${list.size} candidates")
                 val domainList = mapDtosToDomain(list)
                 if (onlyOnline) {
                     domainList.filter { it.isOnline }
@@ -138,6 +196,12 @@ class SupabaseDiscoveryRemoteDataSource @Inject constructor(
                 }
             }
         )
+
+        if (legacyResult is Result.Error) {
+            android.util.Log.e("DiscoveryRemote", "Legacy RPC fallback also failed: ${legacyResult.error.message}")
+        }
+
+        return legacyResult
     }
 
     private fun mapDtosToDomain(list: List<DiscoveryCandidateDto>): List<DiscoveryCandidate> {
