@@ -53,6 +53,7 @@ class DiscoveryRepositoryImpl @Inject constructor(
         minAge: Int,
         maxAge: Int,
         gender: String,
+        onlyOnline: Boolean,
         limit: Int,
         offset: Int
     ): Result<List<DiscoveryCandidate>> {
@@ -63,6 +64,7 @@ class DiscoveryRepositoryImpl @Inject constructor(
             minAge = minAge,
             maxAge = maxAge,
             gender = gender,
+            onlyOnline = onlyOnline,
             limit = limit,
             offset = offset
         )

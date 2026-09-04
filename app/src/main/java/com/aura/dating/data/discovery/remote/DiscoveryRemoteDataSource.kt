@@ -50,8 +50,9 @@ data class SearchCandidatesByLocationRequest(
     val p_region_id: String? = null,
     val p_city_id: String? = null,
     val p_min_age: Int = 18,
-    val p_max_age: Int = 100,
+    val p_max_age: Int = 75,
     val p_gender: String = "ALL",
+    val p_only_online: Boolean = false,
     val p_limit: Int = 20,
     val p_offset: Int = 0
 )
@@ -65,6 +66,7 @@ interface DiscoveryRemoteDataSource {
         minAge: Int,
         maxAge: Int,
         gender: String,
+        onlyOnline: Boolean = false,
         limit: Int,
         offset: Int
     ): Result<List<DiscoveryCandidate>>
@@ -101,6 +103,7 @@ class SupabaseDiscoveryRemoteDataSource @Inject constructor(
         minAge: Int,
         maxAge: Int,
         gender: String,
+        onlyOnline: Boolean,
         limit: Int,
         offset: Int
     ): Result<List<DiscoveryCandidate>> {
@@ -118,6 +121,7 @@ class SupabaseDiscoveryRemoteDataSource @Inject constructor(
                             p_min_age = minAge,
                             p_max_age = maxAge,
                             p_gender = gender,
+                            p_only_online = onlyOnline,
                             p_limit = limit,
                             p_offset = offset
                         )
@@ -126,7 +130,12 @@ class SupabaseDiscoveryRemoteDataSource @Inject constructor(
             },
             parser = { response ->
                 val list = response.body<List<DiscoveryCandidateDto>>()
-                mapDtosToDomain(list)
+                val domainList = mapDtosToDomain(list)
+                if (onlyOnline) {
+                    domainList.filter { it.isOnline }
+                } else {
+                    domainList
+                }
             }
         )
     }

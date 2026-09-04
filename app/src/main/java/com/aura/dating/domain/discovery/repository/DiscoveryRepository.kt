@@ -15,6 +15,7 @@ interface DiscoveryRepository {
         minAge: Int,
         maxAge: Int,
         gender: String,
+        onlyOnline: Boolean = false,
         limit: Int = 20,
         offset: Int = 0
     ): Result<List<DiscoveryCandidate>>

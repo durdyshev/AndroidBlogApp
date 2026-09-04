@@ -122,6 +122,7 @@ class LocationSearchViewModelTest {
         viewModel.selectCity(sampleCity)
         viewModel.onAgeRangeChange(18, 25)
         viewModel.onGenderChange("WOMEN")
+        viewModel.onOnlineOnlyChange(true)
 
         val candidates = listOf(
             DiscoveryCandidate(
@@ -150,6 +151,7 @@ class LocationSearchViewModelTest {
                 minAge = 18,
                 maxAge = 25,
                 gender = "WOMEN",
+                onlyOnline = true,
                 limit = 20,
                 offset = 0
             )
@@ -161,6 +163,7 @@ class LocationSearchViewModelTest {
         val state = viewModel.uiState.value
         assertEquals(1, state.results.size)
         assertEquals("Leyla", state.results[0].displayName)
+        assertTrue(state.onlyOnline)
         assertFalse(state.isSearching)
         assertNull(state.errorMessage)
 
@@ -172,10 +175,33 @@ class LocationSearchViewModelTest {
                 minAge = 18,
                 maxAge = 25,
                 gender = "WOMEN",
+                onlyOnline = true,
                 limit = 20,
                 offset = 0
             )
         }
+    }
+
+    @Test
+    fun `resetFilters resets onlineOnly and other criteria to defaults`() = runTest {
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.selectCountry(sampleCountry)
+        viewModel.onOnlineOnlyChange(true)
+        viewModel.onGenderChange("MEN")
+        viewModel.onAgeRangeChange(20, 30)
+
+        assertTrue(viewModel.uiState.value.onlyOnline)
+        assertEquals("MEN", viewModel.uiState.value.gender)
+
+        viewModel.resetFilters()
+
+        val state = viewModel.uiState.value
+        assertFalse(state.onlyOnline)
+        assertNull(state.selectedCountry)
+        assertEquals(18, state.minAge)
+        assertEquals(75, state.maxAge)
+        assertEquals("ALL", state.gender)
     }
 
     @Test
@@ -197,7 +223,7 @@ class LocationSearchViewModelTest {
         )
 
         coEvery {
-            discoveryRepository.searchCandidatesByLocation(any(), any(), any(), any(), any(), any(), any(), any())
+            discoveryRepository.searchCandidatesByLocation(any(), any(), any(), any(), any(), any(), any(), any(), any())
         } returns Result.Success(listOf(candidate))
 
         coEvery {

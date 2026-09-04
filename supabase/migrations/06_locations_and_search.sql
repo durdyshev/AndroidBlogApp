@@ -65,6 +65,7 @@ CREATE OR REPLACE FUNCTION public.search_candidates_by_location(
     p_min_age INT DEFAULT 18,
     p_max_age INT DEFAULT 100,
     p_gender TEXT DEFAULT 'ALL',
+    p_only_online BOOLEAN DEFAULT false,
     p_limit INT DEFAULT 20,
     p_offset INT DEFAULT 0
 )
@@ -128,6 +129,12 @@ BEGIN
                   WHERE (b.blocker_id = v_user_id AND b.blocked_id = p.id)
                      OR (b.blocker_id = p.id AND b.blocked_id = v_user_id)
               )
+          )
+          -- Filter Online Status
+          AND (
+              p_only_online IS NULL
+              OR p_only_online = false
+              OR p.is_online = true
           )
           -- Filter Gender Preference
           AND (

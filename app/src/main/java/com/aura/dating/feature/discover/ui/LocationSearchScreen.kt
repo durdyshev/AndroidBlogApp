@@ -34,6 +34,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -130,8 +132,9 @@ fun LocationSearchScreen(
                         uiState.selectedRegion != null ||
                         uiState.selectedCity != null ||
                         uiState.minAge > 18 ||
-                        uiState.maxAge < 100 ||
-                        uiState.gender != "ALL"
+                        uiState.maxAge < 75 ||
+                        uiState.gender != "ALL" ||
+                        uiState.onlyOnline
 
                 if (hasActiveFilters) {
                     Text(
@@ -180,6 +183,12 @@ fun LocationSearchScreen(
                             ActiveFilterChip(
                                 label = genderLabel,
                                 onRemove = { viewModel.onGenderChange("ALL") }
+                            )
+                        }
+                        if (uiState.onlyOnline) {
+                            ActiveFilterChip(
+                                label = "Online Now",
+                                onRemove = { viewModel.onOnlineOnlyChange(false) }
                             )
                         }
                     }
@@ -323,6 +332,61 @@ fun LocationSearchScreen(
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
+
+                Spacer(modifier = Modifier.height(28.dp))
+
+                // Section 4: Online Now Toggle
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(14.dp))
+                        .border(
+                            width = 1.dp,
+                            color = if (uiState.onlyOnline) AuraRose.copy(alpha = 0.5f) else DarkBorder,
+                            shape = RoundedCornerShape(14.dp)
+                        )
+                        .background(if (uiState.onlyOnline) AuraRose.copy(alpha = 0.08f) else DarkCardBackground)
+                        .clickable { viewModel.onOnlineOnlyChange(!uiState.onlyOnline) }
+                        .padding(horizontal = Dimens.Spacing16, vertical = 14.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .background(
+                                        if (uiState.onlyOnline) Color(0xFF4CAF50) else Color.White.copy(alpha = 0.3f),
+                                        CircleShape
+                                    )
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Online Now",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.White
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Only show people who are active right now",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.White.copy(alpha = 0.6f)
+                        )
+                    }
+                    Switch(
+                        checked = uiState.onlyOnline,
+                        onCheckedChange = { viewModel.onOnlineOnlyChange(it) },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = Color.White,
+                            checkedTrackColor = AuraRose,
+                            uncheckedThumbColor = Color.White.copy(alpha = 0.7f),
+                            uncheckedTrackColor = DarkBorder
+                        )
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(Dimens.Spacing20))
             }

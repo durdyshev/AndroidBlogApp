@@ -32,6 +32,7 @@ data class LocationSearchUiState(
     val minAge: Int = 18,
     val maxAge: Int = 75,
     val gender: String = "ALL", // "ALL", "WOMEN", "MEN", "NON_BINARY"
+    val onlyOnline: Boolean = false,
     val isLoadingLocations: Boolean = false,
     val isSearching: Boolean = false,
     val isPaginating: Boolean = false,
@@ -167,6 +168,10 @@ class LocationSearchViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(gender = gender)
     }
 
+    fun onOnlineOnlyChange(onlyOnline: Boolean) {
+        _uiState.value = _uiState.value.copy(onlyOnline = onlyOnline)
+    }
+
     fun removeCountryFilter() {
         selectCountry(null)
     }
@@ -188,7 +193,8 @@ class LocationSearchViewModel @Inject constructor(
             cities = emptyList(),
             minAge = 18,
             maxAge = 75,
-            gender = "ALL"
+            gender = "ALL",
+            onlyOnline = false
         )
     }
 
@@ -216,6 +222,7 @@ class LocationSearchViewModel @Inject constructor(
                 minAge = _uiState.value.minAge,
                 maxAge = _uiState.value.maxAge,
                 gender = _uiState.value.gender,
+                onlyOnline = _uiState.value.onlyOnline,
                 limit = pageSize,
                 offset = offset
             )
@@ -287,6 +294,7 @@ class LocationSearchViewModel @Inject constructor(
             else -> "Everyone"
         }
         val ageLabel = "${_uiState.value.minAge}–${_uiState.value.maxAge}"
-        return "$ageLabel · $genderLabel"
+        val onlineLabel = if (_uiState.value.onlyOnline) " · Online Now" else ""
+        return "$ageLabel · $genderLabel$onlineLabel"
     }
 }
