@@ -56,3 +56,35 @@ FROM public.reports r
 JOIN public.profiles reporter ON reporter.id = r.reporter_id
 JOIN public.profiles reported ON reported.id = r.reported_id
 WHERE r.status = 'PENDING';
+
+-- 3. Get Blocked Users (Bypasses Discovery RLS to show names and avatars on Settings Screen)
+CREATE OR REPLACE FUNCTION public.get_my_blocked_users()
+RETURNS TABLE (
+    id UUID,
+    blocked_user_id UUID,
+    display_name TEXT,
+    photo_url TEXT,
+    created_at TIMESTAMPTZ
+) AS $$
+DECLARE
+    v_user_id UUID := auth.uid();
+BEGIN
+    RETURN QUERY
+    SELECT 
+        b.id,
+        b.blocked_id AS blocked_user_id,
+        p.display_name,
+        (
+            SELECT ph.photo_url 
+            FROM public.profile_photos ph 
+            WHERE ph.user_id = b.blocked_id 
+            ORDER BY ph.is_primary DESC, ph.display_order ASC 
+            LIMIT 1
+        ) AS photo_url,
+        b.created_at
+    FROM public.blocks b
+    JOIN public.profiles p ON p.id = b.blocked_id
+    WHERE b.blocker_id = v_user_id
+    ORDER BY b.created_at DESC;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

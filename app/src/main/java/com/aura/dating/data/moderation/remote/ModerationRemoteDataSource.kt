@@ -20,6 +20,15 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Serializable
+data class BlockedUserRpcDto(
+    val id: String,
+    @SerialName("blocked_user_id") val blockedUserId: String,
+    @SerialName("display_name") val displayName: String? = null,
+    @SerialName("photo_url") val photoUrl: String? = null,
+    @SerialName("created_at") val createdAt: String
+)
+
+@Serializable
 data class BlockSupabaseDto(
     val id: String,
     @SerialName("blocker_id") val blockerId: String,
@@ -88,6 +97,34 @@ class SupabaseModerationRemoteDataSource @Inject constructor(
     }
 
     override suspend fun getBlockedUsers(blockerId: String): Result<List<BlockedUser>> {
+        // First try the RPC function which bypasses RLS hiding
+        val rpcResult = clientProvider.safeApiCall(
+            block = { client, headers ->
+                client.post {
+                    url("${clientProvider.baseUrl}/rest/v1/rpc/get_my_blocked_users")
+                    contentType(ContentType.Application.Json)
+                    headers(this)
+                }
+            },
+            parser = { response ->
+                val list = response.body<List<BlockedUserRpcDto>>()
+                list.map { dto ->
+                    BlockedUser(
+                        id = dto.id,
+                        blockedUserId = dto.blockedUserId,
+                        displayName = dto.displayName ?: "User",
+                        photoUrl = dto.photoUrl,
+                        blockedAtMillis = DateTimeUtils.parseIsoDate(dto.createdAt)
+                    )
+                }
+            }
+        )
+
+        if (rpcResult is Result.Success) {
+            return rpcResult
+        }
+
+        // Fallback to direct REST table join query
         return clientProvider.safeApiCall(
             block = { client, headers ->
                 client.get {

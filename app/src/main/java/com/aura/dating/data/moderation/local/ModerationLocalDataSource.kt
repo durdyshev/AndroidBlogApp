@@ -11,6 +11,7 @@ import javax.inject.Singleton
 interface ModerationLocalDataSource {
     val blockedUsersFlow: Flow<List<BlockedUser>>
     suspend fun saveBlockedUser(blockedUser: BlockedUser)
+    suspend fun getBlockedUserById(blockedUserId: String): BlockedUser?
     suspend fun removeBlockedUser(blockedUserId: String)
     suspend fun clear()
 }
@@ -41,6 +42,17 @@ class RoomModerationLocalDataSource @Inject constructor(
                 photoUrl = blockedUser.photoUrl,
                 blockedAtMillis = blockedUser.blockedAtMillis
             )
+        )
+    }
+
+    override suspend fun getBlockedUserById(blockedUserId: String): BlockedUser? {
+        val entity = blockedUserDao.getBlockedUserById(blockedUserId) ?: return null
+        return BlockedUser(
+            id = entity.id,
+            blockedUserId = entity.blockedUserId,
+            displayName = entity.displayName,
+            photoUrl = entity.photoUrl,
+            blockedAtMillis = entity.blockedAtMillis
         )
     }
 

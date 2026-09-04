@@ -58,9 +58,19 @@ class ModerationRepositoryImpl @Inject constructor(
 
         val remoteResult = remoteDataSource.getBlockedUsers(blockerId)
         if (remoteResult is Result.Success) {
+            val mergedList = remoteResult.data.map { remoteUser ->
+                val cached = localDataSource.getBlockedUserById(remoteUser.blockedUserId)
+                val finalName = if (remoteUser.displayName != "User" && remoteUser.displayName.isNotBlank()) {
+                    remoteUser.displayName
+                } else {
+                    cached?.displayName ?: remoteUser.displayName
+                }
+                val finalPhoto = remoteUser.photoUrl ?: cached?.photoUrl
+                remoteUser.copy(displayName = finalName, photoUrl = finalPhoto)
+            }
             localDataSource.clear()
-            remoteResult.data.forEach { localDataSource.saveBlockedUser(it) }
-            return remoteResult
+            mergedList.forEach { localDataSource.saveBlockedUser(it) }
+            return Result.Success(mergedList)
         }
         return remoteResult
     }

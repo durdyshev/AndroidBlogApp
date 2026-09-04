@@ -135,6 +135,9 @@ interface BlockedUserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBlockedUser(blockedUser: BlockedUserEntity)
 
+    @Query("SELECT * FROM blocked_users WHERE blockedUserId = :blockedUserId LIMIT 1")
+    suspend fun getBlockedUserById(blockedUserId: String): BlockedUserEntity?
+
     @Query("DELETE FROM blocked_users WHERE blockedUserId = :blockedUserId")
     suspend fun removeBlockedUser(blockedUserId: String)
 
