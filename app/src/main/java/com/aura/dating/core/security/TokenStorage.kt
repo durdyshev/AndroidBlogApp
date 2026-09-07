@@ -18,10 +18,12 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 interface TokenStorage {
     val accessTokenFlow: Flow<String?>
     val userIdFlow: Flow<String?>
-    suspend fun saveTokens(accessToken: String, refreshToken: String, userId: String)
+    val emailFlow: Flow<String?>
+    suspend fun saveTokens(accessToken: String, refreshToken: String, userId: String, email: String = "")
     suspend fun getAccessToken(): String?
     suspend fun getRefreshToken(): String?
     suspend fun getUserId(): String?
+    suspend fun getEmail(): String?
     suspend fun clearTokens()
 }
 
@@ -34,6 +36,7 @@ class DataStoreTokenStorage @Inject constructor(
         private val KEY_ACCESS_TOKEN = stringPreferencesKey("access_token")
         private val KEY_REFRESH_TOKEN = stringPreferencesKey("refresh_token")
         private val KEY_USER_ID = stringPreferencesKey("user_id")
+        private val KEY_EMAIL = stringPreferencesKey("user_email")
     }
 
     override val accessTokenFlow: Flow<String?> = context.dataStore.data.map { prefs ->
@@ -44,11 +47,18 @@ class DataStoreTokenStorage @Inject constructor(
         prefs[KEY_USER_ID]
     }
 
-    override suspend fun saveTokens(accessToken: String, refreshToken: String, userId: String) {
+    override val emailFlow: Flow<String?> = context.dataStore.data.map { prefs ->
+        prefs[KEY_EMAIL]
+    }
+
+    override suspend fun saveTokens(accessToken: String, refreshToken: String, userId: String, email: String) {
         context.dataStore.edit { prefs ->
             prefs[KEY_ACCESS_TOKEN] = accessToken
             prefs[KEY_REFRESH_TOKEN] = refreshToken
             prefs[KEY_USER_ID] = userId
+            if (email.isNotBlank()) {
+                prefs[KEY_EMAIL] = email
+            }
         }
     }
 
@@ -64,11 +74,16 @@ class DataStoreTokenStorage @Inject constructor(
         return context.dataStore.data.first()[KEY_USER_ID]
     }
 
+    override suspend fun getEmail(): String? {
+        return context.dataStore.data.first()[KEY_EMAIL]
+    }
+
     override suspend fun clearTokens() {
         context.dataStore.edit { prefs ->
             prefs.remove(KEY_ACCESS_TOKEN)
             prefs.remove(KEY_REFRESH_TOKEN)
             prefs.remove(KEY_USER_ID)
+            prefs.remove(KEY_EMAIL)
         }
     }
 }

@@ -28,6 +28,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -63,7 +64,10 @@ import com.aura.dating.core.designsystem.theme.Dimens
 import com.aura.dating.domain.location.model.City
 import com.aura.dating.domain.location.model.Country
 import com.aura.dating.domain.location.model.Region
+import com.aura.dating.feature.discover.ui.CityLocationItem
+import com.aura.dating.feature.discover.ui.CountryLocationItem
 import com.aura.dating.feature.discover.ui.LocationPickerBottomSheet
+import com.aura.dating.feature.discover.ui.RegionLocationItem
 import com.aura.dating.feature.profile.viewmodel.ProfileEvent
 import com.aura.dating.feature.profile.viewmodel.ProfileViewModel
 
@@ -131,6 +135,43 @@ fun EditProfileScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 Spacer(modifier = Modifier.height(Dimens.Spacing16))
+
+                if (uiState.userEmail.isNotBlank()) {
+                    OutlinedTextField(
+                        value = uiState.userEmail,
+                        onValueChange = {},
+                        readOnly = true,
+                        enabled = false,
+                        label = { Text("Account Email") },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Email,
+                                contentDescription = "Email",
+                                tint = AuraRose
+                            )
+                        },
+                        trailingIcon = {
+                            Text(
+                                text = "Verified",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = AuraRose,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(end = 12.dp)
+                            )
+                        },
+                        singleLine = true,
+                        shape = RoundedCornerShape(Dimens.RadiusMedium),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            disabledBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                            disabledTextColor = Color.White.copy(alpha = 0.9f),
+                            disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            disabledContainerColor = Color.White.copy(alpha = 0.03f)
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(Dimens.Spacing20))
+                }
 
                 OutlinedTextField(
                     value = displayName,
@@ -231,8 +272,8 @@ fun EditProfileScreen(
     if (showCountryPicker) {
         LocationPickerBottomSheet(
             title = "Select Country",
-            items = uiState.countries.map { com.aura.dating.feature.discover.ui.CountryLocationItem(it) },
-            selectedItem = selectedCountry?.let { com.aura.dating.feature.discover.ui.CountryLocationItem(it) },
+            items = uiState.countries.map { CountryLocationItem(it) },
+            selectedItem = selectedCountry?.let { CountryLocationItem(it) },
             isLoading = uiState.isLoadingLocations && uiState.countries.isEmpty(),
             onItemSelected = { item ->
                 selectedCountry = item.country
@@ -246,8 +287,8 @@ fun EditProfileScreen(
     if (showRegionPicker) {
         LocationPickerBottomSheet(
             title = "Select Region",
-            items = uiState.regions.map { com.aura.dating.feature.discover.ui.RegionLocationItem(it) },
-            selectedItem = selectedRegion?.let { com.aura.dating.feature.discover.ui.RegionLocationItem(it) },
+            items = uiState.regions.map { RegionLocationItem(it) },
+            selectedItem = selectedRegion?.let { RegionLocationItem(it) },
             isLoading = uiState.isLoadingLocations && uiState.regions.isEmpty(),
             onItemSelected = { item ->
                 selectedRegion = item.region
@@ -260,8 +301,8 @@ fun EditProfileScreen(
     if (showCityPicker) {
         LocationPickerBottomSheet(
             title = "Select City",
-            items = uiState.cities.map { com.aura.dating.feature.discover.ui.CityLocationItem(it) },
-            selectedItem = selectedCity?.let { com.aura.dating.feature.discover.ui.CityLocationItem(it) },
+            items = uiState.cities.map { CityLocationItem(it) },
+            selectedItem = selectedCity?.let { CityLocationItem(it) },
             isLoading = uiState.isLoadingLocations && uiState.cities.isEmpty(),
             onItemSelected = { item ->
                 selectedCity = item.city
@@ -362,7 +403,7 @@ fun EditPhotosScreen(
                     verticalArrangement = Arrangement.spacedBy(Dimens.Spacing10),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    items(6) { index ->
+                    items(3) { index ->
                         val photo = photos.getOrNull(index)
 
                         Box(

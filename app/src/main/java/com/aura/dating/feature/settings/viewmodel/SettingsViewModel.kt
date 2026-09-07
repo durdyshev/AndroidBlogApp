@@ -3,6 +3,7 @@ package com.aura.dating.feature.settings.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aura.dating.core.preferences.AppSettingsStorage
+import com.aura.dating.core.security.TokenStorage
 import com.aura.dating.domain.auth.usecase.LogoutUseCase
 import com.aura.dating.domain.moderation.model.BlockedUser
 import com.aura.dating.domain.moderation.usecase.DeleteAccountUseCase
@@ -22,6 +23,7 @@ import javax.inject.Inject
 
 data class SettingsUiState(
     val blockedUsers: List<BlockedUser> = emptyList(),
+    val userEmail: String = "",
     val pushNotificationsEnabled: Boolean = true,
     val newMatchesPush: Boolean = true,
     val messagesPush: Boolean = true,
@@ -44,7 +46,8 @@ class SettingsViewModel @Inject constructor(
     private val deleteAccountUseCase: DeleteAccountUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val appSettingsStorage: AppSettingsStorage,
-    private val presenceManager: PresenceManager
+    private val presenceManager: PresenceManager,
+    private val tokenStorage: TokenStorage
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -56,7 +59,16 @@ class SettingsViewModel @Inject constructor(
     init {
         observeBlockedUsers()
         observePreferences()
+        observeEmail()
         loadBlockedUsers()
+    }
+
+    private fun observeEmail() {
+        viewModelScope.launch {
+            tokenStorage.emailFlow.collect { email ->
+                _uiState.value = _uiState.value.copy(userEmail = email ?: "")
+            }
+        }
     }
 
     private fun observeBlockedUsers() {

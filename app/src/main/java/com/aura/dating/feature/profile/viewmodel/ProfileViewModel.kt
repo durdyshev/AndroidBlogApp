@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 import com.aura.dating.core.preferences.AppSettingsStorage
+import com.aura.dating.core.security.TokenStorage
 import com.aura.dating.domain.location.model.City
 import com.aura.dating.domain.location.model.Country
 import com.aura.dating.domain.location.model.Region
@@ -39,6 +40,7 @@ import com.aura.dating.domain.location.repository.LocationRepository
 
 data class ProfileUiState(
     val myProfile: UserProfile? = null,
+    val userEmail: String = "",
     val selectedUserProfile: UserProfile? = null,
     val availableInterests: List<Interest> = emptyList(),
     val countries: List<Country> = emptyList(),
@@ -70,7 +72,8 @@ class ProfileViewModel @Inject constructor(
     private val blockUserUseCase: BlockUserUseCase,
     private val reportUserUseCase: ReportUserUseCase,
     private val locationRepository: LocationRepository,
-    private val appSettingsStorage: AppSettingsStorage
+    private val appSettingsStorage: AppSettingsStorage,
+    private val tokenStorage: TokenStorage
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
@@ -83,7 +86,16 @@ class ProfileViewModel @Inject constructor(
         loadProfile()
         observeProfile()
         observeSettings()
+        observeEmail()
         loadInterests()
+    }
+
+    private fun observeEmail() {
+        viewModelScope.launch {
+            tokenStorage.emailFlow.collect { email ->
+                _uiState.value = _uiState.value.copy(userEmail = email ?: "")
+            }
+        }
     }
 
     private fun observeSettings() {

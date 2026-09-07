@@ -13,6 +13,7 @@ interface AuthLocalDataSource {
     suspend fun getAccessToken(): String?
     suspend fun getRefreshToken(): String?
     suspend fun getUserId(): String?
+    suspend fun getEmail(): String?
     suspend fun clearSession()
 }
 
@@ -23,12 +24,13 @@ class DataStoreAuthLocalDataSource @Inject constructor(
 
     override val currentSessionFlow: Flow<UserSession?> = combine(
         tokenStorage.accessTokenFlow,
-        tokenStorage.userIdFlow
-    ) { token, userId ->
+        tokenStorage.userIdFlow,
+        tokenStorage.emailFlow
+    ) { token, userId, email ->
         if (!token.isNullOrBlank() && !userId.isNullOrBlank()) {
             UserSession(
                 userId = userId,
-                email = "",
+                email = email ?: "",
                 accessToken = token,
                 refreshToken = ""
             )
@@ -41,7 +43,8 @@ class DataStoreAuthLocalDataSource @Inject constructor(
         tokenStorage.saveTokens(
             accessToken = session.accessToken,
             refreshToken = session.refreshToken,
-            userId = session.userId
+            userId = session.userId,
+            email = session.email
         )
     }
 
@@ -50,6 +53,8 @@ class DataStoreAuthLocalDataSource @Inject constructor(
     override suspend fun getRefreshToken(): String? = tokenStorage.getRefreshToken()
 
     override suspend fun getUserId(): String? = tokenStorage.getUserId()
+
+    override suspend fun getEmail(): String? = tokenStorage.getEmail()
 
     override suspend fun clearSession() {
         tokenStorage.clearTokens()

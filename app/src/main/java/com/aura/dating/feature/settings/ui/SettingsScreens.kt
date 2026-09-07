@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
@@ -455,6 +456,55 @@ fun AccountSettingsScreen(
                     .fillMaxWidth()
                     .padding(horizontal = Dimens.Spacing24, vertical = Dimens.Spacing16)
             ) {
+                if (uiState.userEmail.isNotBlank()) {
+                    Text(
+                        text = "Account Information",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+
+                    Spacer(modifier = Modifier.height(Dimens.Spacing12))
+
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = RoundedCornerShape(Dimens.RadiusMedium),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = Dimens.Spacing16, vertical = Dimens.Spacing16),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Email,
+                                contentDescription = "Email",
+                                tint = AuraRose,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(Dimens.Spacing16))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Email Address",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = uiState.userEmail,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(Dimens.Spacing32))
+                }
+
                 Text(
                     text = "Account Actions",
                     style = MaterialTheme.typography.titleLarge,
