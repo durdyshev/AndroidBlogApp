@@ -419,13 +419,17 @@ fun AccountSettingsScreen(
     onNavigateToWelcome: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.eventFlow.collect { event ->
-            if (event is SettingsEvent.NavigateToWelcome) {
-                onNavigateToWelcome()
+            when (event) {
+                is SettingsEvent.NavigateToWelcome -> onNavigateToWelcome()
+                is SettingsEvent.ShowToast -> {
+                    android.widget.Toast.makeText(context, event.message, android.widget.Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
@@ -469,11 +473,31 @@ fun AccountSettingsScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing32))
 
                 SecondaryButton(
-                    text = "Delete Account",
-                    onClick = { showDeleteDialog = true },
+                    text = if (uiState.isLoading) "Deleting Account..." else "Delete Account",
+                    onClick = { if (!uiState.isLoading) showDeleteDialog = true },
                     textColor = PassColor,
                     borderColor = PassColor
                 )
+
+                if (uiState.errorMessage != null) {
+                    Spacer(modifier = Modifier.height(Dimens.Spacing16))
+                    Text(
+                        text = uiState.errorMessage ?: "",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = PassColor
+                    )
+                }
+            }
+        }
+
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                androidx.compose.material3.CircularProgressIndicator(color = AuraRose)
             }
         }
 

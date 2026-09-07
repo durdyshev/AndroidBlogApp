@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS public.matches (
     user1_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     user2_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     is_active BOOLEAN DEFAULT true,
-    unmatched_by UUID REFERENCES public.profiles(id),
+    unmatched_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
     unmatched_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ DEFAULT now(),
     UNIQUE (user1_id, user2_id),
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS public.conversations (
     match_id UUID UNIQUE NOT NULL REFERENCES public.matches(id) ON DELETE CASCADE,
     last_message_text TEXT,
     last_message_at TIMESTAMPTZ DEFAULT now(),
-    last_message_sender_id UUID REFERENCES public.profiles(id),
+    last_message_sender_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
     created_at TIMESTAMPTZ DEFAULT now(),
     updated_at TIMESTAMPTZ DEFAULT now()
 );

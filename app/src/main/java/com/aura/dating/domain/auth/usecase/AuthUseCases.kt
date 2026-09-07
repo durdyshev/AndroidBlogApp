@@ -42,11 +42,23 @@ class RegisterUseCase @Inject constructor(
 class VerifyEmailUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
-    suspend operator fun invoke(email: String, token: String): Result<Unit> {
+    suspend operator fun invoke(email: String, token: String): Result<UserSession> {
         if (token.isBlank()) {
             return Result.Error(AppError.ValidationError("Verification code cannot be blank", field = "token"))
         }
         return authRepository.verifyEmail(email.trim(), token.trim())
+    }
+}
+
+class ResendVerificationCodeUseCase @Inject constructor(
+    private val authRepository: AuthRepository
+) {
+    suspend operator fun invoke(email: String): Result<Unit> {
+        val trimmedEmail = email.trim()
+        if (trimmedEmail.isBlank()) {
+            return Result.Error(AppError.ValidationError("Email cannot be blank", field = "email"))
+        }
+        return authRepository.resendVerificationCode(trimmedEmail)
     }
 }
 

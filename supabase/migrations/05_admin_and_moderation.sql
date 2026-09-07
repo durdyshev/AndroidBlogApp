@@ -3,7 +3,22 @@
 -- Migration: 05_admin_and_moderation.sql
 -- ===================================================
 
--- 1. Soft Delete Account Procedure
+-- 1. Fix Foreign Key Constraints for Clean Cascade Deletion
+ALTER TABLE public.conversations
+DROP CONSTRAINT IF EXISTS conversations_last_message_sender_id_fkey;
+
+ALTER TABLE public.conversations
+ADD CONSTRAINT conversations_last_message_sender_id_fkey
+FOREIGN KEY (last_message_sender_id) REFERENCES public.profiles(id) ON DELETE SET NULL;
+
+ALTER TABLE public.matches
+DROP CONSTRAINT IF EXISTS matches_unmatched_by_fkey;
+
+ALTER TABLE public.matches
+ADD CONSTRAINT matches_unmatched_by_fkey
+FOREIGN KEY (unmatched_by) REFERENCES public.profiles(id) ON DELETE SET NULL;
+
+-- 2. Hard/Full Delete Account Procedure (Removes Auth and Cascades All Data)
 CREATE OR REPLACE FUNCTION public.soft_delete_user_account()
 RETURNS VOID AS $$
 DECLARE
@@ -13,32 +28,22 @@ BEGIN
         RAISE EXCEPTION 'Not authenticated';
     END IF;
 
-    -- Deactivate matches
+    -- Nullify last message sender in conversations
+    UPDATE public.conversations
+    SET last_message_sender_id = NULL
+    WHERE last_message_sender_id = v_user_id;
+
+    -- Nullify unmatched_by in matches
     UPDATE public.matches
-    SET is_active = false,
-        unmatched_by = v_user_id,
-        unmatched_at = now()
-    WHERE user1_id = v_user_id OR user2_id = v_user_id;
+    SET unmatched_by = NULL
+    WHERE unmatched_by = v_user_id;
 
-    -- Remove device tokens
-    DELETE FROM public.device_tokens WHERE user_id = v_user_id;
-
-    -- Anonymize and mark profile as banned/deactivated
-    UPDATE public.profiles
-    SET
-        display_name = 'Deleted Account',
-        bio = NULL,
-        latitude = NULL,
-        longitude = NULL,
-        is_banned = true,
-        is_online = false,
-        updated_at = now()
-    WHERE id = v_user_id;
-
-    -- Remove photos
-    DELETE FROM public.profile_photos WHERE user_id = v_user_id;
+    -- Deleting from auth.users cascades to public.profiles, profile_photos, swipes, preferences, tokens, etc.
+    DELETE FROM auth.users WHERE id = v_user_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+GRANT EXECUTE ON FUNCTION public.soft_delete_user_account TO authenticated, anon;
 
 -- 2. Admin Moderation View for Pending Reports
 CREATE OR REPLACE VIEW public.admin_pending_reports AS

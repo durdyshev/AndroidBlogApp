@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.aura.dating.core.common.result.Result
 import com.aura.dating.domain.auth.usecase.LoginUseCase
 import com.aura.dating.domain.auth.usecase.RegisterUseCase
+import com.aura.dating.domain.auth.usecase.ResendVerificationCodeUseCase
 import com.aura.dating.domain.auth.usecase.ResetPasswordUseCase
 import com.aura.dating.domain.auth.usecase.VerifyEmailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,6 +40,7 @@ class AuthViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
     private val verifyEmailUseCase: VerifyEmailUseCase,
+    private val resendVerificationCodeUseCase: ResendVerificationCodeUseCase,
     private val resetPasswordUseCase: ResetPasswordUseCase
 ) : ViewModel() {
 
@@ -125,6 +127,26 @@ class AuthViewModel @Inject constructor(
             when (result) {
                 is Result.Success -> {
                     _eventFlow.emit(AuthEvent.NavigateToCreateProfile)
+                }
+                is Result.Error -> {
+                    _uiState.value = _uiState.value.copy(errorMessage = result.error.message)
+                }
+            }
+        }
+    }
+
+    fun resendVerificationCode(email: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null, infoMessage = null)
+            val result = resendVerificationCodeUseCase(email)
+            _uiState.value = _uiState.value.copy(isLoading = false)
+
+            when (result) {
+                is Result.Success -> {
+                    _uiState.value = _uiState.value.copy(
+                        infoMessage = "A new verification code has been sent to $email"
+                    )
+                    _eventFlow.emit(AuthEvent.ShowToast("Verification code resent!"))
                 }
                 is Result.Error -> {
                     _uiState.value = _uiState.value.copy(errorMessage = result.error.message)

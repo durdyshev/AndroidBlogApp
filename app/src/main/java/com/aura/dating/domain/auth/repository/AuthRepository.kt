@@ -8,7 +8,8 @@ interface AuthRepository {
     val currentSessionFlow: Flow<UserSession?>
     suspend fun login(email: String, password: String): Result<UserSession>
     suspend fun register(email: String, password: String): Result<UserSession>
-    suspend fun verifyEmail(email: String, token: String): Result<Unit>
+    suspend fun verifyEmail(email: String, token: String): Result<UserSession>
+    suspend fun resendVerificationCode(email: String): Result<Unit>
     suspend fun sendPasswordReset(email: String): Result<Unit>
     suspend fun getCurrentSession(): UserSession?
     suspend fun restoreSession(): Result<UserSession>

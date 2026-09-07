@@ -151,14 +151,16 @@ class SettingsViewModel @Inject constructor(
 
     fun deleteAccount() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
+            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             val result = deleteAccountUseCase()
             _uiState.value = _uiState.value.copy(isLoading = false)
 
             if (result is com.aura.dating.core.common.result.Result.Success) {
                 _eventFlow.emit(SettingsEvent.NavigateToWelcome)
-            } else {
-                _uiState.value = _uiState.value.copy(errorMessage = (result as com.aura.dating.core.common.result.Result.Error).error.message)
+            } else if (result is com.aura.dating.core.common.result.Result.Error) {
+                val errorMsg = result.error.message ?: "Failed to delete account"
+                _uiState.value = _uiState.value.copy(errorMessage = errorMsg)
+                _eventFlow.emit(SettingsEvent.ShowToast(errorMsg))
             }
         }
     }

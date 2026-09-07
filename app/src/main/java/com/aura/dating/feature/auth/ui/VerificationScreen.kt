@@ -45,12 +45,17 @@ fun VerificationScreen(
     onNavigateToCreateProfile: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.eventFlow.collect { event ->
-            if (event is AuthEvent.NavigateToCreateProfile) {
-                onNavigateToCreateProfile()
+            when (event) {
+                is AuthEvent.NavigateToCreateProfile -> onNavigateToCreateProfile()
+                is AuthEvent.ShowToast -> {
+                    android.widget.Toast.makeText(context, event.message, android.widget.Toast.LENGTH_SHORT).show()
+                }
+                else -> {}
             }
         }
     }
@@ -125,7 +130,18 @@ fun VerificationScreen(
                     Text(
                         text = uiState.errorMessage ?: "",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = PassColor
+                        color = PassColor,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+                if (uiState.infoMessage != null) {
+                    Spacer(modifier = Modifier.height(Dimens.Spacing16))
+                    Text(
+                        text = uiState.infoMessage ?: "",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = AuraRose,
+                        textAlign = TextAlign.Center
                     )
                 }
 
@@ -136,6 +152,20 @@ fun VerificationScreen(
                     isLoading = uiState.isLoading,
                     onClick = { viewModel.verifyEmail(email) }
                 )
+
+                Spacer(modifier = Modifier.height(Dimens.Spacing16))
+
+                androidx.compose.material3.TextButton(
+                    onClick = { viewModel.resendVerificationCode(email) },
+                    enabled = !uiState.isLoading
+                ) {
+                    Text(
+                        text = "Didn't receive a code? Resend",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = AuraRose,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
             }
         }
     }

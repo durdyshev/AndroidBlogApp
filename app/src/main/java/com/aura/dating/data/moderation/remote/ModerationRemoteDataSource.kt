@@ -176,7 +176,8 @@ class SupabaseModerationRemoteDataSource @Inject constructor(
     }
 
     override suspend fun softDeleteAccount(): Result<Unit> {
-        return clientProvider.safeApiCall(
+        android.util.Log.d("ModerationRemote", "softDeleteAccount called")
+        val result = clientProvider.safeApiCall(
             block = { client, headers ->
                 client.post {
                     url("${clientProvider.baseUrl}/rest/v1/rpc/soft_delete_user_account")
@@ -186,5 +187,11 @@ class SupabaseModerationRemoteDataSource @Inject constructor(
             },
             parser = { }
         )
+        if (result is Result.Error) {
+            android.util.Log.e("ModerationRemote", "softDeleteAccount failed: ${result.error.message}")
+        } else {
+            android.util.Log.d("ModerationRemote", "softDeleteAccount succeeded")
+        }
+        return result
     }
 }

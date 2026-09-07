@@ -34,8 +34,16 @@ class AuthRepositoryImpl @Inject constructor(
         return result
     }
 
-    override suspend fun verifyEmail(email: String, token: String): Result<Unit> {
-        return remoteDataSource.verifyOtp(email, token)
+    override suspend fun verifyEmail(email: String, token: String): Result<UserSession> {
+        val result = remoteDataSource.verifyOtp(email, token)
+        if (result is Result.Success && result.data.accessToken.isNotBlank()) {
+            localDataSource.saveSession(result.data)
+        }
+        return result
+    }
+
+    override suspend fun resendVerificationCode(email: String): Result<Unit> {
+        return remoteDataSource.resendOtp(email)
     }
 
     override suspend fun sendPasswordReset(email: String): Result<Unit> {

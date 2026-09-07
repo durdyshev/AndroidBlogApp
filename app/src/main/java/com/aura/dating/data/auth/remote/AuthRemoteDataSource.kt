@@ -29,6 +29,12 @@ data class VerifyOtpRequest(
 )
 
 @Serializable
+data class ResendOtpRequest(
+    val type: String = "signup",
+    val email: String
+)
+
+@Serializable
 data class PasswordResetRequest(
     val email: String
 )
@@ -43,7 +49,9 @@ data class SupabaseAuthResponse(
     @SerialName("access_token") val accessToken: String? = null,
     @SerialName("refresh_token") val refreshToken: String? = null,
     @SerialName("expires_in") val expiresIn: Long? = null,
-    val user: SupabaseUserDto? = null
+    val user: SupabaseUserDto? = null,
+    val id: String? = null,
+    val email: String? = null
 )
 
 @Serializable
@@ -55,7 +63,8 @@ data class SupabaseUserDto(
 interface AuthRemoteDataSource {
     suspend fun login(email: String, password: String): Result<UserSession>
     suspend fun register(email: String, password: String): Result<UserSession>
-    suspend fun verifyOtp(email: String, token: String): Result<Unit>
+    suspend fun verifyOtp(email: String, token: String): Result<UserSession>
+    suspend fun resendOtp(email: String): Result<Unit>
     suspend fun sendPasswordReset(email: String): Result<Unit>
     suspend fun refreshToken(refreshToken: String): Result<UserSession>
     suspend fun logout(): Result<Unit>
@@ -78,13 +87,14 @@ class SupabaseAuthRemoteDataSource @Inject constructor(
             },
             parser = { response ->
                 val body = response.body<SupabaseAuthResponse>()
-                val user = requireNotNull(body.user) { "User object is missing" }
+                val userId = body.user?.id ?: body.id ?: ""
+                val userEmail = body.user?.email ?: body.email ?: email
                 val accessToken = requireNotNull(body.accessToken) { "Access token missing" }
                 val refreshToken = requireNotNull(body.refreshToken) { "Refresh token missing" }
 
                 UserSession(
-                    userId = user.id,
-                    email = user.email ?: email,
+                    userId = userId,
+                    email = userEmail,
                     accessToken = accessToken,
                     refreshToken = refreshToken,
                     expiresAt = System.currentTimeMillis() + ((body.expiresIn ?: 3600) * 1000)
@@ -105,13 +115,14 @@ class SupabaseAuthRemoteDataSource @Inject constructor(
             },
             parser = { response ->
                 val body = response.body<SupabaseAuthResponse>()
-                val user = requireNotNull(body.user) { "User object is missing in signup" }
+                val userId = body.user?.id ?: body.id ?: ""
+                val userEmail = body.user?.email ?: body.email ?: email
                 val accessToken = body.accessToken ?: ""
                 val refreshToken = body.refreshToken ?: ""
 
                 UserSession(
-                    userId = user.id,
-                    email = user.email ?: email,
+                    userId = userId,
+                    email = userEmail,
                     accessToken = accessToken,
                     refreshToken = refreshToken,
                     expiresAt = System.currentTimeMillis() + ((body.expiresIn ?: 3600) * 1000)
@@ -120,14 +131,42 @@ class SupabaseAuthRemoteDataSource @Inject constructor(
         )
     }
 
-    override suspend fun verifyOtp(email: String, token: String): Result<Unit> {
+    override suspend fun verifyOtp(email: String, token: String): Result<UserSession> {
         return clientProvider.safeApiCall(
             block = { client, headers ->
                 client.post {
                     url("${clientProvider.baseUrl}/auth/v1/verify")
                     contentType(ContentType.Application.Json)
                     headers(this)
-                    setBody(VerifyOtpRequest(email = email, token = token))
+                    setBody(VerifyOtpRequest(type = "signup", email = email, token = token))
+                }
+            },
+            parser = { response ->
+                val body = response.body<SupabaseAuthResponse>()
+                val userId = body.user?.id ?: body.id ?: ""
+                val userEmail = body.user?.email ?: body.email ?: email
+                val accessToken = requireNotNull(body.accessToken) { "Access token missing in verification response" }
+                val refreshToken = body.refreshToken ?: ""
+
+                UserSession(
+                    userId = userId,
+                    email = userEmail,
+                    accessToken = accessToken,
+                    refreshToken = refreshToken,
+                    expiresAt = System.currentTimeMillis() + ((body.expiresIn ?: 3600) * 1000)
+                )
+            }
+        )
+    }
+
+    override suspend fun resendOtp(email: String): Result<Unit> {
+        return clientProvider.safeApiCall(
+            block = { client, headers ->
+                client.post {
+                    url("${clientProvider.baseUrl}/auth/v1/resend")
+                    contentType(ContentType.Application.Json)
+                    headers(this)
+                    setBody(ResendOtpRequest(type = "signup", email = email))
                 }
             },
             parser = { }
@@ -160,13 +199,14 @@ class SupabaseAuthRemoteDataSource @Inject constructor(
             },
             parser = { response ->
                 val body = response.body<SupabaseAuthResponse>()
-                val user = requireNotNull(body.user) { "User object missing" }
+                val userId = body.user?.id ?: body.id ?: ""
+                val userEmail = body.user?.email ?: body.email ?: ""
                 val accessToken = requireNotNull(body.accessToken) { "Access token missing" }
                 val newRefreshToken = requireNotNull(body.refreshToken) { "Refresh token missing" }
 
                 UserSession(
-                    userId = user.id,
-                    email = user.email ?: "",
+                    userId = userId,
+                    email = userEmail,
                     accessToken = accessToken,
                     refreshToken = newRefreshToken,
                     expiresAt = System.currentTimeMillis() + ((body.expiresIn ?: 3600) * 1000)
