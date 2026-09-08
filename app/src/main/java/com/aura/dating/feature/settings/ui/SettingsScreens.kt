@@ -21,12 +21,17 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -43,16 +48,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.aura.dating.R
 import com.aura.dating.core.designsystem.components.AuraTopBar
 import com.aura.dating.core.designsystem.components.Avatar
 import com.aura.dating.core.designsystem.components.ConfirmationDialog
 import com.aura.dating.core.designsystem.components.EmptyState
 import com.aura.dating.core.designsystem.components.SecondaryButton
 import com.aura.dating.core.designsystem.theme.AuraRose
+import com.aura.dating.core.localization.AppLanguage
 import com.aura.dating.core.designsystem.theme.DarkBackground
 import com.aura.dating.core.designsystem.theme.Dimens
 import com.aura.dating.core.designsystem.theme.PassColor
@@ -69,7 +77,11 @@ fun SettingsScreen(
     onNavigateToWelcome: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     var showLogoutDialog by remember { mutableStateOf(false) }
+    var showLanguagePicker by remember { mutableStateOf(false) }
+
+    val currentLanguage = AppLanguage.fromCode(uiState.selectedLanguageCode)
 
     LaunchedEffect(Unit) {
         viewModel.eventFlow.collect { event ->
@@ -90,7 +102,7 @@ fun SettingsScreen(
                 .padding(bottom = Dimens.Spacing32)
         ) {
             AuraTopBar(
-                title = "Settings",
+                title = stringResource(R.string.settings),
                 showBackButton = true,
                 onBackClick = onNavigateBack
             )
@@ -101,29 +113,36 @@ fun SettingsScreen(
                     .padding(horizontal = Dimens.Spacing20)
             ) {
                 SettingsNavigationItem(
+                    icon = Icons.Default.Language,
+                    title = stringResource(R.string.app_language),
+                    subtitle = "${currentLanguage.flagEmoji} ${currentLanguage.nativeName}",
+                    onClick = { showLanguagePicker = true }
+                )
+
+                SettingsNavigationItem(
                     icon = Icons.Default.Notifications,
-                    title = "Push Notifications",
+                    title = stringResource(R.string.push_notifications),
                     subtitle = "Likes, matches, and chat alerts",
                     onClick = onNavigateToNotificationSettings
                 )
 
                 SettingsNavigationItem(
                     icon = Icons.Default.Lock,
-                    title = "Privacy & Visibility",
+                    title = stringResource(R.string.privacy),
                     subtitle = "Online status, approximate distance",
                     onClick = onNavigateToPrivacy
                 )
 
                 SettingsNavigationItem(
                     icon = Icons.Default.Block,
-                    title = "Blocked Users",
+                    title = stringResource(R.string.blocked_users),
                     subtitle = "Manage blocked profiles",
                     onClick = onNavigateToBlockedUsers
                 )
 
                 SettingsNavigationItem(
                     icon = Icons.Default.Person,
-                    title = "Account",
+                    title = stringResource(R.string.account),
                     subtitle = "Session and account removal",
                     onClick = onNavigateToAccount
                 )
@@ -131,7 +150,7 @@ fun SettingsScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing32))
 
                 SecondaryButton(
-                    text = "Sign Out",
+                    text = stringResource(R.string.logout),
                     onClick = { showLogoutDialog = true },
                     textColor = Color.White
                 )
@@ -147,11 +166,21 @@ fun SettingsScreen(
             }
         }
 
+        if (showLanguagePicker) {
+            LanguageSelectionBottomSheet(
+                selectedCode = uiState.selectedLanguageCode,
+                onLanguageSelected = { code ->
+                    viewModel.setLanguage(code)
+                },
+                onDismiss = { showLanguagePicker = false }
+            )
+        }
+
         if (showLogoutDialog) {
             ConfirmationDialog(
-                title = "Sign Out?",
-                message = "Are you sure you want to sign out of your Aura account?",
-                confirmText = "Sign Out",
+                title = stringResource(R.string.logout),
+                message = stringResource(R.string.logout_confirmation),
+                confirmText = stringResource(R.string.logout),
                 onConfirm = {
                     showLogoutDialog = false
                     viewModel.logout()
@@ -563,6 +592,84 @@ fun AccountSettingsScreen(
                 },
                 onDismiss = { showDeleteDialog = false }
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LanguageSelectionBottomSheet(
+    selectedCode: String,
+    onLanguageSelected: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.surface,
+        shape = RoundedCornerShape(topStart = Dimens.RadiusLarge, topEnd = Dimens.RadiusLarge)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimens.Spacing24, vertical = Dimens.Spacing16)
+                .padding(bottom = Dimens.Spacing32)
+        ) {
+            Text(
+                text = stringResource(R.string.select_language),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+
+            Spacer(modifier = Modifier.height(Dimens.Spacing16))
+
+            AppLanguage.entries.forEach { lang ->
+                val isSelected = (lang.code == selectedCode)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(Dimens.RadiusMedium))
+                        .clickable {
+                            onLanguageSelected(lang.code)
+                            onDismiss()
+                        }
+                        .padding(vertical = Dimens.Spacing12, horizontal = Dimens.Spacing8),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = lang.flagEmoji,
+                        fontSize = 24.sp
+                    )
+                    Spacer(modifier = Modifier.width(Dimens.Spacing16))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = lang.nativeName,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            color = if (isSelected) AuraRose else Color.White
+                        )
+                        if (lang != AppLanguage.SYSTEM && lang.displayName != lang.nativeName) {
+                            Text(
+                                text = lang.displayName,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    RadioButton(
+                        selected = isSelected,
+                        onClick = {
+                            onLanguageSelected(lang.code)
+                            onDismiss()
+                        },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = AuraRose,
+                            unselectedColor = MaterialTheme.colorScheme.outline
+                        )
+                    )
+                }
+                HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f))
+            }
         }
     }
 }

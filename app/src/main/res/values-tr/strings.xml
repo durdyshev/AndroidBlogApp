@@ -1,0 +1,110 @@
+<resources>
+    <string name="app_name">Aura</string>
+    <string name="default_notification_channel_id">aura_notifications</string>
+    <string name="default_notification_channel_name">Aura Bildirimleri</string>
+    <string name="default_notification_channel_description">Beğeniler, eşleşmeler ve mesajlar için bildirimler</string>
+
+    <!-- General -->
+    <string name="save">Kaydet</string>
+    <string name="cancel">İptal</string>
+    <string name="continue_text">Devam Et</string>
+    <string name="done">Tamam</string>
+    <string name="loading">Yükleniyor...</string>
+    <string name="error">Hata</string>
+    <string name="success">Başarılı</string>
+    <string name="retry">Tekrar Dene</string>
+    <string name="delete">Sil</string>
+    <string name="edit">Düzenle</string>
+    <string name="back">Geri</string>
+    <string name="close">Kapat</string>
+    <string name="search">Ara</string>
+    <string name="save_changes">Değişiklikleri Kaydet</string>
+    <string name="confirm">Onayla</string>
+
+    <!-- Auth -->
+    <string name="login">Giriş Yap</string>
+    <string name="sign_up">Kayıt Ol</string>
+    <string name="create_account">Hesap Oluştur</string>
+    <string name="email">E-posta</string>
+    <string name="password">Şifre</string>
+    <string name="confirm_password">Şifreyi Onayla</string>
+    <string name="forgot_password">Şifremi Unuttum?</string>
+    <string name="reset_password">Şifreyi Sıfırla</string>
+    <string name="verify_code">Kodu Doğrula</string>
+    <string name="resend_code">Kodu Tekrar Gönder</string>
+    <string name="enter_verification_code">E-postanıza gönderilen 6 haneli kodu girin</string>
+    <string name="welcome_title">Gerçek Bağlantılar Keşfedin</string>
+    <string name="welcome_subtitle">Çevrenizdeki kafa dengi insanlarla tanışın</string>
+    <string name="dont_have_account">Hesabınız yok mu? Kayıt Olun</string>
+    <string name="already_have_account">Zaten hesabınız var mı? Giriş Yapın</string>
+    <string name="passwords_dont_match">Şifreler eşleşmiyor</string>
+
+    <!-- Discovery & Matching -->
+    <string name="discover">Keşfet</string>
+    <string name="matches">Eşleşmeler</string>
+    <string name="no_more_profiles">Yakınınızda başka profil kalmadı</string>
+    <string name="adjust_filters_hint">Filtrelerinizi genişletmeyi deneyin veya daha sonra tekrar kontrol edin.</string>
+    <string name="its_a_match">Eşleştiniz!</string>
+    <string name="match_subtitle">%1$s ile birbirinizi beğendiniz</string>
+    <string name="send_message">Mesaj Gönder</string>
+    <string name="keep_swiping">Keşfetmeye Devam Et</string>
+    <string name="online_now">Şu An Çevrim içi</string>
+    <string name="last_seen">Son görülme: %1$s</string>
+    <string name="km_away">%1$d km uzakta</string>
+
+    <!-- Profile -->
+    <string name="profile">Profil</string>
+    <string name="edit_profile">Profili Düzenle</string>
+    <string name="display_name">Görünen İsim</string>
+    <string name="bio">Biyografi</string>
+    <string name="about_me">Hakkımda</string>
+    <string name="home_location">Yaşadığınız Yer</string>
+    <string name="country">Ülke</string>
+    <string name="region">Bölge / İl</string>
+    <string name="city">Şehir / İlçe</string>
+    <string name="interests">İlgi Alanları</string>
+    <string name="photos">Fotoğraflar</string>
+    <string name="account_email">Hesap E-postası</string>
+    <string name="verified">Doğrulandı</string>
+    <string name="add_photo">Fotoğraf Ekle</string>
+    <string name="select_country">Ülke Seçin</string>
+    <string name="select_region">Bölge Seçin</string>
+    <string name="select_city">Şehir Seçin</string>
+
+    <!-- Chat -->
+    <string name="chat">Sohbet</string>
+    <string name="messages">Mesajlar</string>
+    <string name="type_a_message">Bir mesaj yazın...</string>
+    <string name="no_messages_yet">Henüz mesaj yok. Merhaba deyin!</string>
+    <string name="conversation">Sohbet</string>
+
+    <!-- Settings & Language -->
+    <string name="settings">Ayarlar</string>
+    <string name="account">Hesap</string>
+    <string name="account_information">Hesap Bilgileri</string>
+    <string name="account_actions">Hesap İşlemleri</string>
+    <string name="notifications">Bildirimler</string>
+    <string name="privacy">Gizlilik</string>
+    <string name="app_language">Uygulama Dili</string>
+    <string name="select_language">Dil Seçin</string>
+    <string name="system_default">Sistem Varsayılanı</string>
+    <string name="language_english">English</string>
+    <string name="language_turkish">Türkçe</string>
+    <string name="language_russian">Русский</string>
+    <string name="language_turkmen">Türkmençe</string>
+    <string name="push_notifications">Anlık Bildirimler</string>
+    <string name="new_matches">Yeni Eşleşmeler</string>
+    <string name="new_likes">Yeni Beğeniler</string>
+    <string name="show_online_status">Çevrim içi Durumunu Göster</string>
+    <string name="show_distance">Mesafeyi Göster</string>
+    <string name="blocked_users">Engellenen Kullanıcılar</string>
+    <string name="no_blocked_users">Engellenen kullanıcı yok</string>
+    <string name="unblock">Engeli Kaldır</string>
+    <string name="block_user">Kullanıcıyı Engelle</string>
+    <string name="report_user">Kullanıcıyı Bildir</string>
+    <string name="logout">Çıkış Yap</string>
+    <string name="logout_confirmation">Çıkış yapmak istediğinize emin misiniz?</string>
+    <string name="delete_account">Hesabı Sil</string>
+    <string name="delete_account_warning">Hesabınızı silmek fotoğraflarınızı, konuşmalarınızı, eşleşmelerinizi ve profilinizi Aura\'dan kalıcı olarak kaldırır. Bu işlem geri alınamaz.</string>
+    <string name="delete_account_confirm">Evet, Hesabımı Sil</string>
+</resources>

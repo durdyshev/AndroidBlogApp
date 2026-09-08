@@ -11,6 +11,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import androidx.datastore.preferences.core.stringPreferencesKey
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,6 +24,7 @@ interface AppSettingsStorage {
     val likesPushFlow: Flow<Boolean>
     val showOnlineStatusFlow: Flow<Boolean>
     val showDistanceFlow: Flow<Boolean>
+    val selectedLanguageCodeFlow: Flow<String>
 
     suspend fun setPushNotificationsEnabled(enabled: Boolean)
     suspend fun setNewMatchesPushEnabled(enabled: Boolean)
@@ -30,8 +32,10 @@ interface AppSettingsStorage {
     suspend fun setLikesPushEnabled(enabled: Boolean)
     suspend fun setShowOnlineStatus(show: Boolean)
     suspend fun setShowDistance(show: Boolean)
+    suspend fun setSelectedLanguageCode(code: String)
     suspend fun getShowOnlineStatus(): Boolean
     suspend fun getShowDistance(): Boolean
+    suspend fun getSelectedLanguageCode(): String
 
     suspend fun isNotificationAllowed(type: NotificationType): Boolean
 }
@@ -48,6 +52,7 @@ class DataStoreAppSettingsStorage @Inject constructor(
         private val KEY_LIKES_PUSH = booleanPreferencesKey("likes_push")
         private val KEY_SHOW_ONLINE = booleanPreferencesKey("show_online")
         private val KEY_SHOW_DISTANCE = booleanPreferencesKey("show_distance")
+        private val KEY_SELECTED_LANGUAGE = stringPreferencesKey("selected_language")
     }
 
     override val pushNotificationsEnabledFlow: Flow<Boolean> = context.settingsDataStore.data.map { prefs ->
@@ -74,6 +79,10 @@ class DataStoreAppSettingsStorage @Inject constructor(
         prefs[KEY_SHOW_DISTANCE] ?: true
     }
 
+    override val selectedLanguageCodeFlow: Flow<String> = context.settingsDataStore.data.map { prefs ->
+        prefs[KEY_SELECTED_LANGUAGE] ?: "system"
+    }
+
     override suspend fun setPushNotificationsEnabled(enabled: Boolean) {
         context.settingsDataStore.edit { it[KEY_PUSH_ENABLED] = enabled }
     }
@@ -96,6 +105,15 @@ class DataStoreAppSettingsStorage @Inject constructor(
 
     override suspend fun setShowDistance(show: Boolean) {
         context.settingsDataStore.edit { it[KEY_SHOW_DISTANCE] = show }
+    }
+
+    override suspend fun setSelectedLanguageCode(code: String) {
+        context.settingsDataStore.edit { it[KEY_SELECTED_LANGUAGE] = code }
+    }
+
+    override suspend fun getSelectedLanguageCode(): String {
+        val prefs = context.settingsDataStore.data.first()
+        return prefs[KEY_SELECTED_LANGUAGE] ?: "system"
     }
 
     override suspend fun getShowOnlineStatus(): Boolean {

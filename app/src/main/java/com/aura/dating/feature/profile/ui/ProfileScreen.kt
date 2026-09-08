@@ -252,7 +252,7 @@ fun ProfileScreen(
                             ) {
                                 profile.interests.forEach { interest ->
                                     InterestChip(
-                                        name = interest.name,
+                                        name = interest.getLocalizedName(),
                                         icon = interest.icon,
                                         isSelected = true
                                     )

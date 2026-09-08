@@ -25,8 +25,26 @@ data class Interest(
     val id: String,
     val name: String,
     val category: String,
-    val icon: String? = null
-)
+    val icon: String? = null,
+    val nameTr: String? = null,
+    val nameRu: String? = null,
+    val nameTk: String? = null
+) {
+    fun getLocalizedName(languageCode: String = ""): String {
+        val lang = if (languageCode.isNotBlank() && languageCode != "system") {
+            languageCode
+        } else {
+            java.util.Locale.getDefault().language
+        }
+
+        return when (lang) {
+            "tr" -> nameTr ?: InterestTranslations.getTranslation(name, "tr") ?: name
+            "ru" -> nameRu ?: InterestTranslations.getTranslation(name, "ru") ?: name
+            "tk" -> nameTk ?: InterestTranslations.getTranslation(name, "tk") ?: name
+            else -> name
+        }
+    }
+}
 
 @Serializable
 data class UserPreferences(

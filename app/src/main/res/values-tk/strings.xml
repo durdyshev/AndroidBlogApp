@@ -1,0 +1,110 @@
+<resources>
+    <string name="app_name">Aura</string>
+    <string name="default_notification_channel_id">aura_notifications</string>
+    <string name="default_notification_channel_name">Aura Bildirişleri</string>
+    <string name="default_notification_channel_description">Halamalar, gabat gelmeler we hatlar üçin bildirişler</string>
+
+    <!-- General -->
+    <string name="save">Ýatda sakla</string>
+    <string name="cancel">Ýatyr</string>
+    <string name="continue_text">Dowam et</string>
+    <string name="done">Taýyn</string>
+    <string name="loading">Ýüklenýär...</string>
+    <string name="error">Ýalňyşlyk</string>
+    <string name="success">Üstünlikli</string>
+    <string name="retry">Gaýtadan synan</string>
+    <string name="delete">Poz</string>
+    <string name="edit">Üýtget</string>
+    <string name="back">Yza</string>
+    <string name="close">Ýap</string>
+    <string name="search">Gözleg</string>
+    <string name="save_changes">Üýtgeşmeleri ýatda sakla</string>
+    <string name="confirm">Tassykla</string>
+
+    <!-- Auth -->
+    <string name="login">Giriş</string>
+    <string name="sign_up">Hasap aç</string>
+    <string name="create_account">Täze hasap döret</string>
+    <string name="email">E-poçta</string>
+    <string name="password">Açar sözi</string>
+    <string name="confirm_password">Açar sözüni tassykla</string>
+    <string name="forgot_password">Açar sözüni unutdyňyzmy?</string>
+    <string name="reset_password">Açar sözüni täzele</string>
+    <string name="verify_code">Kody tassykla</string>
+    <string name="resend_code">Kody täzeden iber</string>
+    <string name="enter_verification_code">E-poçtaňyza iberilen 6 belgili kody giriziň</string>
+    <string name="welcome_title">Hakyky Tanyşlyklary Açyň</string>
+    <string name="welcome_subtitle">Töweregiňizdäki gyzykly adamlar bilen tanyşyň</string>
+    <string name="dont_have_account">Hasabyňyz ýokmy? Hasap açyň</string>
+    <string name="already_have_account">Hasabyňyz barmy? Giriş ediň</string>
+    <string name="passwords_dont_match">Açar sözleri gabat gelenok</string>
+
+    <!-- Discovery & Matching -->
+    <string name="discover">Gözleg</string>
+    <string name="matches">Gabat gelmeler</string>
+    <string name="no_more_profiles">Golaýda başga profil galmady</string>
+    <string name="adjust_filters_hint">Gözleg süzgüçleriňizi giňeltmäge synanyşyň ýa-da soňra gaýtadan barlaň.</string>
+    <string name="its_a_match">Gabat Geldiňiz!</string>
+    <string name="match_subtitle">Siz we %1$s biri-biriňizi haladyňyz</string>
+    <string name="send_message">Hat ýaz</string>
+    <string name="keep_swiping">Gözlege dowam et</string>
+    <string name="online_now">Häzir onlaýn</string>
+    <string name="last_seen">Soňky gezek onlaýn: %1$s</string>
+    <string name="km_away">%1$d km uzaklykda</string>
+
+    <!-- Profile -->
+    <string name="profile">Profil</string>
+    <string name="edit_profile">Profili üýtget</string>
+    <string name="display_name">Görünýän at</string>
+    <string name="bio">Özüň barada</string>
+    <string name="about_me">Men barada</string>
+    <string name="home_location">Ýaşaýan ýeriňiz</string>
+    <string name="country">Ýurt</string>
+    <string name="region">Welaýat</string>
+    <string name="city">Şäher / Etrap</string>
+    <string name="interests">Gyzyklanmalar</string>
+    <string name="photos">Suratlar</string>
+    <string name="account_email">Hasap e-poçtasy</string>
+    <string name="verified">Tassyklandy</string>
+    <string name="add_photo">Surat goş</string>
+    <string name="select_country">Ýurt saýlaň</string>
+    <string name="select_region">Welaýat saýlaň</string>
+    <string name="select_city">Şäher saýlaň</string>
+
+    <!-- Chat -->
+    <string name="chat">Söhbetdeşlik</string>
+    <string name="messages">Hatlar</string>
+    <string name="type_a_message">Hat ýazyň...</string>
+    <string name="no_messages_yet">Entek hat ýok. Salam diýiň!</string>
+    <string name="conversation">Gürrüňdeşlik</string>
+
+    <!-- Settings & Language -->
+    <string name="settings">Sazlamalar</string>
+    <string name="account">Hasap</string>
+    <string name="account_information">Hasap maglumatlary</string>
+    <string name="account_actions">Hasap amallary</string>
+    <string name="notifications">Bildirişler</string>
+    <string name="privacy">Gizlinlik</string>
+    <string name="app_language">Programma dili</string>
+    <string name="select_language">Dil saýlaň</string>
+    <string name="system_default">Ulgam dili</string>
+    <string name="language_english">English</string>
+    <string name="language_turkish">Türkçe</string>
+    <string name="language_russian">Русский</string>
+    <string name="language_turkmen">Türkmençe</string>
+    <string name="push_notifications">Bildirişler</string>
+    <string name="new_matches">Täze gabat gelmeler</string>
+    <string name="new_likes">Täze halamalar</string>
+    <string name="show_online_status">Onlaýn ýagdaýyny görkez</string>
+    <string name="show_distance">Aralygy görkez</string>
+    <string name="blocked_users">Bloklanan ulanyjylar</string>
+    <string name="no_blocked_users">Bloklanan ulanyjy ýok</string>
+    <string name="unblock">Blokdan çykar</string>
+    <string name="block_user">Ulanyjyny blokla</string>
+    <string name="report_user">Şikaýat et</string>
+    <string name="logout">Çykyş</string>
+    <string name="logout_confirmation">Çykmak isleýändigiňize ynanýarsyňyzmy?</string>
+    <string name="delete_account">Hasaby poz</string>
+    <string name="delete_account_warning">Hasabyňyzy pozmak suratlaryňyzy, hatlaryňyzy, gabat gelmeleriňizi we profiliňizi Aura-dan hemişelik aýyrar. Bu amaly yzyna gaýtaryp bolmaýar.</string>
+    <string name="delete_account_confirm">Hawa, hasabymy poz</string>
+</resources>

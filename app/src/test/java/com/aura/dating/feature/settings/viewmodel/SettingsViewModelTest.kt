@@ -1,7 +1,9 @@
 package com.aura.dating.feature.settings.viewmodel
 
+import android.content.Context
 import com.aura.dating.core.preferences.AppSettingsStorage
 import com.aura.dating.core.presence.PresenceManager
+import com.aura.dating.core.security.TokenStorage
 import com.aura.dating.domain.auth.usecase.LogoutUseCase
 import com.aura.dating.domain.moderation.usecase.DeleteAccountUseCase
 import com.aura.dating.domain.moderation.usecase.GetBlockedUsersUseCase
@@ -38,6 +40,9 @@ class SettingsViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: SettingsViewModel
+    private val context: Context = mockk(relaxed = true)
+    private val tokenStorage: TokenStorage = mockk(relaxed = true)
+
 
     @Before
     fun setUp() {
@@ -56,6 +61,8 @@ class SettingsViewModelTest {
         every { appSettingsStorage.showDistanceFlow } returns flowOf(true)
 
         viewModel = SettingsViewModel(
+            context = context,
+            tokenStorage = tokenStorage,
             getBlockedUsersUseCase = getBlockedUsersUseCase,
             unblockUserUseCase = unblockUserUseCase,
             deleteAccountUseCase = deleteAccountUseCase,

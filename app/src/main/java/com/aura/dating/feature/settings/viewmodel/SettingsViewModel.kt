@@ -1,7 +1,9 @@
 package com.aura.dating.feature.settings.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aura.dating.core.localization.LanguageManager
 import com.aura.dating.core.preferences.AppSettingsStorage
 import com.aura.dating.core.security.TokenStorage
 import com.aura.dating.domain.auth.usecase.LogoutUseCase
@@ -11,6 +13,7 @@ import com.aura.dating.domain.moderation.usecase.GetBlockedUsersUseCase
 import com.aura.dating.domain.moderation.usecase.UnblockUserUseCase
 import com.aura.dating.core.presence.PresenceManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -24,6 +27,7 @@ import javax.inject.Inject
 data class SettingsUiState(
     val blockedUsers: List<BlockedUser> = emptyList(),
     val userEmail: String = "",
+    val selectedLanguageCode: String = "system",
     val pushNotificationsEnabled: Boolean = true,
     val newMatchesPush: Boolean = true,
     val messagesPush: Boolean = true,
@@ -41,6 +45,7 @@ sealed interface SettingsEvent {
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val getBlockedUsersUseCase: GetBlockedUsersUseCase,
     private val unblockUserUseCase: UnblockUserUseCase,
     private val deleteAccountUseCase: DeleteAccountUseCase,
@@ -82,26 +87,41 @@ class SettingsViewModel @Inject constructor(
     private fun observePreferences() {
         viewModelScope.launch {
             combine(
-                listOf(
+                combine(
                     appSettingsStorage.pushNotificationsEnabledFlow,
                     appSettingsStorage.newMatchesPushFlow,
                     appSettingsStorage.messagesPushFlow,
-                    appSettingsStorage.likesPushFlow,
+                    appSettingsStorage.likesPushFlow
+                ) { push, matches, messages, likes ->
+                    listOf(push, matches, messages, likes)
+                },
+                combine(
                     appSettingsStorage.showOnlineStatusFlow,
-                    appSettingsStorage.showDistanceFlow
-                )
-            ) { values ->
+                    appSettingsStorage.showDistanceFlow,
+                    appSettingsStorage.selectedLanguageCodeFlow
+                ) { online, distance, lang ->
+                    Triple(online, distance, lang)
+                }
+            ) { notifs, other ->
                 _uiState.value.copy(
-                    pushNotificationsEnabled = values[0],
-                    newMatchesPush = values[1],
-                    messagesPush = values[2],
-                    likesPush = values[3],
-                    showOnlineStatus = values[4],
-                    showDistance = values[5]
+                    pushNotificationsEnabled = notifs[0],
+                    newMatchesPush = notifs[1],
+                    messagesPush = notifs[2],
+                    likesPush = notifs[3],
+                    showOnlineStatus = other.first,
+                    showDistance = other.second,
+                    selectedLanguageCode = other.third
                 )
             }.collect { updatedState ->
                 _uiState.value = updatedState
             }
+        }
+    }
+
+    fun setLanguage(languageCode: String) {
+        viewModelScope.launch {
+            appSettingsStorage.setSelectedLanguageCode(languageCode)
+            LanguageManager.applyLanguage(context, languageCode)
         }
     }
 

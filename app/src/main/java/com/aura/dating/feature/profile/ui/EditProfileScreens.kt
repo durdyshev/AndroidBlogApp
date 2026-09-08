@@ -563,7 +563,7 @@ fun EditInterestsScreen(
                     uiState.availableInterests.forEach { interest ->
                         val isSelected = selectedIds.contains(interest.id)
                         InterestChip(
-                            name = interest.name,
+                            name = interest.getLocalizedName(),
                             icon = interest.icon,
                             isSelected = isSelected,
                             onClick = {

@@ -110,7 +110,7 @@ fun SelectInterestsScreen(
                     uiState.availableInterests.forEach { interest ->
                         val isSelected = uiState.selectedInterestIds.contains(interest.id)
                         InterestChip(
-                            name = interest.name,
+                            name = interest.getLocalizedName(),
                             icon = interest.icon,
                             isSelected = isSelected,
                             onClick = { viewModel.toggleInterest(interest.id) }
