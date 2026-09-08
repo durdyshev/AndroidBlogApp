@@ -52,6 +52,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.aura.dating.R
 import com.aura.dating.core.designsystem.components.AuraTopBar
 import com.aura.dating.core.designsystem.components.PrimaryButton
 import com.aura.dating.core.designsystem.theme.AuraPrimaryGradient
@@ -98,13 +100,13 @@ fun LocationSearchScreen(
                 .padding(bottom = 90.dp)
         ) {
             AuraTopBar(
-                title = "Search People",
+                title = stringResource(R.string.search_people),
                 showBackButton = true,
                 onBackClick = onNavigateBack,
                 actions = {
                     TextButton(onClick = { viewModel.resetFilters() }) {
                         Text(
-                            text = "Reset",
+                            text = stringResource(R.string.reset),
                             color = AuraRose,
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.SemiBold
@@ -120,7 +122,7 @@ fun LocationSearchScreen(
                     .padding(horizontal = Dimens.Spacing20, vertical = Dimens.Spacing8)
             ) {
                 Text(
-                    text = "Find people in a specific location",
+                    text = stringResource(R.string.find_people_location_hint),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.White.copy(alpha = 0.6f)
                 )
@@ -138,7 +140,7 @@ fun LocationSearchScreen(
 
                 if (hasActiveFilters) {
                     Text(
-                        text = "Active Filters",
+                        text = stringResource(R.string.active_filters),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White.copy(alpha = 0.7f)
@@ -175,9 +177,9 @@ fun LocationSearchScreen(
                         }
                         if (uiState.gender != "ALL") {
                             val genderLabel = when (uiState.gender) {
-                                "WOMEN" -> "Women"
-                                "MEN" -> "Men"
-                                "NON_BINARY" -> "Non-Binary"
+                                "WOMEN" -> stringResource(R.string.gender_women)
+                                "MEN" -> stringResource(R.string.gender_men)
+                                "NON_BINARY" -> stringResource(R.string.gender_non_binary)
                                 else -> uiState.gender
                             }
                             ActiveFilterChip(
@@ -187,7 +189,7 @@ fun LocationSearchScreen(
                         }
                         if (uiState.onlyOnline) {
                             ActiveFilterChip(
-                                label = "Online Now",
+                                label = stringResource(R.string.online_now),
                                 onRemove = { viewModel.onOnlineOnlyChange(false) }
                             )
                         }
@@ -198,7 +200,7 @@ fun LocationSearchScreen(
 
                 // Section 1: Location Hierarchy
                 Text(
-                    text = "Location",
+                    text = stringResource(R.string.location_hierarchy),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -206,8 +208,8 @@ fun LocationSearchScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing12))
 
                 LocationSelectorTile(
-                    title = "Country",
-                    selectedValue = uiState.selectedCountry?.name ?: "Select Country",
+                    title = stringResource(R.string.country),
+                    selectedValue = uiState.selectedCountry?.name ?: stringResource(R.string.select_country),
                     icon = Icons.Default.Public,
                     isEnabled = true,
                     onClick = {
@@ -221,8 +223,8 @@ fun LocationSearchScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing12))
 
                 LocationSelectorTile(
-                    title = "Region / Province",
-                    selectedValue = uiState.selectedRegion?.name ?: if (uiState.selectedCountry == null) "Select Country first" else "Select Region",
+                    title = stringResource(R.string.region_province),
+                    selectedValue = uiState.selectedRegion?.name ?: if (uiState.selectedCountry == null) stringResource(R.string.select_country_first) else stringResource(R.string.select_region),
                     icon = Icons.Default.Map,
                     isEnabled = uiState.selectedCountry != null,
                     onClick = {
@@ -238,8 +240,8 @@ fun LocationSearchScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing12))
 
                 LocationSelectorTile(
-                    title = "City",
-                    selectedValue = uiState.selectedCity?.name ?: if (uiState.selectedRegion == null) "Select Region first" else "Select City",
+                    title = stringResource(R.string.city),
+                    selectedValue = uiState.selectedCity?.name ?: if (uiState.selectedRegion == null) stringResource(R.string.select_region_first) else stringResource(R.string.select_city),
                     icon = Icons.Default.LocationCity,
                     isEnabled = uiState.selectedRegion != null,
                     onClick = {
@@ -256,7 +258,7 @@ fun LocationSearchScreen(
 
                 // Section 2: Gender
                 Text(
-                    text = "Looking for",
+                    text = stringResource(R.string.looking_for),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -267,7 +269,11 @@ fun LocationSearchScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    val genders = listOf("WOMEN" to "Women", "MEN" to "Men", "ALL" to "Everyone")
+                    val genders = listOf(
+                        "WOMEN" to stringResource(R.string.gender_women),
+                        "MEN" to stringResource(R.string.gender_men),
+                        "ALL" to stringResource(R.string.gender_everyone)
+                    )
                     genders.forEach { (key, label) ->
                         val isSelected = uiState.gender == key
                         Box(
@@ -303,7 +309,7 @@ fun LocationSearchScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Age Range",
+                        text = stringResource(R.string.age_preference),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -363,7 +369,7 @@ fun LocationSearchScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Online Now",
+                                text = stringResource(R.string.online_now),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 color = Color.White
@@ -371,7 +377,7 @@ fun LocationSearchScreen(
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Only show people who are active right now",
+                            text = stringResource(R.string.online_now_hint),
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.White.copy(alpha = 0.6f)
                         )
@@ -406,7 +412,7 @@ fun LocationSearchScreen(
                     .padding(horizontal = Dimens.Spacing20, vertical = Dimens.Spacing16)
             ) {
                 PrimaryButton(
-                    text = "Search People",
+                    text = stringResource(R.string.search_people),
                     onClick = { viewModel.executeSearch(isNewSearch = true) },
                     isLoading = uiState.isSearching,
                     leadingIcon = Icons.Default.Search,
@@ -419,7 +425,7 @@ fun LocationSearchScreen(
     // Country Picker Sheet
     if (showCountryPicker) {
         LocationPickerBottomSheet(
-            title = "Select Country",
+            title = stringResource(R.string.select_country),
             items = uiState.countries.map { CountryLocationItem(it) },
             selectedItem = uiState.selectedCountry?.let { CountryLocationItem(it) },
             isLoading = uiState.isLoadingLocations,
@@ -434,7 +440,7 @@ fun LocationSearchScreen(
     // Region Picker Sheet
     if (showRegionPicker) {
         LocationPickerBottomSheet(
-            title = "Select Region",
+            title = stringResource(R.string.select_region),
             items = uiState.regions.map { RegionLocationItem(it) },
             selectedItem = uiState.selectedRegion?.let { RegionLocationItem(it) },
             isLoading = uiState.isLoadingLocations,
@@ -449,7 +455,7 @@ fun LocationSearchScreen(
     // City Picker Sheet
     if (showCityPicker) {
         LocationPickerBottomSheet(
-            title = "Select City",
+            title = stringResource(R.string.select_city),
             items = uiState.cities.map { CityLocationItem(it) },
             selectedItem = uiState.selectedCity?.let { CityLocationItem(it) },
             isLoading = uiState.isLoadingLocations,
@@ -548,7 +554,7 @@ private fun ActiveFilterChip(
         Spacer(modifier = Modifier.width(Dimens.Spacing6))
         Icon(
             imageVector = Icons.Default.Close,
-            contentDescription = "Remove filter",
+            contentDescription = stringResource(R.string.remove_filter),
             tint = AuraRose,
             modifier = Modifier
                 .size(16.dp)

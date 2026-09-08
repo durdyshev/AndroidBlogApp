@@ -50,10 +50,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.aura.dating.R
 import com.aura.dating.core.designsystem.components.AuraTopBar
 import com.aura.dating.core.designsystem.components.InterestChip
 import com.aura.dating.core.designsystem.components.PrimaryButton
@@ -122,7 +124,7 @@ fun EditProfileScreen(
                 .padding(bottom = Dimens.Spacing32)
         ) {
             AuraTopBar(
-                title = "Edit Profile",
+                title = stringResource(R.string.edit_profile),
                 showBackButton = true,
                 onBackClick = onNavigateBack
             )
@@ -142,17 +144,17 @@ fun EditProfileScreen(
                         onValueChange = {},
                         readOnly = true,
                         enabled = false,
-                        label = { Text("Account Email") },
+                        label = { Text(stringResource(R.string.account_email)) },
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Email,
-                                contentDescription = "Email",
+                                contentDescription = stringResource(R.string.email),
                                 tint = AuraRose
                             )
                         },
                         trailingIcon = {
                             Text(
-                                text = "Verified",
+                                text = stringResource(R.string.verified),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = AuraRose,
                                 fontWeight = FontWeight.SemiBold,
@@ -176,7 +178,7 @@ fun EditProfileScreen(
                 OutlinedTextField(
                     value = displayName,
                     onValueChange = { displayName = it },
-                    label = { Text("Display Name") },
+                    label = { Text(stringResource(R.string.display_name)) },
                     singleLine = true,
                     shape = RoundedCornerShape(Dimens.RadiusMedium),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -193,7 +195,7 @@ fun EditProfileScreen(
                 OutlinedTextField(
                     value = bio,
                     onValueChange = { bio = it },
-                    label = { Text("Bio") },
+                    label = { Text(stringResource(R.string.bio)) },
                     minLines = 4,
                     maxLines = 6,
                     shape = RoundedCornerShape(Dimens.RadiusMedium),
@@ -209,7 +211,7 @@ fun EditProfileScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing24))
 
                 Text(
-                    text = "Home Location",
+                    text = stringResource(R.string.home_location),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -218,8 +220,8 @@ fun EditProfileScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing8))
 
                 EditProfileLocationTile(
-                    label = "Country",
-                    value = selectedCountry?.name ?: "Select Country",
+                    label = stringResource(R.string.country),
+                    value = selectedCountry?.name ?: stringResource(R.string.select_country),
                     isEnabled = true,
                     onClick = { showCountryPicker = true }
                 )
@@ -227,8 +229,8 @@ fun EditProfileScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing8))
 
                 EditProfileLocationTile(
-                    label = "Region",
-                    value = selectedRegion?.name ?: if (selectedCountry == null) "Select Country first" else "Select Region",
+                    label = stringResource(R.string.region),
+                    value = selectedRegion?.name ?: if (selectedCountry == null) stringResource(R.string.select_country_first) else stringResource(R.string.select_region),
                     isEnabled = selectedCountry != null,
                     onClick = {
                         selectedCountry?.let { viewModel.loadRegions(it.id) }
@@ -239,8 +241,8 @@ fun EditProfileScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing8))
 
                 EditProfileLocationTile(
-                    label = "City",
-                    value = selectedCity?.name ?: if (selectedRegion == null) "Select Region first" else "Select City",
+                    label = stringResource(R.string.city),
+                    value = selectedCity?.name ?: if (selectedRegion == null) stringResource(R.string.select_region_first) else stringResource(R.string.select_city),
                     isEnabled = selectedRegion != null,
                     onClick = {
                         selectedRegion?.let { viewModel.loadCities(it.id) }
@@ -253,7 +255,7 @@ fun EditProfileScreen(
 
             Box(modifier = Modifier.padding(horizontal = Dimens.Spacing24)) {
                 PrimaryButton(
-                    text = "Save Changes",
+                    text = stringResource(R.string.save_changes),
                     isLoading = uiState.isLoading,
                     onClick = {
                         viewModel.updateProfile(
@@ -271,7 +273,7 @@ fun EditProfileScreen(
 
     if (showCountryPicker) {
         LocationPickerBottomSheet(
-            title = "Select Country",
+            title = stringResource(R.string.select_country),
             items = uiState.countries.map { CountryLocationItem(it) },
             selectedItem = selectedCountry?.let { CountryLocationItem(it) },
             isLoading = uiState.isLoadingLocations && uiState.countries.isEmpty(),
@@ -286,7 +288,7 @@ fun EditProfileScreen(
 
     if (showRegionPicker) {
         LocationPickerBottomSheet(
-            title = "Select Region",
+            title = stringResource(R.string.select_region),
             items = uiState.regions.map { RegionLocationItem(it) },
             selectedItem = selectedRegion?.let { RegionLocationItem(it) },
             isLoading = uiState.isLoadingLocations && uiState.regions.isEmpty(),
@@ -300,7 +302,7 @@ fun EditProfileScreen(
 
     if (showCityPicker) {
         LocationPickerBottomSheet(
-            title = "Select City",
+            title = stringResource(R.string.select_city),
             items = uiState.cities.map { CityLocationItem(it) },
             selectedItem = selectedCity?.let { CityLocationItem(it) },
             isLoading = uiState.isLoadingLocations && uiState.cities.isEmpty(),
@@ -372,7 +374,7 @@ fun EditPhotosScreen(
                 .padding(bottom = Dimens.Spacing32)
         ) {
             AuraTopBar(
-                title = "Edit Photos",
+                title = stringResource(R.string.edit_photos),
                 showBackButton = true,
                 onBackClick = onNavigateBack
             )
@@ -383,14 +385,14 @@ fun EditPhotosScreen(
                     .padding(horizontal = Dimens.Spacing24)
             ) {
                 Text(
-                    text = "Manage Profile Photos",
+                    text = stringResource(R.string.manage_profile_photos),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
                 Spacer(modifier = Modifier.height(Dimens.Spacing8))
                 Text(
-                    text = "Tap a photo to set as primary, or tap + to upload new pictures.",
+                    text = stringResource(R.string.manage_photos_hint),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.White.copy(alpha = 0.7f)
                 )
@@ -447,7 +449,7 @@ fun EditPhotosScreen(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Star,
-                                            contentDescription = "Primary",
+                                            contentDescription = stringResource(R.string.primary),
                                             tint = Color.Black,
                                             modifier = Modifier.size(12.dp)
                                         )
@@ -465,7 +467,7 @@ fun EditPhotosScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Close,
-                                        contentDescription = "Delete",
+                                        contentDescription = stringResource(R.string.delete),
                                         tint = Color.White,
                                         modifier = Modifier.size(14.dp)
                                     )
@@ -473,7 +475,7 @@ fun EditPhotosScreen(
                             } else {
                                 Icon(
                                     imageVector = Icons.Default.Add,
-                                    contentDescription = "Add",
+                                    contentDescription = stringResource(R.string.add),
                                     tint = AuraRose,
                                     modifier = Modifier.size(32.dp)
                                 )
@@ -492,7 +494,7 @@ fun EditPhotosScreen(
                         CircularProgressIndicator(modifier = Modifier.size(20.dp), color = AuraRose, strokeWidth = 2.dp)
                         Spacer(modifier = Modifier.width(Dimens.Spacing8))
                         Text(
-                            text = "Uploading photo...",
+                            text = stringResource(R.string.uploading_photo),
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.White.copy(alpha = 0.7f)
                         )
@@ -534,7 +536,7 @@ fun EditInterestsScreen(
                 .padding(bottom = Dimens.Spacing32)
         ) {
             AuraTopBar(
-                title = "Edit Interests",
+                title = stringResource(R.string.edit_interests),
                 showBackButton = true,
                 onBackClick = onNavigateBack
             )
@@ -547,7 +549,7 @@ fun EditInterestsScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
-                    text = "Select Interests (${selectedIds.size}/8)",
+                    text = stringResource(R.string.select_interests_count, selectedIds.size),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -581,7 +583,7 @@ fun EditInterestsScreen(
 
             Box(modifier = Modifier.padding(horizontal = Dimens.Spacing24)) {
                 PrimaryButton(
-                    text = "Save Interests",
+                    text = stringResource(R.string.save_interests),
                     isLoading = uiState.isLoading,
                     onClick = { viewModel.updateInterests(selectedIds.toList()) }
                 )

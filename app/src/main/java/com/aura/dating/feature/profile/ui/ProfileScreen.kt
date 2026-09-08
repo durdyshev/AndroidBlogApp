@@ -39,8 +39,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.aura.dating.R
 import com.aura.dating.core.common.utils.DateTimeUtils
 import com.aura.dating.core.designsystem.components.AuraTopBar
 import com.aura.dating.core.designsystem.components.Avatar
@@ -74,7 +76,7 @@ fun ProfileScreen(
                 .padding(bottom = 80.dp)
         ) {
             AuraTopBar(
-                title = "My Profile",
+                title = stringResource(R.string.my_profile),
                 actions = {
                     IconButton(
                         onClick = onNavigateToSettings,
@@ -85,7 +87,7 @@ fun ProfileScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings",
+                            contentDescription = stringResource(R.string.settings),
                             tint = Color.White
                         )
                     }
@@ -121,7 +123,7 @@ fun ProfileScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.AddPhotoAlternate,
-                            contentDescription = "Edit Photos",
+                            contentDescription = stringResource(R.string.edit_photos),
                             tint = Color.White,
                             modifier = Modifier.size(20.dp)
                         )
@@ -141,7 +143,7 @@ fun ProfileScreen(
                     Spacer(modifier = Modifier.width(Dimens.Spacing6))
                     Icon(
                         imageVector = Icons.Default.Verified,
-                        contentDescription = "Verified Profile",
+                        contentDescription = stringResource(R.string.verified_profile),
                         tint = AuraBlue,
                         modifier = Modifier.size(22.dp)
                     )
@@ -187,19 +189,19 @@ fun ProfileScreen(
                 ) {
                     ProfileActionButton(
                         icon = Icons.Default.Edit,
-                        label = "Edit Info",
+                        label = stringResource(R.string.edit_info),
                         onClick = onNavigateToEditProfile,
                         modifier = Modifier.weight(1f)
                     )
                     ProfileActionButton(
                         icon = Icons.Default.AddPhotoAlternate,
-                        label = "Photos (${profile?.photos?.size ?: 0})",
+                        label = stringResource(R.string.photos_count, profile?.photos?.size ?: 0),
                         onClick = onNavigateToEditPhotos,
                         modifier = Modifier.weight(1f)
                     )
                     ProfileActionButton(
                         icon = Icons.Default.Interests,
-                        label = "Interests",
+                        label = stringResource(R.string.interests),
                         onClick = onNavigateToEditInterests,
                         modifier = Modifier.weight(1f)
                     )
@@ -215,14 +217,14 @@ fun ProfileScreen(
                 ) {
                     Column(modifier = Modifier.padding(Dimens.Spacing16)) {
                         Text(
-                            text = "About Me",
+                            text = stringResource(R.string.about_me),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White
                         )
                         Spacer(modifier = Modifier.height(Dimens.Spacing8))
                         Text(
-                            text = if (profile?.bio.isNullOrBlank()) "No bio written yet. Tap 'Edit Info' to introduce yourself." else profile.bio,
+                            text = if (profile?.bio.isNullOrBlank()) stringResource(R.string.no_bio_yet) else profile.bio,
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.White.copy(alpha = 0.8f)
                         )
@@ -240,7 +242,7 @@ fun ProfileScreen(
                     ) {
                         Column(modifier = Modifier.padding(Dimens.Spacing16)) {
                             Text(
-                                text = "My Interests",
+                                text = stringResource(R.string.my_interests),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 color = Color.White

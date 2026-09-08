@@ -27,6 +27,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.aura.dating.R
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -99,7 +101,7 @@ fun RegisterScreen(
                     .padding(top = Dimens.Spacing16, bottom = Dimens.Spacing32)
             ) {
                 Text(
-                    text = "Create Account",
+                    text = stringResource(R.string.create_account),
                     style = MaterialTheme.typography.displayMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -108,7 +110,7 @@ fun RegisterScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing8))
 
                 Text(
-                    text = "Join Aura and connect with matches around you.",
+                    text = stringResource(R.string.register_subtitle),
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.White.copy(alpha = 0.7f)
                 )
@@ -119,7 +121,7 @@ fun RegisterScreen(
                 OutlinedTextField(
                     value = uiState.email,
                     onValueChange = viewModel::onEmailChange,
-                    label = { Text("Email address") },
+                    label = { Text(stringResource(R.string.email_address)) },
                     leadingIcon = {
                         Icon(Icons.Default.Email, contentDescription = null, tint = Color.White.copy(alpha = 0.7f))
                     },
@@ -142,7 +144,7 @@ fun RegisterScreen(
                 OutlinedTextField(
                     value = uiState.password,
                     onValueChange = viewModel::onPasswordChange,
-                    label = { Text("Password (min 6 chars)") },
+                    label = { Text(stringResource(R.string.password_min_chars)) },
                     leadingIcon = {
                         Icon(Icons.Default.Lock, contentDescription = null, tint = Color.White.copy(alpha = 0.7f))
                     },
@@ -175,7 +177,7 @@ fun RegisterScreen(
                 OutlinedTextField(
                     value = uiState.confirmPassword,
                     onValueChange = viewModel::onConfirmPasswordChange,
-                    label = { Text("Confirm Password") },
+                    label = { Text(stringResource(R.string.confirm_password)) },
                     leadingIcon = {
                         Icon(Icons.Default.Lock, contentDescription = null, tint = Color.White.copy(alpha = 0.7f))
                     },
@@ -208,7 +210,7 @@ fun RegisterScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing32))
 
                 PrimaryButton(
-                    text = "Sign Up",
+                    text = stringResource(R.string.sign_up),
                     isLoading = uiState.isLoading,
                     onClick = {
                         focusManager.clearFocus()
@@ -223,12 +225,12 @@ fun RegisterScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Already have an account? ",
+                        text = stringResource(R.string.already_have_account_prefix),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White.copy(alpha = 0.7f)
                     )
                     Text(
-                        text = "Sign In",
+                        text = stringResource(R.string.login),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         color = AuraRose,

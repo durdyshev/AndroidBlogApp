@@ -47,10 +47,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.aura.dating.R
 import coil.request.ImageRequest
 import com.aura.dating.core.common.utils.DateTimeUtils
 import com.aura.dating.core.common.utils.DistanceUtils
@@ -110,7 +112,7 @@ fun UserProfileDetailScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 AuraTopBar(
-                    title = "Profile",
+                    title = stringResource(R.string.profile),
                     showBackButton = true,
                     onBackClick = onNavigateBack
                 )
@@ -119,7 +121,7 @@ fun UserProfileDetailScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     ErrorState(
-                        message = uiState.errorMessage ?: "Could not load user profile",
+                        message = uiState.errorMessage ?: stringResource(R.string.could_not_load_profile),
                         onRetry = { viewModel.loadUserProfile(userId) }
                     )
                 }
@@ -174,7 +176,7 @@ fun UserProfileDetailScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.MoreVert,
-                                contentDescription = "More",
+                                contentDescription = stringResource(R.string.more),
                                 tint = Color.White
                             )
                         }
@@ -184,14 +186,14 @@ fun UserProfileDetailScreen(
                             onDismissRequest = { showMenu = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Report Profile") },
+                                text = { Text(stringResource(R.string.report_profile)) },
                                 onClick = {
                                     showMenu = false
                                     showReportSheet = true
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Block User", color = PassColor) },
+                                text = { Text(stringResource(R.string.block_user), color = PassColor) },
                                 onClick = {
                                     showMenu = false
                                     showBlockDialog = true
@@ -217,7 +219,7 @@ fun UserProfileDetailScreen(
                     Spacer(modifier = Modifier.width(Dimens.Spacing8))
                     Icon(
                         imageVector = Icons.Default.Verified,
-                        contentDescription = "Verified",
+                        contentDescription = stringResource(R.string.verified),
                         tint = AuraBlue,
                         modifier = Modifier.size(24.dp)
                     )
@@ -263,7 +265,7 @@ fun UserProfileDetailScreen(
                 if (!candidate?.bio.isNullOrBlank()) {
                     Spacer(modifier = Modifier.height(Dimens.Spacing20))
                     Text(
-                        text = "About",
+                        text = stringResource(R.string.about),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
@@ -279,7 +281,7 @@ fun UserProfileDetailScreen(
                 if (!candidate?.interests.isNullOrEmpty()) {
                     Spacer(modifier = Modifier.height(Dimens.Spacing20))
                     Text(
-                        text = "Interests",
+                        text = stringResource(R.string.interests),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
@@ -325,7 +327,7 @@ fun UserProfileDetailScreen(
                         )
                         Spacer(modifier = Modifier.width(Dimens.Spacing8))
                         Text(
-                            text = "Send Message",
+                            text = stringResource(R.string.send_message),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
@@ -340,9 +342,9 @@ fun UserProfileDetailScreen(
 
         if (showBlockDialog) {
             ConfirmationDialog(
-                title = "Block ${candidate?.displayName}?",
-                message = "They will not be able to view your profile or contact you.",
-                confirmText = "Block",
+                title = stringResource(R.string.block_user_title, candidate?.displayName ?: ""),
+                message = stringResource(R.string.block_user_detail_desc),
+                confirmText = stringResource(R.string.block),
                 isDestructive = true,
                 onConfirm = {
                     showBlockDialog = false

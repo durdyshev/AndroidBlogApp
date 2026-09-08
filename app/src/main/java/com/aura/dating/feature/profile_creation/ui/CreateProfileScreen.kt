@@ -24,6 +24,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.aura.dating.R
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -80,7 +82,7 @@ fun CreateProfileScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             AuraTopBar(
-                title = "Step 1 of 4",
+                title = stringResource(R.string.step_1_of_4),
                 showBackButton = true,
                 onBackClick = onNavigateBack
             )
@@ -92,7 +94,7 @@ fun CreateProfileScreen(
                     .padding(top = Dimens.Spacing8, bottom = Dimens.Spacing32)
             ) {
                 Text(
-                    text = "About You",
+                    text = stringResource(R.string.tell_us_about_yourself),
                     style = MaterialTheme.typography.displayMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -101,7 +103,7 @@ fun CreateProfileScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing8))
 
                 Text(
-                    text = "Let others know who you are. Adults 18+ only.",
+                    text = stringResource(R.string.adults_only_hint),
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.White.copy(alpha = 0.7f)
                 )
@@ -112,7 +114,7 @@ fun CreateProfileScreen(
                 OutlinedTextField(
                     value = uiState.displayName,
                     onValueChange = viewModel::onDisplayNameChange,
-                    label = { Text("Display Name") },
+                    label = { Text(stringResource(R.string.display_name)) },
                     leadingIcon = {
                         Icon(Icons.Default.Person, contentDescription = null, tint = Color.White.copy(alpha = 0.7f))
                     },
@@ -132,6 +134,7 @@ fun CreateProfileScreen(
                 // Birth Date Picker
                 val formattedBirthDate = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(Date(uiState.birthDateMillis))
                 val age = DateTimeUtils.calculateAge(uiState.birthDateMillis)
+                val yearsOldText = stringResource(R.string.years_old, age)
 
                 Box(
                     modifier = Modifier
@@ -140,11 +143,11 @@ fun CreateProfileScreen(
                         .clickable { showDatePickerDialog = true }
                 ) {
                     OutlinedTextField(
-                        value = "$formattedBirthDate ($age years old)",
+                        value = "$formattedBirthDate ($yearsOldText)",
                         onValueChange = {},
                         readOnly = true,
                         enabled = false,
-                        label = { Text("Birthday") },
+                        label = { Text(stringResource(R.string.birthday)) },
                         leadingIcon = {
                             Icon(Icons.Default.CalendarToday, contentDescription = null, tint = Color.White.copy(alpha = 0.7f))
                         },
@@ -167,7 +170,7 @@ fun CreateProfileScreen(
 
                 // Gender Selection
                 Text(
-                    text = "I am a",
+                    text = stringResource(R.string.i_am_a),
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White
                 )
@@ -177,9 +180,9 @@ fun CreateProfileScreen(
                     horizontalArrangement = Arrangement.spacedBy(Dimens.Spacing8)
                 ) {
                     listOf(
-                        Gender.WOMAN to "Woman",
-                        Gender.MAN to "Man",
-                        Gender.NON_BINARY to "Non-Binary"
+                        Gender.WOMAN to stringResource(R.string.gender_woman),
+                        Gender.MAN to stringResource(R.string.gender_man),
+                        Gender.NON_BINARY to stringResource(R.string.gender_non_binary)
                     ).forEach { (gender, label) ->
                         InterestChip(
                             name = label,
@@ -196,7 +199,7 @@ fun CreateProfileScreen(
                 OutlinedTextField(
                     value = uiState.bio,
                     onValueChange = viewModel::onBioChange,
-                    label = { Text("Short Bio (Optional)") },
+                    label = { Text(stringResource(R.string.short_bio_optional)) },
                     minLines = 3,
                     maxLines = 5,
                     shape = RoundedCornerShape(Dimens.RadiusMedium),
@@ -213,7 +216,7 @@ fun CreateProfileScreen(
 
                 // Location Section
                 Text(
-                    text = "Your Location",
+                    text = stringResource(R.string.your_location),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -226,8 +229,8 @@ fun CreateProfileScreen(
                 var showCityPicker by remember { mutableStateOf(false) }
 
                 LocationSelectionRow(
-                    label = "Country",
-                    value = uiState.selectedCountry?.name ?: "Select Country",
+                    label = stringResource(R.string.country),
+                    value = uiState.selectedCountry?.name ?: stringResource(R.string.select_country),
                     isEnabled = true,
                     onClick = { showCountryPicker = true }
                 )
@@ -235,8 +238,8 @@ fun CreateProfileScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing8))
 
                 LocationSelectionRow(
-                    label = "Region",
-                    value = uiState.selectedRegion?.name ?: if (uiState.selectedCountry == null) "Select Country first" else "Select Region",
+                    label = stringResource(R.string.region),
+                    value = uiState.selectedRegion?.name ?: if (uiState.selectedCountry == null) stringResource(R.string.select_country_first) else stringResource(R.string.select_region),
                     isEnabled = uiState.selectedCountry != null,
                     onClick = { showRegionPicker = true }
                 )
@@ -244,8 +247,8 @@ fun CreateProfileScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing8))
 
                 LocationSelectionRow(
-                    label = "City",
-                    value = uiState.selectedCity?.name ?: if (uiState.selectedRegion == null) "Select Region first" else "Select City",
+                    label = stringResource(R.string.city),
+                    value = uiState.selectedCity?.name ?: if (uiState.selectedRegion == null) stringResource(R.string.select_region_first) else stringResource(R.string.select_city),
                     isEnabled = uiState.selectedRegion != null,
                     onClick = { showCityPicker = true }
                 )
@@ -262,14 +265,14 @@ fun CreateProfileScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing32))
 
                 PrimaryButton(
-                    text = "Continue to Photos",
+                    text = stringResource(R.string.continue_to_photos),
                     isLoading = uiState.isLoading,
                     onClick = { viewModel.submitBasicInfo() }
                 )
 
                 if (showCountryPicker) {
                     com.aura.dating.feature.discover.ui.LocationPickerBottomSheet(
-                        title = "Select Country",
+                        title = stringResource(R.string.select_country),
                         items = uiState.countries.map { com.aura.dating.feature.discover.ui.CountryLocationItem(it) },
                         selectedItem = uiState.selectedCountry?.let { com.aura.dating.feature.discover.ui.CountryLocationItem(it) },
                         isLoading = uiState.isLoadingLocations && uiState.countries.isEmpty(),
@@ -280,7 +283,7 @@ fun CreateProfileScreen(
 
                 if (showRegionPicker) {
                     com.aura.dating.feature.discover.ui.LocationPickerBottomSheet(
-                        title = "Select Region",
+                        title = stringResource(R.string.select_region),
                         items = uiState.regions.map { com.aura.dating.feature.discover.ui.RegionLocationItem(it) },
                         selectedItem = uiState.selectedRegion?.let { com.aura.dating.feature.discover.ui.RegionLocationItem(it) },
                         isLoading = uiState.isLoadingLocations && uiState.regions.isEmpty(),
@@ -291,7 +294,7 @@ fun CreateProfileScreen(
 
                 if (showCityPicker) {
                     com.aura.dating.feature.discover.ui.LocationPickerBottomSheet(
-                        title = "Select City",
+                        title = stringResource(R.string.select_city),
                         items = uiState.cities.map { com.aura.dating.feature.discover.ui.CityLocationItem(it) },
                         selectedItem = uiState.selectedCity?.let { com.aura.dating.feature.discover.ui.CityLocationItem(it) },
                         isLoading = uiState.isLoadingLocations && uiState.cities.isEmpty(),

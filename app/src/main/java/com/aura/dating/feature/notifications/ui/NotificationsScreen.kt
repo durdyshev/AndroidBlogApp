@@ -31,10 +31,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.aura.dating.R
 import com.aura.dating.core.common.utils.DateTimeUtils
 import com.aura.dating.core.designsystem.components.AuraTopBar
 import com.aura.dating.core.designsystem.components.EmptyState
@@ -59,15 +61,15 @@ fun NotificationsScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             AuraTopBar(
-                title = "Activity & Notifications",
+                title = stringResource(R.string.activity_and_notifications),
                 showBackButton = true,
                 onBackClick = onNavigateBack
             )
 
             if (uiState.notifications.isEmpty()) {
                 EmptyState(
-                    title = "No Notifications",
-                    description = "When someone matches with you or sends a message, you'll see alerts here.",
+                    title = stringResource(R.string.no_notifications),
+                    description = stringResource(R.string.no_notifications_desc),
                     icon = Icons.Default.Notifications
                 )
             } else {

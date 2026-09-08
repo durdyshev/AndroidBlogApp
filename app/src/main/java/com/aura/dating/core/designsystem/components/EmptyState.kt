@@ -17,9 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.aura.dating.R
 import com.aura.dating.core.designsystem.theme.AuraRose
 import com.aura.dating.core.designsystem.theme.Dimens
 import com.aura.dating.core.designsystem.theme.PassColor
@@ -78,7 +80,7 @@ fun ErrorState(
     message: String,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
-    title: String = "Something Went Wrong"
+    title: String = stringResource(R.string.something_went_wrong)
 ) {
     Column(
         modifier = modifier
@@ -110,7 +112,7 @@ fun ErrorState(
         )
         Spacer(modifier = Modifier.height(Dimens.Spacing24))
         SecondaryButton(
-            text = "Try Again",
+            text = stringResource(R.string.retry),
             onClick = onRetry,
             modifier = Modifier.fillMaxWidth(0.6f)
         )

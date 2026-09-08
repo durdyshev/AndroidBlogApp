@@ -54,10 +54,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.aura.dating.R
 import com.aura.dating.core.designsystem.components.Avatar
 import com.aura.dating.core.designsystem.components.ConfirmationDialog
 import com.aura.dating.core.designsystem.components.MessageBubble
@@ -166,7 +168,7 @@ fun ConversationScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back),
                             tint = Color.White
                         )
                     }
@@ -199,13 +201,13 @@ fun ConversationScreen(
                         )
                         if (uiState.isPartnerTyping) {
                             Text(
-                                text = "yazıyor...",
+                                text = stringResource(R.string.typing_indicator),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = AuraRose
                             )
                         } else if (uiState.isPartnerOnline) {
                             Text(
-                                text = "Çevrimiçi",
+                                text = stringResource(R.string.online),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = com.aura.dating.core.designsystem.theme.OnlineColor
                             )
@@ -222,7 +224,7 @@ fun ConversationScreen(
                         IconButton(onClick = { showMenu = true }) {
                             Icon(
                                 imageVector = Icons.Default.MoreVert,
-                                contentDescription = "Menu",
+                                contentDescription = stringResource(R.string.menu),
                                 tint = Color.White
                             )
                         }
@@ -232,21 +234,21 @@ fun ConversationScreen(
                             onDismissRequest = { showMenu = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Unmatch") },
+                                text = { Text(stringResource(R.string.unmatch)) },
                                 onClick = {
                                     showMenu = false
                                     showUnmatchDialog = true
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Report User") },
+                                text = { Text(stringResource(R.string.report_user)) },
                                 onClick = {
                                     showMenu = false
                                     showReportSheet = true
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Block User", color = PassColor) },
+                                text = { Text(stringResource(R.string.block_user), color = PassColor) },
                                 onClick = {
                                     showMenu = false
                                     showBlockDialog = true
@@ -363,7 +365,7 @@ fun ConversationScreen(
                         } else {
                             Icon(
                                 imageVector = Icons.Default.AddPhotoAlternate,
-                                contentDescription = "Send Photo",
+                                contentDescription = stringResource(R.string.send_photo),
                                 tint = Color.White
                             )
                         }
@@ -374,7 +376,7 @@ fun ConversationScreen(
                     OutlinedTextField(
                         value = uiState.inputText,
                         onValueChange = viewModel::onInputTextChange,
-                        placeholder = { Text("Type a message...") },
+                        placeholder = { Text(stringResource(R.string.type_a_message)) },
                         maxLines = 4,
                         shape = RoundedCornerShape(Dimens.RadiusExtraLarge),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
@@ -405,7 +407,7 @@ fun ConversationScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
-                            contentDescription = "Send",
+                            contentDescription = stringResource(R.string.send),
                             tint = Color.White,
                             modifier = Modifier.size(20.dp)
                         )
@@ -417,9 +419,9 @@ fun ConversationScreen(
         // Unmatch Confirmation Dialog
         if (showUnmatchDialog) {
             ConfirmationDialog(
-                title = "Unmatch ${uiState.matchName}?",
-                message = "You won't be able to message each other anymore, and this conversation will be removed.",
-                confirmText = "Unmatch",
+                title = stringResource(R.string.unmatch_user_title, uiState.matchName),
+                message = stringResource(R.string.unmatch_confirmation),
+                confirmText = stringResource(R.string.unmatch),
                 isDestructive = true,
                 onConfirm = {
                     showUnmatchDialog = false
@@ -432,9 +434,9 @@ fun ConversationScreen(
         // Block Confirmation Dialog
         if (showBlockDialog) {
             ConfirmationDialog(
-                title = "Block ${uiState.matchName}?",
-                message = "They will not be able to see your profile, send you messages, or appear in your discovery stack.",
-                confirmText = "Block",
+                title = stringResource(R.string.block_user_title, uiState.matchName),
+                message = stringResource(R.string.block_user_confirmation),
+                confirmText = stringResource(R.string.block),
                 isDestructive = true,
                 onConfirm = {
                     showBlockDialog = false

@@ -43,6 +43,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.aura.dating.domain.profile.model.InterestTranslations
+import java.util.Locale
 import com.aura.dating.core.designsystem.theme.AuraBlue
 import com.aura.dating.core.designsystem.theme.AuraDarkCardGradient
 import com.aura.dating.core.designsystem.theme.Dimens
@@ -234,8 +236,9 @@ fun ProfileCard(
                                             vertical = Dimens.Spacing4
                                         )
                                 ) {
+                                    val localizedInterest = InterestTranslations.getTranslation(interest, Locale.getDefault().language) ?: interest
                                     Text(
-                                        text = interest,
+                                        text = localizedInterest,
                                         style = MaterialTheme.typography.labelSmall,
                                         color = Color.White
                                     )

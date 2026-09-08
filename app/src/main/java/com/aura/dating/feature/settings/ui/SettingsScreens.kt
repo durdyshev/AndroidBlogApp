@@ -122,28 +122,28 @@ fun SettingsScreen(
                 SettingsNavigationItem(
                     icon = Icons.Default.Notifications,
                     title = stringResource(R.string.push_notifications),
-                    subtitle = "Likes, matches, and chat alerts",
+                    subtitle = stringResource(R.string.notifications_subtitle),
                     onClick = onNavigateToNotificationSettings
                 )
 
                 SettingsNavigationItem(
                     icon = Icons.Default.Lock,
                     title = stringResource(R.string.privacy),
-                    subtitle = "Online status, approximate distance",
+                    subtitle = stringResource(R.string.privacy_subtitle),
                     onClick = onNavigateToPrivacy
                 )
 
                 SettingsNavigationItem(
                     icon = Icons.Default.Block,
                     title = stringResource(R.string.blocked_users),
-                    subtitle = "Manage blocked profiles",
+                    subtitle = stringResource(R.string.blocked_users_subtitle),
                     onClick = onNavigateToBlockedUsers
                 )
 
                 SettingsNavigationItem(
                     icon = Icons.Default.Person,
                     title = stringResource(R.string.account),
-                    subtitle = "Session and account removal",
+                    subtitle = stringResource(R.string.account_subtitle),
                     onClick = onNavigateToAccount
                 )
 
@@ -158,7 +158,7 @@ fun SettingsScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing24))
 
                 Text(
-                    text = "Aura Dating & Social Discovery v1.0.0 (2026)",
+                    text = stringResource(R.string.app_version_info),
                     style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
                     color = Color.White.copy(alpha = 0.4f),
                     modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -260,7 +260,7 @@ fun NotificationSettingsScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             AuraTopBar(
-                title = "Notifications",
+                title = stringResource(R.string.notifications),
                 showBackButton = true,
                 onBackClick = onNavigateBack
             )
@@ -271,22 +271,22 @@ fun NotificationSettingsScreen(
                     .padding(horizontal = Dimens.Spacing24, vertical = Dimens.Spacing16)
             ) {
                 SettingToggleRow(
-                    title = "New Matches",
-                    subtitle = "Notify when someone likes you back",
+                    title = stringResource(R.string.new_matches),
+                    subtitle = stringResource(R.string.new_matches_notification_desc),
                     checked = uiState.newMatchesPush,
                     onCheckedChange = viewModel::toggleNewMatchesPush
                 )
 
                 SettingToggleRow(
-                    title = "Messages",
-                    subtitle = "Notify when you receive a new chat message",
+                    title = stringResource(R.string.messages),
+                    subtitle = stringResource(R.string.messages_notification_desc),
                     checked = uiState.messagesPush,
                     onCheckedChange = viewModel::toggleMessagesPush
                 )
 
                 SettingToggleRow(
-                    title = "New Likes",
-                    subtitle = "Notify when you receive likes or super likes",
+                    title = stringResource(R.string.new_likes),
+                    subtitle = stringResource(R.string.likes_notification_desc),
                     checked = uiState.likesPush,
                     onCheckedChange = viewModel::toggleLikesPush
                 )
@@ -309,7 +309,7 @@ fun PrivacyScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             AuraTopBar(
-                title = "Privacy & Visibility",
+                title = stringResource(R.string.privacy_and_visibility),
                 showBackButton = true,
                 onBackClick = onNavigateBack
             )
@@ -320,15 +320,15 @@ fun PrivacyScreen(
                     .padding(horizontal = Dimens.Spacing24, vertical = Dimens.Spacing16)
             ) {
                 SettingToggleRow(
-                    title = "Show Online Status",
-                    subtitle = "Let matches see when you are active",
+                    title = stringResource(R.string.show_online_status),
+                    subtitle = stringResource(R.string.show_online_status_desc),
                     checked = uiState.showOnlineStatus,
                     onCheckedChange = viewModel::toggleShowOnline
                 )
 
                 SettingToggleRow(
-                    title = "Show Approximate Distance",
-                    subtitle = "Display approximate distance (e.g. 2.4 km away)",
+                    title = stringResource(R.string.show_approximate_distance),
+                    subtitle = stringResource(R.string.show_approximate_distance_desc),
                     checked = uiState.showDistance,
                     onCheckedChange = viewModel::toggleShowDistance
                 )
@@ -390,15 +390,15 @@ fun BlockedUsersScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             AuraTopBar(
-                title = "Blocked Users",
+                title = stringResource(R.string.blocked_users),
                 showBackButton = true,
                 onBackClick = onNavigateBack
             )
 
             if (uiState.blockedUsers.isEmpty()) {
                 EmptyState(
-                    title = "No Blocked Users",
-                    description = "You haven't blocked anyone yet.",
+                    title = stringResource(R.string.no_blocked_users),
+                    description = stringResource(R.string.no_blocked_users_desc),
                     icon = Icons.Default.Block
                 )
             } else {
@@ -430,7 +430,7 @@ fun BlockedUsersScreen(
                             }
 
                             SecondaryButton(
-                                text = "Unblock",
+                                text = stringResource(R.string.unblock),
                                 onClick = { viewModel.unblockUser(user.blockedUserId) },
                                 modifier = Modifier.width(100.dp)
                             )
@@ -475,7 +475,7 @@ fun AccountSettingsScreen(
                 .padding(bottom = Dimens.Spacing32)
         ) {
             AuraTopBar(
-                title = "Account",
+                title = stringResource(R.string.account),
                 showBackButton = true,
                 onBackClick = onNavigateBack
             )
@@ -487,7 +487,7 @@ fun AccountSettingsScreen(
             ) {
                 if (uiState.userEmail.isNotBlank()) {
                     Text(
-                        text = "Account Information",
+                        text = stringResource(R.string.account_information),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -509,14 +509,14 @@ fun AccountSettingsScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Email,
-                                contentDescription = "Email",
+                                contentDescription = stringResource(R.string.email),
                                 tint = AuraRose,
                                 modifier = Modifier.size(24.dp)
                             )
                             Spacer(modifier = Modifier.width(Dimens.Spacing16))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Email Address",
+                                    text = stringResource(R.string.email_address),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -535,7 +535,7 @@ fun AccountSettingsScreen(
                 }
 
                 Text(
-                    text = "Account Actions",
+                    text = stringResource(R.string.account_actions),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -544,7 +544,7 @@ fun AccountSettingsScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing16))
 
                 Text(
-                    text = "Deleting your account will permanently remove your photos, conversations, matches, and profile from Aura. This action cannot be undone.",
+                    text = stringResource(R.string.delete_account_explanation),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.White.copy(alpha = 0.7f)
                 )
@@ -552,7 +552,7 @@ fun AccountSettingsScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing32))
 
                 SecondaryButton(
-                    text = if (uiState.isLoading) "Deleting Account..." else "Delete Account",
+                    text = if (uiState.isLoading) stringResource(R.string.deleting_account) else stringResource(R.string.delete_account),
                     onClick = { if (!uiState.isLoading) showDeleteDialog = true },
                     textColor = PassColor,
                     borderColor = PassColor
@@ -582,9 +582,9 @@ fun AccountSettingsScreen(
 
         if (showDeleteDialog) {
             ConfirmationDialog(
-                title = "Permanently Delete Account?",
-                message = "Are you absolutely sure? All your matches, conversations, and profile details will be permanently removed.",
-                confirmText = "Delete Permanently",
+                title = stringResource(R.string.delete_account_dialog_title),
+                message = stringResource(R.string.delete_account_dialog_desc),
+                confirmText = stringResource(R.string.delete_permanently),
                 isDestructive = true,
                 onConfirm = {
                     showDeleteDialog = false

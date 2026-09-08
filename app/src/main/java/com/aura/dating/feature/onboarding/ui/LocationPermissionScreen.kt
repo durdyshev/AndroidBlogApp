@@ -22,6 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import com.aura.dating.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -78,7 +80,7 @@ fun LocationPermissionScreen(
             Spacer(modifier = Modifier.height(Dimens.Spacing32))
 
             Text(
-                text = "Enable Location",
+                text = stringResource(R.string.enable_location),
                 style = MaterialTheme.typography.displayMedium,
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
@@ -88,7 +90,7 @@ fun LocationPermissionScreen(
             Spacer(modifier = Modifier.height(Dimens.Spacing12))
 
             Text(
-                text = "Aura uses your approximate location to show discoverable matches nearby. Your exact GPS coordinates will never be shared with other users.",
+                text = stringResource(R.string.location_permission_description),
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.White.copy(alpha = 0.75f),
                 textAlign = TextAlign.Center,
@@ -98,7 +100,7 @@ fun LocationPermissionScreen(
             Spacer(modifier = Modifier.weight(1.2f))
 
             PrimaryButton(
-                text = "Allow Location Access",
+                text = stringResource(R.string.allow_location_access),
                 gradient = AuraSuperLikeGradient,
                 onClick = {
                     permissionLauncher.launch(

@@ -26,6 +26,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.ui.res.stringResource
+import com.aura.dating.R
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -99,7 +101,7 @@ fun DiscoverScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Notifications,
-                            contentDescription = "Notifications",
+                            contentDescription = stringResource(R.string.notifications),
                             tint = Color.White
                         )
                     }
@@ -113,7 +115,7 @@ fun DiscoverScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Map,
-                            contentDescription = "Nearby Radar",
+                            contentDescription = stringResource(R.string.nearby_radar),
                             tint = Color.White
                         )
                     }
@@ -127,7 +129,7 @@ fun DiscoverScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Tune,
-                            contentDescription = "Filters",
+                            contentDescription = stringResource(R.string.filters),
                             tint = Color.White
                         )
                     }
@@ -154,7 +156,7 @@ fun DiscoverScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "📍 Near Me",
+                        text = stringResource(R.string.near_me),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -171,7 +173,7 @@ fun DiscoverScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "🌍 Search",
+                        text = stringResource(R.string.search_tab),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White.copy(alpha = 0.7f)
@@ -201,9 +203,9 @@ fun DiscoverScreen(
 
                     uiState.candidates.isEmpty() -> {
                         EmptyState(
-                            title = "No More Profiles Nearby",
-                            description = "You've viewed all nearby profiles matching your filters. Expand your search distance or age range to meet more people.",
-                            actionButtonText = "Adjust Filters",
+                            title = stringResource(R.string.no_more_profiles),
+                            description = stringResource(R.string.all_profiles_viewed_hint),
+                            actionButtonText = stringResource(R.string.adjust_filters),
                             onActionClick = { showFilterSheet = true }
                         )
                     }
@@ -220,7 +222,7 @@ fun DiscoverScreen(
                                 photoUrls = nextCandidate.photos.map { it.photoUrl },
                                 distanceText = DistanceUtils.formatDistance(nextCandidate.distanceKm, uiState.showDistance),
                                 bio = nextCandidate.bio,
-                                interests = nextCandidate.interests.map { it.name },
+                                interests = nextCandidate.interests.map { it.getLocalizedName() },
                                 isOnline = nextCandidate.isOnline,
                                 onInfoClick = { onNavigateToUserProfile(nextCandidate.id) },
                                 modifier = Modifier
@@ -247,7 +249,7 @@ fun DiscoverScreen(
                                 photoUrls = topCandidate.photos.map { it.photoUrl },
                                 distanceText = DistanceUtils.formatDistance(topCandidate.distanceKm, uiState.showDistance),
                                 bio = topCandidate.bio,
-                                interests = topCandidate.interests.map { it.name },
+                                interests = topCandidate.interests.map { it.getLocalizedName() },
                                 isOnline = topCandidate.isOnline,
                                 onInfoClick = { onNavigateToUserProfile(topCandidate.id) },
                                 modifier = Modifier.fillMaxSize()

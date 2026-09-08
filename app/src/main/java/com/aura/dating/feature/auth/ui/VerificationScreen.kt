@@ -24,6 +24,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import com.aura.dating.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -91,7 +93,7 @@ fun VerificationScreen(
                 )
 
                 Text(
-                    text = "Verify Your Email",
+                    text = stringResource(R.string.verify_your_email),
                     style = MaterialTheme.typography.displaySmall,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
@@ -101,7 +103,7 @@ fun VerificationScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing8))
 
                 Text(
-                    text = "We sent a 6-digit confirmation code to $email. Enter the code below to verify your account.",
+                    text = stringResource(R.string.verification_code_sent_description, email),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.White.copy(alpha = 0.7f),
                     textAlign = TextAlign.Center
@@ -112,7 +114,7 @@ fun VerificationScreen(
                 OutlinedTextField(
                     value = uiState.verificationCode,
                     onValueChange = viewModel::onVerificationCodeChange,
-                    label = { Text("Verification Code") },
+                    label = { Text(stringResource(R.string.verification_code_label)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     shape = RoundedCornerShape(Dimens.RadiusMedium),
@@ -148,7 +150,7 @@ fun VerificationScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing32))
 
                 PrimaryButton(
-                    text = "Verify & Continue",
+                    text = stringResource(R.string.verify_and_continue),
                     isLoading = uiState.isLoading,
                     onClick = { viewModel.verifyEmail(email) }
                 )
@@ -160,7 +162,7 @@ fun VerificationScreen(
                     enabled = !uiState.isLoading
                 ) {
                     Text(
-                        text = "Didn't receive a code? Resend",
+                        text = stringResource(R.string.didnt_receive_code_resend),
                         style = MaterialTheme.typography.labelLarge,
                         color = AuraRose,
                         fontWeight = FontWeight.SemiBold
@@ -201,7 +203,7 @@ fun ForgotPasswordScreen(
                     .padding(top = Dimens.Spacing16)
             ) {
                 Text(
-                    text = "Reset Password",
+                    text = stringResource(R.string.reset_password),
                     style = MaterialTheme.typography.displaySmall,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -210,7 +212,7 @@ fun ForgotPasswordScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing8))
 
                 Text(
-                    text = "Enter your email address to receive password reset instructions.",
+                    text = stringResource(R.string.reset_password_description),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.White.copy(alpha = 0.7f)
                 )
@@ -220,7 +222,7 @@ fun ForgotPasswordScreen(
                 OutlinedTextField(
                     value = uiState.email,
                     onValueChange = viewModel::onEmailChange,
-                    label = { Text("Email address") },
+                    label = { Text(stringResource(R.string.email_address)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     shape = RoundedCornerShape(Dimens.RadiusMedium),
@@ -254,7 +256,7 @@ fun ForgotPasswordScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing32))
 
                 PrimaryButton(
-                    text = "Send Reset Link",
+                    text = stringResource(R.string.send_reset_link),
                     isLoading = uiState.isLoading,
                     onClick = { viewModel.sendPasswordReset() }
                 )

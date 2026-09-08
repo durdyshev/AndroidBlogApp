@@ -28,6 +28,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.res.stringResource
+import com.aura.dating.R
 import com.aura.dating.core.designsystem.theme.AuraPrimaryGradient
 import com.aura.dating.core.designsystem.theme.AuraRose
 import com.aura.dating.core.designsystem.theme.DarkBackground
@@ -92,7 +94,7 @@ fun SplashScreen(
             )
             Spacer(modifier = Modifier.height(Dimens.Spacing8))
             Text(
-                text = "Real connections, nearby.",
+                text = stringResource(R.string.tagline_splash),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White.copy(alpha = 0.7f)
             )

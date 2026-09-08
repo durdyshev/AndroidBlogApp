@@ -20,6 +20,8 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.aura.dating.R
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -73,7 +75,7 @@ fun SelectInterestsScreen(
                 .padding(bottom = Dimens.Spacing32)
         ) {
             AuraTopBar(
-                title = "Step 3 of 4",
+                title = stringResource(R.string.step_3_of_4),
                 showBackButton = true,
                 onBackClick = onNavigateBack
             )
@@ -86,7 +88,7 @@ fun SelectInterestsScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
-                    text = "Select Your Interests",
+                    text = stringResource(R.string.select_your_interests),
                     style = MaterialTheme.typography.displayMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -95,7 +97,7 @@ fun SelectInterestsScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing8))
 
                 Text(
-                    text = "Pick up to 8 interests to match with people who share your passions.",
+                    text = stringResource(R.string.select_interests_hint),
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.White.copy(alpha = 0.7f)
                 )
@@ -132,7 +134,7 @@ fun SelectInterestsScreen(
 
             Box(modifier = Modifier.padding(horizontal = Dimens.Spacing24)) {
                 PrimaryButton(
-                    text = "Continue to Preferences",
+                    text = stringResource(R.string.continue_to_preferences),
                     isLoading = uiState.isLoading,
                     onClick = { viewModel.submitInterests() }
                 )
@@ -175,7 +177,7 @@ fun DatingPreferencesScreen(
                 .padding(bottom = Dimens.Spacing32)
         ) {
             AuraTopBar(
-                title = "Step 4 of 4",
+                title = stringResource(R.string.step_4_of_4),
                 showBackButton = true,
                 onBackClick = onNavigateBack
             )
@@ -188,7 +190,7 @@ fun DatingPreferencesScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
-                    text = "Discovery Preferences",
+                    text = stringResource(R.string.discovery_preferences),
                     style = MaterialTheme.typography.displayMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -197,7 +199,7 @@ fun DatingPreferencesScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing8))
 
                 Text(
-                    text = "Set your matching criteria. You can change these anytime in filters.",
+                    text = stringResource(R.string.discovery_preferences_hint),
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.White.copy(alpha = 0.7f)
                 )
@@ -206,7 +208,7 @@ fun DatingPreferencesScreen(
 
                 // Interested In
                 Text(
-                    text = "Interested In",
+                    text = stringResource(R.string.interested_in),
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White
                 )
@@ -216,9 +218,9 @@ fun DatingPreferencesScreen(
                     horizontalArrangement = Arrangement.spacedBy(Dimens.Spacing8)
                 ) {
                     listOf(
-                        GenderPreference.ALL to "Everyone",
-                        GenderPreference.WOMEN to "Women",
-                        GenderPreference.MEN to "Men"
+                        GenderPreference.ALL to stringResource(R.string.gender_everyone),
+                        GenderPreference.WOMEN to stringResource(R.string.gender_women),
+                        GenderPreference.MEN to stringResource(R.string.gender_men)
                     ).forEach { (pref, label) ->
                         InterestChip(
                             name = label,
@@ -238,7 +240,7 @@ fun DatingPreferencesScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Maximum Distance",
+                        text = stringResource(R.string.maximum_distance),
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.White
                     )
@@ -271,7 +273,7 @@ fun DatingPreferencesScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Age Preference",
+                        text = stringResource(R.string.age_preference),
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.White
                     )
@@ -309,7 +311,7 @@ fun DatingPreferencesScreen(
 
             Box(modifier = Modifier.padding(horizontal = Dimens.Spacing24)) {
                 PrimaryButton(
-                    text = "Finish & Discover",
+                    text = stringResource(R.string.finish_and_discover),
                     isLoading = uiState.isLoading,
                     onClick = { viewModel.submitPreferences() }
                 )

@@ -30,6 +30,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.aura.dating.R
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -88,7 +90,7 @@ fun AddPhotosScreen(
                 .padding(bottom = Dimens.Spacing32)
         ) {
             AuraTopBar(
-                title = "Step 2 of 4",
+                title = stringResource(R.string.step_2_of_4),
                 showBackButton = true,
                 onBackClick = onNavigateBack
             )
@@ -100,7 +102,7 @@ fun AddPhotosScreen(
                     .padding(horizontal = Dimens.Spacing24)
             ) {
                 Text(
-                    text = "Add Your Photos",
+                    text = stringResource(R.string.add_your_photos),
                     style = MaterialTheme.typography.displayMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -109,7 +111,7 @@ fun AddPhotosScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing8))
 
                 Text(
-                    text = "Upload at least 1 clear photo. Your first photo will be your main profile picture.",
+                    text = stringResource(R.string.add_photos_hint),
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.White.copy(alpha = 0.7f)
                 )
@@ -215,7 +217,7 @@ fun AddPhotosScreen(
                         )
                         Spacer(modifier = Modifier.size(Dimens.Spacing8))
                         Text(
-                            text = "Compressing & uploading photo...",
+                            text = stringResource(R.string.uploading_photo),
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.White.copy(alpha = 0.7f)
                         )
@@ -234,7 +236,7 @@ fun AddPhotosScreen(
 
             Box(modifier = Modifier.padding(horizontal = Dimens.Spacing24)) {
                 PrimaryButton(
-                    text = "Continue to Interests",
+                    text = stringResource(R.string.continue_to_interests),
                     enabled = uiState.photos.isNotEmpty() && !uiState.isUploadingPhoto,
                     onClick = { viewModel.proceedToInterests() }
                 )

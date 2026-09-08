@@ -20,6 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import com.aura.dating.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -67,7 +69,7 @@ fun WelcomeScreen(
             Spacer(modifier = Modifier.height(Dimens.Spacing32))
 
             Text(
-                text = "Welcome to Aura",
+                text = stringResource(R.string.welcome_to_aura),
                 style = MaterialTheme.typography.displayMedium,
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
@@ -77,7 +79,7 @@ fun WelcomeScreen(
             Spacer(modifier = Modifier.height(Dimens.Spacing12))
 
             Text(
-                text = "A modern, private discovery space for genuine adult dating and social discovery.",
+                text = stringResource(R.string.welcome_description),
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.White.copy(alpha = 0.75f),
                 textAlign = TextAlign.Center,
@@ -87,14 +89,14 @@ fun WelcomeScreen(
             Spacer(modifier = Modifier.weight(1.2f))
 
             PrimaryButton(
-                text = "Create Account",
+                text = stringResource(R.string.create_account),
                 onClick = onNavigateToRegister
             )
 
             Spacer(modifier = Modifier.height(Dimens.Spacing16))
 
             SecondaryButton(
-                text = "Sign In",
+                text = stringResource(R.string.login),
                 onClick = onNavigateToLogin,
                 textColor = Color.White
             )
@@ -102,7 +104,7 @@ fun WelcomeScreen(
             Spacer(modifier = Modifier.height(Dimens.Spacing24))
 
             Text(
-                text = "By signing up, you agree to our Terms of Service & Privacy Policy. Adults 18+ only.",
+                text = stringResource(R.string.terms_agreement_hint),
                 style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
                 color = Color.White.copy(alpha = 0.5f),
                 textAlign = TextAlign.Center

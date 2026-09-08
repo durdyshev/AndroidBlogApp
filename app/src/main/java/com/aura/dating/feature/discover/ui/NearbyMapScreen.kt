@@ -25,10 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.aura.dating.R
 import com.aura.dating.core.designsystem.components.AuraTopBar
 import com.aura.dating.core.designsystem.components.Avatar
 import com.aura.dating.core.designsystem.theme.AuraPrimaryGradient
@@ -58,7 +60,7 @@ fun NearbyMapScreen(
                 .padding(bottom = Dimens.Spacing32)
         ) {
             AuraTopBar(
-                title = "Nearby Radar",
+                title = stringResource(R.string.nearby_radar),
                 showBackButton = true,
                 onBackClick = onNavigateBack
             )
@@ -70,13 +72,13 @@ fun NearbyMapScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Active Profiles in Your Area",
+                    text = stringResource(R.string.active_profiles_area),
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White.copy(alpha = 0.8f),
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "Coordinates are obfuscated to protect user privacy.",
+                    text = stringResource(R.string.obfuscated_privacy_note),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.White.copy(alpha = 0.5f),
                     textAlign = TextAlign.Center
@@ -124,7 +126,7 @@ fun NearbyMapScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.MyLocation,
-                        contentDescription = "You are here",
+                        contentDescription = stringResource(R.string.you_are_here),
                         tint = Color.White,
                         modifier = Modifier.size(24.dp)
                     )

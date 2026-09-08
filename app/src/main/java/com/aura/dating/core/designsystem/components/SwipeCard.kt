@@ -23,10 +23,12 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aura.dating.R
 import com.aura.dating.core.designsystem.theme.Dimens
 import com.aura.dating.core.designsystem.theme.LikeColor
 import com.aura.dating.core.designsystem.theme.PassColor
@@ -132,7 +134,7 @@ fun SwipeCard(
                     .padding(horizontal = Dimens.Spacing16, vertical = Dimens.Spacing8)
             ) {
                 Text(
-                    text = "LIKE",
+                    text = stringResource(R.string.like_action).uppercase(),
                     color = LikeColor,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Black,
@@ -160,7 +162,7 @@ fun SwipeCard(
                     .padding(horizontal = Dimens.Spacing16, vertical = Dimens.Spacing8)
             ) {
                 Text(
-                    text = "PASS",
+                    text = stringResource(R.string.pass_action).uppercase(),
                     color = PassColor,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Black,
@@ -186,7 +188,7 @@ fun SwipeCard(
                     .padding(horizontal = Dimens.Spacing20, vertical = Dimens.Spacing10)
             ) {
                 Text(
-                    text = "SUPER LIKE",
+                    text = stringResource(R.string.super_like_action).uppercase(),
                     color = SuperLikeColor,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Black,

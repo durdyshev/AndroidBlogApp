@@ -27,6 +27,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.aura.dating.R
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -98,7 +100,7 @@ fun LoginScreen(
                     .padding(top = Dimens.Spacing16, bottom = Dimens.Spacing32)
             ) {
                 Text(
-                    text = "Welcome Back",
+                    text = stringResource(R.string.welcome_back),
                     style = MaterialTheme.typography.displayMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -107,7 +109,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing8))
 
                 Text(
-                    text = "Sign in to continue discovering genuine connections.",
+                    text = stringResource(R.string.login_subtitle),
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.White.copy(alpha = 0.7f)
                 )
@@ -118,7 +120,7 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = uiState.email,
                     onValueChange = viewModel::onEmailChange,
-                    label = { Text("Email address") },
+                    label = { Text(stringResource(R.string.email_address)) },
                     leadingIcon = {
                         Icon(Icons.Default.Email, contentDescription = null, tint = Color.White.copy(alpha = 0.7f))
                     },
@@ -141,7 +143,7 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = uiState.password,
                     onValueChange = viewModel::onPasswordChange,
-                    label = { Text("Password") },
+                    label = { Text(stringResource(R.string.password)) },
                     leadingIcon = {
                         Icon(Icons.Default.Lock, contentDescription = null, tint = Color.White.copy(alpha = 0.7f))
                     },
@@ -149,7 +151,7 @@ fun LoginScreen(
                         IconButton(onClick = { passwordVisible = !passwordVisible }) {
                             Icon(
                                 imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = if (passwordVisible) "Hide password" else "Show password",
+                                contentDescription = if (passwordVisible) stringResource(R.string.hide_password) else stringResource(R.string.show_password),
                                 tint = Color.White.copy(alpha = 0.7f)
                             )
                         }
@@ -174,7 +176,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing8))
 
                 Text(
-                    text = "Forgot password?",
+                    text = stringResource(R.string.forgot_password),
                     style = MaterialTheme.typography.labelMedium,
                     color = AuraRose,
                     modifier = Modifier
@@ -195,7 +197,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(Dimens.Spacing32))
 
                 PrimaryButton(
-                    text = "Sign In",
+                    text = stringResource(R.string.login),
                     isLoading = uiState.isLoading,
                     onClick = {
                         focusManager.clearFocus()
@@ -210,12 +212,12 @@ fun LoginScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Don't have an account? ",
+                        text = stringResource(R.string.dont_have_account_prefix),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White.copy(alpha = 0.7f)
                     )
                     Text(
-                        text = "Sign Up",
+                        text = stringResource(R.string.sign_up),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         color = AuraRose,

@@ -41,8 +41,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.aura.dating.R
 import com.aura.dating.core.common.utils.DistanceUtils
 import com.aura.dating.core.designsystem.components.AuraTopBar
 import com.aura.dating.core.designsystem.components.EmptyState
@@ -110,7 +112,7 @@ fun SearchResultsScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Tune,
-                            contentDescription = "Adjust Filters",
+                            contentDescription = stringResource(R.string.adjust_filters),
                             tint = Color.White
                         )
                     }
@@ -132,7 +134,10 @@ fun SearchResultsScreen(
                 )
                 if (uiState.results.isNotEmpty()) {
                     Text(
-                        text = "${uiState.results.size}${if (uiState.hasMore) "+" else ""} people",
+                        text = stringResource(
+                            R.string.search_results_people_count,
+                            "${uiState.results.size}${if (uiState.hasMore) "+" else ""}"
+                        ),
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
                         color = AuraRose
@@ -161,7 +166,7 @@ fun SearchResultsScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         ErrorState(
-                            message = uiState.errorMessage ?: "Couldn't load people. Please try again.",
+                            message = uiState.errorMessage ?: stringResource(R.string.could_not_load_people),
                             onRetry = { viewModel.executeSearch(isNewSearch = true) }
                         )
                     }
@@ -173,9 +178,9 @@ fun SearchResultsScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         EmptyState(
-                            title = "No People Found",
-                            description = "Try expanding your location, age range, or gender preferences.",
-                            actionButtonText = "Change Filters",
+                            title = stringResource(R.string.no_people_found),
+                            description = stringResource(R.string.no_people_found_desc),
+                            actionButtonText = stringResource(R.string.change_filters),
                             onActionClick = onAdjustFilters
                         )
                     }
@@ -277,7 +282,7 @@ private fun SearchResultCandidateCard(
                 photoUrls = candidate.photos.map { it.photoUrl },
                 distanceText = locationLabel,
                 bio = candidate.bio,
-                interests = candidate.interests.map { it.name },
+                interests = candidate.interests.map { it.getLocalizedName() },
                 isOnline = candidate.isOnline,
                 onInfoClick = onProfileClick,
                 modifier = Modifier.fillMaxSize()
@@ -307,7 +312,7 @@ private fun SearchResultCandidateCard(
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Pass",
+                        contentDescription = stringResource(R.string.pass_action),
                         tint = PassColor,
                         modifier = Modifier.size(28.dp)
                     )
@@ -327,7 +332,7 @@ private fun SearchResultCandidateCard(
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Default.Star,
-                        contentDescription = "Super Like",
+                        contentDescription = stringResource(R.string.super_like_action),
                         tint = AuraBlue,
                         modifier = Modifier.size(24.dp)
                     )
@@ -347,7 +352,7 @@ private fun SearchResultCandidateCard(
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Default.Favorite,
-                        contentDescription = "Like",
+                        contentDescription = stringResource(R.string.like_action),
                         tint = LikeColor,
                         modifier = Modifier.size(28.dp)
                     )

@@ -21,7 +21,17 @@ object InterestTranslations {
         "Hiking" to mapOf("tr" to "Doğa Yürüyüşü", "ru" to "Походы", "tk" to "Gezelenç"),
         "Yoga" to mapOf("tr" to "Yoga", "ru" to "Йога", "tk" to "Ýoga"),
         "Dancing" to mapOf("tr" to "Dans", "ru" to "Танцы", "tk" to "Tans"),
-        "Anime" to mapOf("tr" to "Anime", "ru" to "Аниме", "tk" to "Anime")
+        "Anime" to mapOf("tr" to "Anime", "ru" to "Аниме", "tk" to "Anime"),
+        "Cinema" to mapOf("tr" to "Sinema", "ru" to "Кино", "tk" to "Film"),
+        "Dogs" to mapOf("tr" to "Köpekler", "ru" to "Собаки", "tk" to "Itler"),
+        "Cats" to mapOf("tr" to "Kediler", "ru" to "Кошки", "tk" to "Pişikler"),
+        "Wine" to mapOf("tr" to "Şarap", "ru" to "Вино", "tk" to "Şerap"),
+        "Running" to mapOf("tr" to "Koşu", "ru" to "Бег", "tk" to "Ylgaw"),
+        "Beer" to mapOf("tr" to "Bira", "ru" to "Пиво", "tk" to "Piwo"),
+        "Swimming" to mapOf("tr" to "Yüzme", "ru" to "Плавание", "tk" to "Ýüzmek"),
+        "Books" to mapOf("tr" to "Kitaplar", "ru" to "Книги", "tk" to "Kitaplar"),
+        "Board Games" to mapOf("tr" to "Kutu Oyunları", "ru" to "Настольные игры", "tk" to "Stol oýunlary"),
+        "Outdoors" to mapOf("tr" to "Açık Hava", "ru" to "На свежем воздухе", "tk" to "Açyk howa")
     )
 
     fun getTranslation(name: String, lang: String): String? {

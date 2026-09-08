@@ -55,7 +55,7 @@ fun AuraTopBar(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = androidx.compose.ui.res.stringResource(com.aura.dating.R.string.back),
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }

@@ -29,11 +29,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.aura.dating.R
 import com.aura.dating.core.common.utils.DateTimeUtils
 import com.aura.dating.core.designsystem.components.AuraTopBar
 import com.aura.dating.core.designsystem.components.Avatar
@@ -67,7 +69,7 @@ fun MatchesScreen(
                 .padding(bottom = 80.dp)
         ) {
             AuraTopBar(
-                title = "Matches & Messages",
+                title = stringResource(R.string.matches_and_messages),
                 showBrandedLogo = false
             )
 
@@ -77,8 +79,8 @@ fun MatchesScreen(
                 }
             } else if (uiState.matches.isEmpty() && uiState.conversations.isEmpty()) {
                 EmptyState(
-                    title = "No Matches Yet",
-                    description = "When you and someone else both like each other, they'll appear here. Keep discovering!",
+                    title = stringResource(R.string.no_matches_yet),
+                    description = stringResource(R.string.no_matches_yet_desc),
                     icon = Icons.Default.Favorite
                 )
             } else {
@@ -90,7 +92,7 @@ fun MatchesScreen(
                         item {
                             Column(modifier = Modifier.padding(vertical = Dimens.Spacing8)) {
                                 Text(
-                                    text = "New Matches (${uiState.matches.size})",
+                                    text = stringResource(R.string.new_matches_count, uiState.matches.size),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White,
@@ -145,7 +147,7 @@ fun MatchesScreen(
                     // Conversations Header
                     item {
                         Text(
-                            text = "Conversations",
+                            text = stringResource(R.string.conversations),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
@@ -163,7 +165,7 @@ fun MatchesScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "Tap on a match above to start chatting!",
+                                    text = stringResource(R.string.tap_match_to_chat),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = Color.White.copy(alpha = 0.6f)
                                 )
@@ -220,7 +222,7 @@ fun MatchesScreen(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Text(
-                                            text = conversation.lastMessageText ?: "Say hi to your new match!",
+                                            text = conversation.lastMessageText ?: stringResource(R.string.say_hi_new_match),
                                             style = MaterialTheme.typography.bodyMedium,
                                             color = if (conversation.unreadCount > 0) Color.White else Color.White.copy(alpha = 0.6f),
                                             fontWeight = if (conversation.unreadCount > 0) FontWeight.Bold else FontWeight.Normal,

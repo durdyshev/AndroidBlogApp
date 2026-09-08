@@ -28,8 +28,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.aura.dating.R
 import com.aura.dating.core.designsystem.theme.AuraRose
 import com.aura.dating.core.designsystem.theme.Dimens
 import kotlin.math.roundToInt
@@ -64,7 +66,7 @@ fun FilterSheet(
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
-                text = "Discovery Filters",
+                text = stringResource(R.string.discovery_filters),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -74,7 +76,7 @@ fun FilterSheet(
 
             // Interested In (Gender)
             Text(
-                text = "Show Me",
+                text = stringResource(R.string.show_me),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -83,7 +85,11 @@ fun FilterSheet(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(Dimens.Spacing8)
             ) {
-                listOf("ALL" to "Everyone", "WOMEN" to "Women", "MEN" to "Men").forEach { (key, label) ->
+                listOf(
+                    "ALL" to stringResource(R.string.gender_everyone),
+                    "WOMEN" to stringResource(R.string.gender_women),
+                    "MEN" to stringResource(R.string.gender_men)
+                ).forEach { (key, label) ->
                     InterestChip(
                         name = label,
                         isSelected = currentGender == key,
@@ -102,7 +108,7 @@ fun FilterSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Maximum Distance",
+                    text = stringResource(R.string.maximum_distance),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -132,7 +138,7 @@ fun FilterSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Age Preference",
+                    text = stringResource(R.string.age_preference),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -163,12 +169,12 @@ fun FilterSheet(
             ) {
                 Column {
                     Text(
-                        text = "Online Now",
+                        text = stringResource(R.string.online_now),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Only show profiles active recently",
+                        text = stringResource(R.string.only_active_recently_desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -186,7 +192,7 @@ fun FilterSheet(
             Spacer(modifier = Modifier.height(Dimens.Spacing32))
 
             PrimaryButton(
-                text = "Apply Filters",
+                text = stringResource(R.string.apply_filters),
                 onClick = {
                     onApply(
                         currentAgeRange.start.roundToInt(),

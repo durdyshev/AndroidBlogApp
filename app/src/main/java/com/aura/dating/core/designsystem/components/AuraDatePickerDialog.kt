@@ -13,8 +13,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.aura.dating.R
 import com.aura.dating.core.designsystem.theme.AuraRose
 import com.aura.dating.core.designsystem.theme.DarkBorder
 import com.aura.dating.core.designsystem.theme.DarkSurface
@@ -57,7 +59,7 @@ fun AuraDatePickerDialog(
                 }
             ) {
                 Text(
-                    text = "Confirm",
+                    text = stringResource(R.string.confirm),
                     color = AuraRose,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.labelLarge
@@ -67,7 +69,7 @@ fun AuraDatePickerDialog(
         dismissButton = {
             TextButton(onClick = onDismissRequest) {
                 Text(
-                    text = "Cancel",
+                    text = stringResource(R.string.cancel),
                     color = Color.White.copy(alpha = 0.6f),
                     style = MaterialTheme.typography.labelLarge
                 )

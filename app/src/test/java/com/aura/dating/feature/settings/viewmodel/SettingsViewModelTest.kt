@@ -59,6 +59,8 @@ class SettingsViewModelTest {
         every { appSettingsStorage.likesPushFlow } returns flowOf(true)
         every { appSettingsStorage.showOnlineStatusFlow } returns flowOf(true)
         every { appSettingsStorage.showDistanceFlow } returns flowOf(true)
+        every { appSettingsStorage.selectedLanguageCodeFlow } returns flowOf("en")
+        every { tokenStorage.emailFlow } returns flowOf("test@example.com")
 
         viewModel = SettingsViewModel(
             context = context,
